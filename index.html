@@ -5,88 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú Interactivo | Space Wings</title>
     <style>
-        /* Estilos Generales Modernos */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; min-height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; min-height: 100vh; }
+        header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); text-align: center; padding: 20px; border-bottom: 1px solid #334155; }
+        .logo-text { font-size: 28px; font-weight: 900; letter-spacing: 4px; color: #f59e0b; margin: 0; }
         
-        /* Encabezado Premium */
-        header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); text-align: center; padding: 30px 20px; border-bottom: 1px solid #334155; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .logo-text { font-size: 32px; font-weight: 900; letter-spacing: 4px; color: #f59e0b; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .sub-logo { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-top: 6px; }
-
-        /* Contenedor Principal en Dos Columnas */
-        .main-container { display: flex; flex-direction: row; flex: 1; max-width: 1200px; width: 100%; margin: 30px auto; padding: 0 20px; gap: 35px; box-sizing: border-box; }
+        /* Contenedor Principal */
+        .main-container { display: flex; flex-direction: row; flex: 1; max-width: 1200px; width: 100%; margin: 20px auto; padding: 0 20px; gap: 30px; box-sizing: border-box; }
         
-        /* COLUMNA IZQUIERDA: Catálogo de Productos */
-        .catalog-section { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        .catalog-section h2 { font-size: 20px; margin: 0 0 10px 0; color: #f59e0b; border-bottom: 2px solid #1e293b; padding-bottom: 12px; letter-spacing: 1px; font-weight: 800; }
+        /* COLUMNA IZQUIERDA: Categorías y Productos */
+        .catalog-section { flex: 1; display: flex; flex-direction: column; gap: 25px; }
+        .category-title { font-size: 18px; color: #f59e0b; border-bottom: 2px solid #1e293b; padding-bottom: 8px; margin: 0; font-weight: 800; text-transform: uppercase; }
+        .products-grid { display: flex; flex-direction: column; gap: 12px; }
         
-        /* Tarjetas de Producto Ampliadas */
-        .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
-        .product-card:hover { transform: translateY(-3px); border-color: #f59e0b; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
-        .product-info { display: flex; flex-direction: column; gap: 8px; }
-        .product-name { font-size: 18px; font-weight: 700; color: #ffffff; }
-        .product-price { font-size: 16px; font-weight: 800; color: #f59e0b; }
+        /* Tarjeta de Producto */
+        .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .product-main { display: flex; justify-content: space-between; align-items: center; }
+        .product-name { font-size: 16px; font-weight: 700; }
+        .product-price { font-size: 15px; font-weight: 800; color: #f59e0b; }
         
-        /* Botón Añadir Estilizado */
-        .add-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #0f172a; border: none; padding: 12px 24px; cursor: pointer; border-radius: 10px; font-weight: 800; font-size: 14px; box-shadow: 0 4px 14px rgba(245,158,11,0.3); transition: transform 0.2s, box-shadow 0.2s; }
-        .add-btn:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(245,158,11,0.5); }
-
-        /* COLUMNA DERECHA: Carrito de Compras Compacto (280px) */
-        .cart-section { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 30px; height: max-content; }
+        /* Selector de Salsas interno */
+        .sauce-selector { background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+        .sauce-selector label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .sauce-select { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px; border-radius: 6px; font-size: 13px; outline: none; width: 100%; }
         
-        /* Contenedor del Carrito Tipo App Compacto */
+        .add-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #0f172a; border: none; padding: 8px 16px; cursor: pointer; border-radius: 8px; font-weight: 800; font-size: 13px; align-self: flex-end; }
+        
+        /* COLUMNA DERECHA: Carrito Compacto (280px) */
+        .cart-section { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 20px; height: max-content; }
         .digital-cart { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 16px; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
-        .cart-title { font-size: 16px; font-weight: 800; color: #ffffff; margin: 0 0 15px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        .cart-count { background: #f59e0b; color: #0f172a; font-size: 11px; padding: 2px 7px; border-radius: 20px; font-weight: 900; }
+        .cart-title { font-size: 16px; font-weight: 800; border-bottom: 1px solid #334155; padding-bottom: 10px; margin: 0 0 12px 0; display: flex; justify-content: space-between; }
+        .cart-count { background: #f59e0b; color: #0f172a; font-size: 11px; padding: 2px 6px; border-radius: 10px; }
         
-        /* Input de Cliente Estilizado Compacto */
-        .client-box { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
-        .client-box label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .client-box input { background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #fff; padding: 8px 12px; font-size: 13px; outline: none; transition: border-color 0.2s; }
-        .client-box input:focus { border-color: #f59e0b; }
+        .client-box { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .client-box label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .client-box input { background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; padding: 8px; font-size: 13px; outline: none; }
+        
+        .cart-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; margin-bottom: 12px; }
+        .cart-item { display: flex; flex-direction: column; gap: 6px; background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; }
+        .item-row { display: flex; justify-content: space-between; font-size: 13px; }
+        .item-sauce { font-size: 11px; color: #f59e0b; font-style: italic; margin-top: -2px; }
+        
+        .comment-box { width: 100%; background: #1e293b; border: 1px solid #475569; border-radius: 4px; color: #e2e8f0; padding: 4px 6px; font-size: 11px; box-sizing: border-box; }
+        
+        .qty-controls { display: flex; align-items: center; gap: 6px; }
+        .cant-btn { background: #334155; color: #fff; border: none; width: 20px; height: 20px; cursor: pointer; border-radius: 4px; font-size: 11px; }
+        .del-btn { background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 12px; font-weight: bold; }
+        
+        .summary-box { border-top: 1px dashed #334155; padding-top: 10px; display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 12px; }
+        .btn-send { padding: 12px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; border: none; width: 100%; cursor: pointer; font-weight: 800; border-radius: 8px; font-size: 13px; text-align: center; text-decoration: none; display: block; box-sizing: border-box; }
+        
+        .qr-wrapper { display: flex; flex-direction: column; align-items: center; gap: 4px; background: #ffffff; padding: 10px; border-radius: 8px; margin-top: 10px; color: #0f172a; font-size: 10px; font-weight: 800; }
 
-        /* Lista de Productos en el Carrito */
-        .cart-list { display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 2px; margin-bottom: 15px; }
-        .cart-list::-webkit-scrollbar { width: 4px; }
-        .cart-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        
-        /* Filas del Carrito con Bloque de Comentarios */
-        .cart-item { display: flex; flex-direction: column; gap: 8px; background: #0f172a; padding: 12px; border-radius: 10px; border: 1px solid #334155; }
-        .item-main-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 4px; }
-        .item-details { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-        .item-name { font-size: 13px; font-weight: 600; color: #f8fafc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .item-subtotal { font-size: 12px; font-weight: 700; color: #f59e0b; }
-        
-        /* Controles de Cantidad */
-        .qty-controls { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-        .cant-btn { background: #334155; color: #fff; border: none; width: 22px; height: 22px; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 12px; display: flex; align-items: center; justify-content: center; }
-        .cant-btn:hover { background: #475569; }
-        .qty-num { font-size: 12px; font-weight: 700; min-width: 14px; text-align: center; }
-        .del-btn { background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 14px; padding: 2px; font-weight: bold; }
-        
-        /* Input para Comentarios por Artículo */
-        .comment-box { width: 100%; background: #1e293b; border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; padding: 6px 8px; font-size: 11px; font-family: sans-serif; box-sizing: border-box; outline: none; transition: border-color 0.15s; }
-        .comment-box::placeholder { color: #64748b; }
-        .comment-box:focus { border-color: #f59e0b; background: #111727; }
-        
-        /* Cuadro de Resumen de Pago */
-        .summary-box { border-top: 1px dashed #334155; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .summary-label { font-size: 14px; font-weight: 700; color: #94a3b8; }
-        .summary-total { font-size: 18px; font-weight: 900; color: #f59e0b; }
-
-        /* Contenedor QR Modificado con etiqueta Img Nativa */
-        .qr-wrapper { display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; padding: 12px; border-radius: 10px; margin-top: 12px; }
-        .qr-wrapper span { color: #0f172a; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
-
-        /* Botón de Enviar a WhatsApp Compacto */
-        .btn-send { padding: 14px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; border: none; width: 100%; cursor: pointer; font-weight: 800; border-radius: 10px; font-size: 14px; text-align: center; text-decoration: none; box-shadow: 0 4px 14px rgba(34,197,94,0.3); display: block; box-sizing: border-box; }
-        .btn-send:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(34,197,94,0.4); }
-
-        /* Adaptabilidad Móvil */
         @media (max-width: 768px) {
-            .main-container { flex-direction: column; padding: 0 15px; gap: 25px; margin: 15px auto; }
+            .main-container { flex-direction: column; padding: 0 10px; }
             .cart-section { width: 100%; position: relative; top: 0; }
-            .product-card { padding: 18px; }
         }
     </style>
 </head>
@@ -94,104 +66,152 @@
 
     <header>
         <h1 class="logo-text">SPACE WINGS</h1>
-        <p class="sub-logo">Sabor que te eleva</p>
     </header>
 
     <div class="main-container">
-        
-        <!-- LADO IZQUIERDO: Catálogo Ampliado -->
-        <section class="catalog-section">
-            <h2>🔥 NUESTRO MENÚ</h2>
-            <div id="lista-productos">
-                <!-- Se inyecta dinámicamente -->
-            </div>
-        </section>
+        <!-- SECCIÓN DE PRODUCTOS SEGÚN TU ESQUEMA -->
+        <section class="catalog-section" id="menu-categorias"></section>
 
-        <!-- LADO DERECHO: Carrito de Compras Compacto Tipo App -->
+        <!-- CARRITO DE COMPRAS -->
         <section class="cart-section">
             <div class="digital-cart">
-                <div class="cart-title">
-                    <span>🛒 Tu Pedido</span>
-                    <span class="cart-count" id="badge-count">0</span>
-                </div>
-
-                <div class="client-box">
-                    <label for="cliente_input">Nombre del Cliente</label>
-                    <input type="text" id="cliente_input" value="Cliente Nuevo" oninput="actualizarQR()">
-                </div>
-
-                <!-- Lista de artículos agregados -->
-                <div class="cart-list" id="lista-carrito">
-                    <!-- Se llena en tiempo real -->
-                </div>
-
-                <div class="summary-box">
-                    <span class="summary-label">Total:</span>
-                    <span class="summary-total">$<span id="tot">0.00</span></span>
-                </div>
-
+                <div class="cart-title"><span>🛒 Pedido</span><span class="cart-count" id="badge-count">0</span></div>
+                <div class="client-box"><label>Cliente</label><input type="text" id="cliente_input" value="Cliente Nuevo" oninput="actualizarQR()"></div>
+                <div class="cart-list" id="lista-carrito"></div>
+                <div class="summary-box"><span>Total:</span><strong>$<span id="tot">0.00</span></strong></div>
                 <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR POR WHATSAPP</button>
-
-                <!-- Código QR Corregido con etiqueta <img> -->
-                <div class="qr-wrapper" id="qr-block" style="display: none;">
-                    <span>Código de Validation</span>
-                    <img id="qrcode_img" src="" alt="Código QR" style="width: 100px; height: 100px;">
-                </div>
+                <div class="qr-wrapper" id="qr-block" style="display: none;"><span>Validación</span><img id="qrcode_img" style="width:100px; height:100px;"></div>
             </div>
         </section>
-
     </div>
 
     <script>
-        // Catálogo de Productos disponibles
-        const productosDisponibles = [
-            { id: "p1", nombre: "Alitas BBQ Clásicas", precio: 120.00 },
-            { id: "p2", nombre: "Papas Gajo Sazonadas", precio: 65.00 },
-            { id: "p3", nombre: "Boneless Crujientes", precio: 140.00 },
-            { id: "p4", nombre: "Refresco Cola 600ml", precio: 35.00 }
+        // Opciones de salsas del esquema
+        const salsasDisponibles = ["Bbq Hot", "Buffalo", "Maracuya Hot", "Mango Habanero", "Piña Habanero", "Fresa Habanero"];
+
+        // Estructura jerárquica exacta de tu mapa conceptual
+        const estructuraMenu = [
+            {
+                categoria: "Platillo Principal",
+                items: [
+                    { id: "alitas", nombre: "Alitas", precio: 120.00, requiereSalsa: true },
+                    { id: "boneless", nombre: "Boneless", precio: 140.00, requiereSalsa: true },
+                    { id: "palomitas", nombre: "Palomitas", precio: 95.00, requiereSalsa: true }
+                ]
+            },
+            {
+                categoria: "Snacks",
+                items: [
+                    { id: "papas_francesa", nombre: "Papas a la francesa", precio: 55.00 },
+                    { id: "papas_gajo", nombre: "Papas Gajo", precio: 65.00 },
+                    { id: "dedos_queso", nombre: "Dedos de queso", precio: 80.00 },
+                    { id: "jalapenos", nombre: "Jalapeños rellenos", precio: 85.00 },
+                    { id: "aros_cebolla", nombre: "Aros de cebolla", precio: 50.00 }
+                ]
+            },
+            {
+                categoria: "Bebidas",
+                items: [
+                    { id: "coca_400", nombre: "Coca Cola 400 ml", precio: 25.00 },
+                    { id: "coca_600", nombre: "Coca Cola 600 ml", precio: 35.00 },
+                    { id: "coca_25", nombre: "Coca Cola 2.5 Lts", precio: 55.00 }
+                ]
+            },
+            {
+                categoria: "Combos",
+                items: [
+                    { id: "c_estrella", nombre: "C. Estrella (Platillo + Snack)", precio: 190.00, esCombo: true },
+                    { id: "c_cometa", nombre: "C. Cometa (Platillo + Bebida)", precio: 160.00, esCombo: true }
+                ]
+            }
         ];
 
         let carrito = [];
 
-        // Inicializar catálogo en el lado izquierdo
-        const divCatalog = document.getElementById('lista-productos');
-        productosDisponibles.forEach(prod => {
-            divCatalog.innerHTML += `
-                <div class="product-card">
-                    <div class="product-info">
-                        <span class="product-name">${prod.nombre}</span>
-                        <span class="product-price">$${prod.precio.toFixed(2)}</span>
-                    </div>
-                    <button class="add-btn" onclick="agregarAlCarrito('${prod.id}')">Agregar +</button>
-                </div>`;
+        // Dibujar el menú en la pantalla
+        const contenedorMenu = document.getElementById('menu-categorias');
+        estructuraMenu.forEach(cat => {
+            let catHTML = `<div class="products-grid"><h2 class="category-title">${cat.categoria}</h2>`;
+            
+            cat.items.forEach(prod => {
+                let selectorSalsa = "";
+                // Si el producto requiere salsa según tu mapa, dibuja las opciones
+                if (prod.requiereSalsa) {
+                    selectorSalsa = `
+                        <div class="sauce-selector">
+                            <label>Elige tu Salsa:</label>
+                            <select class="sauce-select" id="salsa_${prod.id}">
+                                ${salsasDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
+                            </select>
+                        </div>`;
+                }
+                // Si es un Combo, permite elegir el platillo base
+                if (prod.esCombo) {
+                    selectorSalsa = `
+                        <div class="sauce-selector">
+                            <label>Platillo base del Combo:</label>
+                            <select class="sauce-select" id="salsa_${prod.id}">
+                                <option value="Alitas">Alitas</option>
+                                <option value="Boneless">Boneless</option>
+                                <option value="Palomitas">Palomitas</option>
+                            </select>
+                        </div>`;
+                }
+
+                catHTML += `
+                    <div class="product-card">
+                        <div class="product-main">
+                            <span class="product-name">${prod.nombre}</span>
+                            <span class="product-price">$${prod.precio.toFixed(2)}</span>
+                        </div>
+                        ${selectorSalsa}
+                        <button class="add-btn" onclick="agregarAlCarrito('${cat.categoria}', '${prod.id}')">Agregar +</button>
+                    </div>`;
+            });
+            
+            catHTML += `</div>`;
+            contenedorMenu.innerHTML += catHTML;
         });
 
-        function agregarAlCarrito(id) {
-            const prod = productosDisponibles.find(p => p.id === id);
-            const existe = carrito.find(item => item.id === id);
-            if (existe) { 
-                existe.cantidad++; 
-            } else { 
-                carrito.push({ ...prod, cantidad: 1, comentario: "" }); 
+        function agregarAlCarrito(catNombre, prodId) {
+            const cat = estructuraMenu.find(c => c.categoria === catNombre);
+            const prod = cat.items.find(p => p.id === prodId);
+            
+            // Capturar la opción seleccionada del menú desplegable si aplica
+            let salsaSeleccionada = "";
+            const elSelect = document.getElementById(`salsa_${prodId}`);
+            if (elSelect) {
+                salsaSeleccionada = elSelect.value;
+            }
+
+            // Validar si ya existe el mismo artículo con la misma salsa en el carrito
+            const existe = carrito.find(item => item.id === prodId && item.salsa === salsaSeleccionada);
+            
+            if (existe) {
+                existe.cantidad++;
+            } else {
+                carrito.push({ ...prod, cantidad: 1, salsa: salsaSeleccionada, comentario: "" });
             }
             actualizarInterfaz();
         }
 
-        function cambiarCantidad(id, cambio) {
-            const item = carrito.find(p => p.id === id);
+        function cambiarCantidad(id, salsa, cambio) {
+            const item = carrito.find(p => p.id === id && p.salsa === salsa);
             if (!item) return;
             item.cantidad += cambio;
-            if (item.cantidad <= 0) { carrito = carrito.filter(p => p.id !== id); }
+            if (item.cantidad <= 0) {
+                carrito = carrito.filter(p => !(p.id === id && p.salsa === salsa));
+            }
             actualizarInterfaz();
         }
 
-        function eliminarDelCarrito(id) {
-            carrito = carrito.filter(p => p.id !== id);
+        function eliminarDelCarrito(id, salsa) {
+            carrito = carrito.filter(p => !(p.id === id && p.salsa === salsa));
             actualizarInterfaz();
         }
 
-        function guardarComentario(id, texto) {
-            const item = carrito.find(p => p.id === id);
+        function guardarComentario(id, salsa, texto) {
+            const item = carrito.find(p => p.id === id && p.salsa === salsa);
             if (item) { item.comentario = texto; }
         }
 
@@ -202,7 +222,7 @@
             let totalArticulos = 0;
 
             if(carrito.length === 0) {
-                listaHTML.innerHTML = `<div style="text-align:center; color:#64748b; padding:25px; font-size:12px;">Carrito vacío.</div>`;
+                listaHTML.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px; font-size:12px;">Carrito vacío.</div>`;
                 document.getElementById('qr-block').style.display = "none";
             } else {
                 document.getElementById('qr-block').style.display = "flex";
@@ -213,44 +233,43 @@
                 cuentaTotal += importeItem;
                 totalArticulos += item.cantidad;
 
+                let textoSalsa = item.salsa ? `<div class="item-sauce">🔥 Sabor: ${item.salsa}</div>` : "";
+
                 listaHTML.innerHTML += `
                     <div class="cart-item">
-                        <div class="item-main-row">
-                            <div class="item-details">
-                                <span class="item-name">${item.nombre}</span>
-                                <span class="item-subtotal">$${importeItem.toFixed(2)}</span>
+                        <div class="item-row">
+                            <div>
+                                <strong>${item.nombre}</strong>
+                                ${textoSalsa}
+                                <span style="color:#f59e0b; font-weight:700;">$${importeItem.toFixed(2)}</span>
                             </div>
                             <div class="qty-controls">
-                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
-                                <span class="qty-num">${item.cantidad}</span>
-                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
-                                <button class="del-btn" onclick="eliminarDelCarrito('${item.id}')">×</button>
+                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', '${item.salsa}', -1)">-</button>
+                                <span>${item.cantidad}</span>
+                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', '${item.salsa}', 1)">+</button>
+                                <button class="del-btn" onclick="eliminarDelCarrito('${item.id}', '${item.salsa}')">×</button>
                             </div>
                         </div>
-                        <input type="text" class="comment-box" placeholder="Notas (ej. bien doradas, salsa aparte...)" value="${item.comentario}" oninput="guardarComentario('${item.id}', this.value)">
+                        <input type="text" class="comment-box" placeholder="Notas especiales..." value="${item.comentario}" oninput="guardarComentario('${item.id}', '${item.salsa}', this.value)">
                     </div>`;
             });
 
             document.getElementById('badge-count').textContent = totalArticulos;
             document.getElementById('tot').textContent = cuentaTotal.toFixed(2);
-
             actualizarQR();
         }
 
-        // SOLUCIÓN QR POR IMAGEN: Carga nativa sin depender de CDNs
         function actualizarQR() {
             if (carrito.length === 0) return;
             const totalFormateado = document.getElementById('tot').textContent;
             const clienteVal = document.getElementById('cliente_input').value;
-            
             const textoQR = `Cliente:${clienteVal}\nTotal:$${totalFormateado}\nSpace Wings`;
-            
             document.getElementById("qrcode_img").src = "quickchart.io" + encodeURIComponent(textoQR) + "&size=100";
         }
 
         function enviarWhatsApp() {
             if(carrito.length === 0) {
-                alert("Por favor, agrega productos al carrito.");
+                alert("Agrega productos al carrito.");
                 return;
             }
 
@@ -261,10 +280,14 @@
             
             carrito.forEach(item => {
                 let subtotal = item.precio * item.cantidad;
-                mensaje += `📦 *${item.cantidad}x* ${item.nombre} -> _$${subtotal.toFixed(2)}_\n`;
+                mensaje += `📦 *${item.cantidad}x* ${item.nombre}\n`;
+                if(item.salsa) {
+                    mensaje += `   🔥 _Sabor: ${item.salsa}_\n`;
+                }
                 if (item.comentario.trim() !== "") {
                     mensaje += `   📝 _Nota: ${item.comentario.trim()}_\n`;
                 }
+                mensaje += `   💰 _Subtotal: $${subtotal.toFixed(2)}_\n`;
             });
             
             mensaje += `-------------------------------------\n`;
