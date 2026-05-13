@@ -115,16 +115,16 @@
             {
                 categoria: "Bebidas",
                 items: [
-                    { id: "coca_400", nombre: "Coca Cola 400 ml", precio: 20.00 },
-                    { id: "coca_600", nombre: "Coca Cola 600 ml", precio: 30.00 },
-                    { id: "coca_25", nombre: "Coca Cola 2.5 Lts", precio: 40.00 }
+                    { id: "coca_400", nombre: "Coca Cola 400 ml", precio: 25.00 },
+                    { id: "coca_600", nombre: "Coca Cola 600 ml", precio: 35.00 },
+                    { id: "coca_25", nombre: "Coca Cola 2.5 Lts", precio: 55.00 }
                 ]
             },
             {
                 categoria: "Combos",
                 items: [
-                    { id: "c_estrella", nombre: "Combo Estrella", precio: 210.00, esComboEspecial: true },
-                    { id: "c_cometa", nombre: "Combo Cometa", precio: 185.00, esComboEspecial: true }
+                    { id: "c_estrella", nombre: "Combo Estrella (Platillo + 2 Snacks)", precio: 220.00, esComboEspecial: true },
+                    { id: "c_cometa", nombre: "Combo Cometa (Platillo + 2 Snacks)", precio: 220.00, esComboEspecial: true }
                 ]
             }
         ];
@@ -139,7 +139,6 @@
             cat.items.forEach(prod => {
                 let bloqueSelectores = "";
                 
-                // Caso 1: Producto Individual con Salsas (Alitas, Boneless, Palomitas)
                 if (prod.requiereSalsa) {
                     bloqueSelectores = `
                         <div class="sauce-selector">
@@ -150,7 +149,6 @@
                         </div>`;
                 }
                 
-                // Caso 2: Configuración del Combo Especial (1 Platillo + 2 Snacks)
                 if (prod.esComboEspecial) {
                     bloqueSelectores = `
                         <div class="sauce-selector">
@@ -192,7 +190,6 @@
             
             let configuracionAdicional = "";
 
-            // Lógica para capturar las opciones de los Combos
             if (prod.esComboEspecial) {
                 const pBase = document.getElementById(`platillo_${prodId}`).value;
                 const s1 = document.getElementById(`snack1_${prodId}`).value;
@@ -204,11 +201,9 @@
                 }
                 configuracionAdicional = `[${pBase} + ${s1} + ${s2}]`;
             } else if (prod.requiereSalsa) {
-                // Lógica para capturar la salsa de productos individuales
                 configuracionAdicional = document.getElementById(`salsa_${prodId}`).value;
             }
 
-            // Identificar duplicados basados en id y la configuración exacta de ingredientes
             const existe = carrito.find(item => item.id === prodId && item.detalles === configuracionAdicional);
             
             if (existe) {
@@ -283,38 +278,45 @@
             actualizarQR();
         }
 
-       function enviarWhatsApp() {
-    if(carrito.length === 0) {
-        alert("Por favor, agrega al menos un producto al carrito antes de enviar.");
-        return;
-    }
+        function actualizarQR() {
+            if (carrito.length === 0) return;
+            const totalFormateado = document.getElementById('tot').textContent;
+            const clienteVal = document.getElementById('cliente_input').value;
+            const textoQR = `Cliente:${clienteVal}\nTotal:$${totalFormateado}\nSpace Wings`;
+            document.getElementById("qrcode_img").src = "quickchart.io" + encodeURIComponent(textoQR) + "&size=100";
+        }
 
-    const nombreCliente = document.getElementById('cliente_input').value.trim();
-    
-    // Construcción del mensaje de texto formateado
-    let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
-    mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
-    mensaje += `📅 *Fecha:* ${document.getElementById('fec').textContent}\n`;
-    mensaje += `-------------------------------------\n`;
-    
-    carrito.forEach(item => {
-        let subtotal = item.precio * item.cantidad;
-        mensaje += `📦 *${item.cantidad}x* ${item.nombre} -> _$${subtotal.toFixed(2)}_\n`;
-    });
-    
-    mensaje += `-------------------------------------\n`;
-    mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
-    mensaje += `¡Muchas gracias! Quedo a la espera de la confirmación. 🙌`;
+        function enviarWhatsApp() {
+            if(carrito.length === 0) {
+                alert("Agrega productos al carrito.");
+                return;
+            }
 
-    // Línea corregida con concatenación clásica
-    const urlWhatsApp = "https://wa.me/523411398581?text=" + encodeURIComponent(mensaje);
-    
-    // Redirigir de inmediato a la aplicación de WhatsApp
-    window.open(urlWhatsApp, '_blank');
-}
+            const nombreCliente = document.getElementById('cliente_input').value.trim();
+            let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
+            mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
+            mensaje += `-------------------------------------\n`;
+            
+            carrito.forEach(item => {
+                let subtotal = item.precio * item.cantidad;
+                mensaje += `📦 *${item.cantidad}x* ${item.nombre}\n`;
+                if(item.detalles) {
+                    mensaje += `   ✨ _Config: ${item.detalles}_\n`;
+                }
+                if (item.comentario.trim() !== "") {
+                    mensaje += `   📝 _Nota: ${item.comentario.trim()}_\n`;
+                }
+                mensaje += `   💰 _Subtotal: $${subtotal.toFixed(2)}_\n`;
+            });
+            
+            mensaje += `-------------------------------------\n`;
+            mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
+            mensaje += `¡Muchas gracias! 🙌`;
 
+            const urlWhatsApp = "wa.me" + encodeURIComponent(mensaje);
+            window.open(urlWhatsApp, '_blank');
+        }
 
-        
         actualizarInterfaz();
     </script>
 </body>
