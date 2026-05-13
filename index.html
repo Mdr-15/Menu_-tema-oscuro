@@ -53,8 +53,7 @@
         .del-btn { background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 12px; font-weight: bold; }
         
         .summary-box { border-top: 1px dashed #334155; padding-top: 10px; display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 12px; }
-        
-        .qr-wrapper { display: flex; flex-direction: column; align-items: center; gap: 4px; background: #ffffff; padding: 10px; border-radius: 8px; margin-top: 10px; color: #0f172a; font-size: 10px; font-weight: 800; }
+        .btn-send { padding: 12px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; border: none; width: 100%; cursor: pointer; font-weight: 800; border-radius: 8px; font-size: 13px; text-align: center; text-decoration: none; display: block; box-sizing: border-box; }
 
         @media (max-width: 768px) {
             .main-container { flex-direction: column; padding: 0 10px; }
@@ -74,11 +73,10 @@
         <section class="cart-section">
             <div class="digital-cart">
                 <div class="cart-title"><span>🛒 Pedido</span><span class="cart-count" id="badge-count">0</span></div>
-                <div class="client-box"><label>Cliente</label><input type="text" id="cliente_input" value="Cliente Nuevo" oninput="actualizarQR()"></div>
+                <div class="client-box"><label>Cliente</label><input type="text" id="cliente_input" value="Cliente Nuevo"></div>
                 <div class="cart-list" id="lista-carrito"></div>
                 <div class="summary-box"><span>Total:</span><strong>$<span id="tot">0.00</span></strong></div>
                 <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR POR WHATSAPP</button>
-                <div class="qr-wrapper" id="qr-block" style="display: none;"><span>Validación</span><img id="qrcode_img" style="width:100px; height:100px;"></div>
             </div>
         </section>
     </div>
@@ -240,9 +238,6 @@
 
             if(carrito.length === 0) {
                 listaHTML.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px; font-size:12px;">Carrito vacío.</div>`;
-                document.getElementById('qr-block').style.display = "none";
-            } else {
-                document.getElementById('qr-block').style.display = "flex";
             }
 
             carrito.forEach(item => {
@@ -273,49 +268,47 @@
 
             document.getElementById('badge-count').textContent = totalArticulos;
             document.getElementById('tot').textContent = cuentaTotal.toFixed(2);
-            actualizarQR();
         }
 
-        function actualizarQR() {
-            if (carrito.length === 0) return;
-            const totalFormateado = document.getElementById('tot').textContent;
-            const clienteVal = document.getElementById('cliente_input').value;
-            const textoQR = `Cliente:${clienteVal}\nTotal:$${totalFormateado}\nSpace Wings`;
-            document.getElementById("qrcode_img").src = "quickchart.io" + encodeURIComponent(textoQR) + "&size=100";
+       function enviarWhatsApp() {
+    if(carrito.length === 0) {
+        alert("Por favor, agrega al menos un producto al carrito antes de enviar.");
+        return;
+    }
+
+    const nombreCliente = document.getElementById('cliente_input').value.trim();
+    
+    // Construcción del mensaje de texto formateado para Space Wings
+    let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
+    mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
+    mensaje += `-------------------------------------\n`;
+    
+    carrito.forEach(item => {
+        let subtotal = item.precio * item.cantidad;
+        mensaje += `📦 *${item.cantidad}x* ${item.nombre}\n`;
+        
+        // Inyecta el desglose de salsas o los 2 snacks elegidos en el combo
+        if(item.detalles) {
+            mensaje += `   ✨ _Config: ${item.detalles}_\n`;
         }
-
-        function enviarWhatsApp() {
-            if(carrito.length === 0) {
-                alert("Agrega productos al carrito.");
-                return;
-            }
-
-            const nombreCliente = document.getElementById('cliente_input').value.trim();
-            let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
-            mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
-            mensaje += `-------------------------------------\n`;
-            
-            carrito.forEach(item => {
-                let subtotal = item.precio * item.cantidad;
-                mensaje += `📦 *${item.cantidad}x* ${item.nombre}\n`;
-                if(item.detalles) {
-                    mensaje += `   ✨ _Config: ${item.detalles}_\n`;
-                }
-                if (item.comentario.trim() !== "") {
-                    mensaje += `   📝 _Nota: ${item.comentario.trim()}_\n`;
-                }
-                mensaje += `   💰 _Subtotal: $${subtotal.toFixed(2)}_\n`;
-            });
-            
-            mensaje += `-------------------------------------\n`;
-            mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
-            mensaje += `¡Muchas gracias! 🙌`;
-
-            const urlWhatsApp = "wa.me" + encodeURIComponent(mensaje);
-            window.open(urlWhatsApp, '_blank');
+        // Inyecta los comentarios adicionales por artículo si existen
+        if (item.comentario && item.comentario.trim() !== "") {
+            mensaje += `   📝 _Nota: ${item.comentario.trim()}_\n`;
         }
+        mensaje += `   💰 _Subtotal: $${subtotal.toFixed(2)}_\n`;
+    });
+    
+    mensaje += `-------------------------------------\n`;
+    mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
+    mensaje += `¡Muchas gracias! 🙌`;
 
-        actualizarInterfaz();
-    </script>
+    // Enlace de redirección seguro sin texto basura alrededor
+    const urlWhatsApp = "https://wa.me/523411398581?text=" + encodeURIComponent(mensaje);
+    window.open(urlWhatsApp, '_blank');
+}
+
+// Inicialización del carrito vacío en pantalla al cargar
+actualizarInterfaz();
+</script>
 </body>
 </html>
