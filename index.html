@@ -182,34 +182,34 @@
 
         // Función para compilar la lista y abrir la API de WhatsApp
         function enviarWhatsApp() {
-            if(carrito.length === 0) {
-                alert("Por favor, agrega al menos un producto al carrito antes de enviar.");
-                return;
-            }
+    if(carrito.length === 0) {
+        alert("Por favor, agrega al menos un producto al carrito antes de enviar.");
+        return;
+    }
 
-            const nombreCliente = document.getElementById('cliente_input').value.trim();
-            
-            // Construcción del mensaje de texto formateado
-            let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
-            mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
-            mensaje += `📅 *Fecha:* ${document.getElementById('fec').textContent}\n`;
-            mensaje += `-------------------------------------\n`;
-            
-            carrito.forEach(item => {
-                let subtotal = item.precio * item.cantidad;
-                mensaje += `📦 *${item.cantidad}x* ${item.nombre} -> _$${subtotal.toFixed(2)}_\n`;
-            });
-            
-            mensaje += `-------------------------------------\n`;
-            mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
-            mensaje += `¡Muchas gracias! Quedo a la espera de la confirmación. 🙌`;
+    const nombreCliente = document.getElementById('cliente_input').value.trim();
+    
+    // Construcción del mensaje de texto formateado
+    let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
+    mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
+    mensaje += `📅 *Fecha:* ${document.getElementById('fec').textContent}\n`;
+    mensaje += `-------------------------------------\n`;
+    
+    carrito.forEach(item => {
+        let subtotal = item.precio * item.cantidad;
+        mensaje += `📦 *${item.cantidad}x* ${item.nombre} -> _$${subtotal.toFixed(2)}_\n`;
+    });
+    
+    mensaje += `-------------------------------------\n`;
+    mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
+    mensaje += `¡Muchas gracias! Quedo a la espera de la confirmación. 🙌`;
 
-            // Codificar el texto para cumplir con la sintaxis de URL estándar
-                const urlWhatsApp = "https://wa.me/523411398581?text=" + encodeURIComponent(mensaje);
-
-            // Redirigir de inmediato a la aplicación de WhatsApp
-            window.open(urlWhatsApp, '_blank');
-        }
+    // Línea corregida con concatenación clásica
+    const urlWhatsApp = "https://wa.me/523411398581?text=" + encodeURIComponent(mensaje);
+    
+    // Redirigir de inmediato a la aplicación de WhatsApp
+    window.open(urlWhatsApp, '_blank');
+}
 
         // Primera llamada para inicializar el estado del QR vacío
         actualizarInterfaz();
