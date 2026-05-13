@@ -3,95 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Digital | Space Wings</title>
-    <!-- Tailwind CSS para diseño moderno y responsivo -->
-    <script src="tailwindcss.com"></script>
-    <link rel="stylesheet" href="cloudflare.com">
+    <title>Menú con Carrito | Space Wings</title>
+    <script src="jsdelivr.net"></script>
+    <style>
+        body { font-family: 'Courier New', monospace; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; background: #eee; }
+        .ticket { width: 280px; background: white; padding: 10px; box-sizing: border-box; margin-bottom: 20px; }
+        
+        .header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 10px; }
+        .logo-text { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
+        .sub-logo { font-size: 11px; text-transform: uppercase; }
+
+        .info { font-size: 11px; margin-bottom: 12px; line-height: 1.3; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th { border-bottom: 1px solid #000; text-align: left; padding: 5px 0; }
+        td { padding: 6px 0; border-bottom: 1px dashed #ccc; vertical-align: top; }
+        
+        /* Botones para el control del carrito en el ticket */
+        .cant-btn { background: #000; color: #fff; border: none; padding: 2px 6px; cursor: pointer; font-weight: bold; margin: 0 2px; border-radius: 3px; }
+        .del-btn { background: #ff4d4d; color: white; border: none; padding: 2px 5px; cursor: pointer; border-radius: 3px; }
+
+        .total-box { margin-top: 15px; text-align: right; border-top: 2px solid #000; padding-top: 6px; font-size: 16px; }
+        .qr-container { display: flex; justify-content: center; margin-top: 15px; margin-bottom: 5px; }
+        .footer { text-align: center; font-size: 11px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 8px; }
+
+        /* Botón de acción principal fuera del ticket */
+        .btn-send { margin-bottom: 15px; padding: 12px; background: #25D366; color: #fff; border: none; width: 280px; cursor: pointer; font-weight: bold; border-radius: 5px; font-size: 14px; text-align: center; text-decoration: none; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        /* Sección de catálogo rápido para que el cliente seleccione */
+        .catalog { width: 280px; background: #fff; padding: 10px; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
+        .catalog h2 { font-size: 14px; margin-top: 0; border-bottom: 1px solid #000; padding-bottom: 5px; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 12px; }
+        .add-btn { background: #000; color: #fff; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+    </style>
 </head>
-<body class="bg-gray-900 text-white font-sans antialiased pb-20">
+<body>
 
-    <!-- Encabezado / Banner Principal -->
-    <header class="relative h-48 bg-cover bg-center flex flex-col justify-center items-center text-center px-4" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('unsplash.com');">
-        <h1 class="text-3xl font-black tracking-widest text-amber-500">SPACE WINGS</h1>
-        <p class="text-sm uppercase tracking-wider text-gray-300 mt-1">Sabor que te eleva</p>
-        <div class="mt-3 flex space-x-4 text-xs text-gray-400">
-            <span><i class="fas fa-motorcycle text-amber-500"></i> Envío a Domicilio</span>
-            <span><i class="fas fa-clock text-amber-500"></i> 2:00 PM - 11:00 PM</span>
-        </div>
-    </header>
-
-    <!-- Barra de Categorías (Fija al hacer scroll) -->
-    <nav class="sticky top-0 bg-gray-800 border-b border-gray-700 z-50 overflow-x-auto whitespace-nowrap scrollbar-none px-4 py-3 flex space-x-2">
-        <button onclick="filtrar('todos')" class="cat-btn bg-amber-500 text-gray-900 font-bold px-4 py-2 rounded-full text-sm transition">Todos</button>
-        <button onclick="filtrar('alitas')" class="cat-btn bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition">Alitas</button>
-        <button onclick="filtrar('boneless')" class="cat-btn bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition">Boneless</button>
-        <button onclick="filtrar('snacks')" class="cat-btn bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition">Snacks</button>
-        <button onclick="filtrar('bebidas')" class="cat-btn bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition">Bebidas</button>
-    </nav>
-
-    <!-- Contenedor del Menú (Cuadrícula) -->
-    <main class="max-w-md mx-auto px-4 mt-6 grid grid-cols-1 gap-4" id="contenedor-menu">
-        <!-- Los platillos se inyectan dinámicamente aquí con JavaScript -->
-    </main>
-
-    <!-- Botón de Pedido Flotante -->
-    <div class="fixed bottom-4 left-0 right-0 max-w-md mx-auto px-4 z-40">
-        <a href="wa.me" target="_blank" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl shadow-2xl flex justify-center items-center space-x-2 text-center transition">
-            <i class="fab fa-whatsapp text-xl"></i>
-            <span>Pedir por WhatsApp</span>
-        </a>
+    <!-- 1. Catálogo de productos interactivo -->
+    <div class="catalog">
+        <h2>🍔 AGREGAR PRODUCTOS</h2>
+        <div id="lista-productos"></div>
     </div>
 
-    <!-- Lógica de Datos y Filtrado -->
+    <!-- 2. Botón flotante para enviar a WhatsApp -->
+    <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR PEDIDO POR WHATSAPP</button>
+    
+    <!-- 3. Previsualización del Ticket físico -->
+    <div class="ticket">
+        <div class="header">
+            <div class="logo-text">SPACE WINGS</div>
+            <div class="sub-logo">Sabor que te eleva</div>
+        </div>
+
+        <div class="info">
+            <b>CLIENTE:</b> <input type="text" id="cliente_input" value="Cliente Nuevo" style="font-family: 'Courier New'; font-size: 11px; border: none; border-bottom: 1px dashed #000; width: 160px; outline: none;"><br>
+            <b>FECHA:</b> <span id="fec"></span>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 75px;">CANT</th>
+                    <th>PRODUCTO</th>
+                    <th style="text-align:right; width: 60px;">TOTAL</th>
+                </tr>
+            </thead>
+            <tbody id="tabla">
+                <!-- Se llena dinámicamente al presionar agregar -->
+            </tbody>
+        </table>
+
+        <div class="total-box">
+            <strong>TOTAL: $<span id="tot">0.00</span></strong>
+        </div>
+
+        <div class="qr-container">
+            <div id="qrcode"></div>
+        </div>
+
+        <div class="footer">
+            ¡GRACIAS POR TU PREFERENCIA!<br>
+            <p style="font-size: 9px; margin-top: 8px;">*** Comprobante de Venta ***</p>
+        </div>
+    </div>
+
     <script>
-        // Base de datos de platillos (Fácil de actualizar)
-        const platillos = [
-            { id: 1, cat: 'alitas', nombre: 'Alitas BBQ Clásicas', desc: '6 piezas bañadas en salsa BBQ dulce artesanal, acompañadas de aderezo ranch.', precio: 120.00, img: 'unsplash.com' },
-            { id: 2, cat: 'alitas', nombre: 'Alitas Buffalo Spicy', desc: '6 piezas con nuestra salsa buffalo picante tradicional y bastones de apio.', precio: 125.00, img: 'unsplash.com' },
-            { id: 3, cat: 'boneless', nombre: 'Boneless Originales', desc: '250g de pechuga de pollo crujiente, bañados en la salsa de tu elección.', precio: 140.00, img: 'unsplash.com' },
-            { id: 4, cat: 'snacks', nombre: 'Papas Gajo Sazonadas', desc: 'Porción individual de papas gajo rústicas con sazonador de la casa.', precio: 65.00, img: 'unsplash.com' },
-            { id: 5, cat: 'bebidas', nombre: 'Refresco de Cola 600ml', desc: 'Frío y refrescante en envase no retornable.', precio: 35.00, img: 'unsplash.com' }
+        // Número de teléfono de tu negocio (Formato internacional sin el signo +)
+        const TELEFONO_NEGOCIO = "523411594355"; 
+
+        // Lista de productos precargados en el sistema
+        const productosDisponibles = [
+            { id: "p1", nombre: "Alitas BBQ", precio: 120.00 },
+            { id: "p2", nombre: "Papas Gajo", precio: 65.00 },
+            { id: "p3", nombre: "Boneless", precio: 140.00 },
+            { id: "p4", nombre: "Refresco Cola", precio: 35.00 }
         ];
 
-        function renderizarMenu(lista) {
-            const contenedor = document.getElementById('contenedor-menu');
-            contenedor.innerHTML = '';
+        // Estado global del carrito de compras
+        let carrito = [];
+
+        // Inicializar la interfaz gráfica
+        document.getElementById('fec').textContent = new Date().toLocaleString();
+        
+        const divCatalog = document.getElementById('lista-productos');
+        productosDisponibles.forEach(prod => {
+            divCatalog.innerHTML += `
+                <div class="item-row">
+                    <div><strong>${prod.nombre}</strong><br>$${prod.precio.toFixed(2)}</div>
+                    <button class="add-btn" onclick="agregarAlCarrito('${prod.id}')">+</button>
+                </div>`;
+        });
+
+        function agregarAlCarrito(id) {
+            const prod = productosDisponibles.find(p => p.id === id);
+            const existe = carrito.find(item => item.id === id);
             
-            lista.forEach(item => {
-                contenedor.innerHTML += `
-                    <div class="bg-gray-800 rounded-2xl overflow-hidden border border-gray-700 flex p-3 items-center space-x-4 shadow-lg">
-                        <img src="${item.img}" alt="${item.nombre}" class="w-20 h-20 object-cover rounded-xl flex-shrink-0 bg-gray-700">
-                        <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-base truncate text-gray-100">${item.nombre}</h3>
-                            <p class="text-xs text-gray-400 line-clamp-2 mt-0.5 leading-relaxed">${item.desc}</p>
-                            <div class="text-amber-500 font-black text-sm mt-1.5">$${item.precio.toFixed(2)}</div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function filtrar(categoria) {
-            // Actualizar estilo visual de los botones
-            const botones = document.querySelectorAll('.cat-btn');
-            botones.forEach(btn => {
-                btn.classList.remove('bg-amber-500', 'text-gray-900', 'font-bold');
-                btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
-            });
-            event.target.classList.remove('bg-gray-700', 'hover:bg-gray-600');
-            event.target.classList.add('bg-amber-500', 'text-gray-900', 'font-bold');
-
-            // Filtrar elementos de la lista
-            if (categoria === 'todos') {
-                renderizarMenu(platillos);
+            if (existe) {
+                existe.cantidad++;
             } else {
-                const filtrados = platillos.filter(p => p.cat === categoria);
-                renderizarMenu(filtrados);
+                carrito.push({ ...prod, cantidad: 1 });
             }
+            actualizarInterfaz();
         }
 
-        // Inicializar el menú al cargar la página
-        renderizarMenu(platillos);
+        function cambiarCantidad(id, cambio) {
+            const item = carrito.find(p => p.id === id);
+            if (!item) return;
+            item.cantidad += cambio;
+            if (item.cantidad <= 0) {
+                carrito = carrito.filter(p => p.id !== id);
+            }
+            actualizarInterfaz();
+        }
+
+        function eliminarDelCarrito(id) {
+            carrito = carrito.filter(p => p.id !== id);
+            actualizarInterfaz();
+        }
+
+        function actualizarInterfaz() {
+            const t = document.getElementById('tabla');
+            t.innerHTML = "";
+            let cuentaTotal = 0;
+
+            if(carrito.length === 0) {
+                t.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999; padding:15px;">Carrito vacío</td></tr>`;
+            }
+
+            carrito.forEach(item => {
+                let importeItem = item.precio * item.cantidad;
+                cuentaTotal += importeItem;
+
+                let row = t.insertRow();
+                // Columna 1: Botones de control de cantidad
+                row.insertCell(0).innerHTML = `
+                    <button class="del-btn" onclick="eliminarDelCarrito('${item.id}')">×</button>
+                    <button class="cant-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                    <span>${item.cantidad}</span>
+                    <button class="cant-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                `;
+                // Columna 2: Nombre
+                row.insertCell(1).textContent = item.nombre;
+                // Columna 3: Precio total del producto
+                let pCell = row.insertCell(2);
+                pCell.textContent = importeItem.toFixed(2);
+                pCell.style.textAlign = 'right';
+            });
+
+            const totalFormateado = cuentaTotal.toFixed(2);
+            document.getElementById('tot').textContent = totalFormateado;
+
+            // Actualizar el código QR local en tiempo real
+            document.getElementById("qrcode").innerHTML = "";
+            const textoQR = `Cliente:${document.getElementById('cliente_input').value}\nTotal:$${totalFormateado}\nSpace Wings`;
+            new QRCode(document.getElementById("qrcode"), {
+                text: textoQR, width: 130, height: 130, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
+            });
+        }
+
+        // Función para compilar la lista y abrir la API de WhatsApp
+        function enviarWhatsApp() {
+            if(carrito.length === 0) {
+                alert("Por favor, agrega al menos un producto al carrito antes de enviar.");
+                return;
+            }
+
+            const nombreCliente = document.getElementById('cliente_input').value.trim();
+            
+            // Construcción del mensaje de texto formateado
+            let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
+            mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
+            mensaje += `📅 *Fecha:* ${document.getElementById('fec').textContent}\n`;
+            mensaje += `-------------------------------------\n`;
+            
+            carrito.forEach(item => {
+                let subtotal = item.precio * item.cantidad;
+                mensaje += `📦 *${item.cantidad}x* ${item.nombre} -> _$${subtotal.toFixed(2)}_\n`;
+            });
+            
+            mensaje += `-------------------------------------\n`;
+            mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
+            mensaje += `¡Muchas gracias! Quedo a la espera de la confirmación. 🙌`;
+
+            // Codificar el texto para cumplir con la sintaxis de URL estándar
+            const urlWhatsApp = `whatsapp.com{TELEFONO_NEGOCIO}&text=${encodeURIComponent(mensaje)}`;
+            
+            // Redirigir de inmediato a la aplicación de WhatsApp
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        // Primera llamada para inicializar el estado del QR vacío
+        actualizarInterfaz();
     </script>
 </body>
 </html>
