@@ -8,74 +8,92 @@
     <script src="jsdelivr.net"></script>
     <style>
         /* Estilos Generales Modernos */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: #111827; color: #f3f4f6; display: flex; flex-direction: column; min-height: 100vh; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; min-height: 100vh; }
         
         /* Encabezado Premium */
-        header { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); text-align: center; padding: 25px 20px; border-bottom: 2px solid #f59e0b; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); }
-        .logo-text { font-size: 28px; font-weight: 900; letter-spacing: 3px; color: #f59e0b; margin: 0; }
-        .sub-logo { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-top: 4px; }
+        header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); text-align: center; padding: 30px 20px; border-bottom: 1px solid #334155; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .logo-text { font-size: 32px; font-weight: 900; letter-spacing: 4px; color: #f59e0b; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .sub-logo { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-top: 6px; }
 
-        /* Contenedor Principal en Dos Columnas (Escritorio / Tableta) */
-        .main-container { display: flex; flex-direction: row; flex: 1; max-width: 1200px; width: 100%; margin: 20px auto; padding: 0 20px; gap: 30px; box-sizing: border-box; }
+        /* Contenedor Principal en Dos Columnas */
+        .main-container { display: flex; flex-direction: row; flex: 1; max-width: 1200px; width: 100%; margin: 30px auto; padding: 0 20px; gap: 35px; box-sizing: border-box; }
         
-        /* COLUMNA IZQUIERDA: Catálogo de Productos con más espacio */
+        /* COLUMNA IZQUIERDA: Catálogo de Productos */
         .catalog-section { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        .catalog-section h2 { font-size: 18px; margin: 0 0 10px 0; color: #f59e0b; border-bottom: 2px solid #374151; padding-bottom: 8px; letter-spacing: 1px; }
+        .catalog-section h2 { font-size: 20px; margin: 0 0 10px 0; color: #f59e0b; border-bottom: 2px solid #1e293b; padding-bottom: 12px; letter-spacing: 1px; font-weight: 800; }
         
         /* Tarjetas de Producto Ampliadas */
-        .product-card { background: #1f2937; border: 1px solid #374151; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.15); transition: transform 0.2s, border-color 0.2s; }
-        .product-card:hover { transform: translateY(-2px); border-color: #f59e0b; }
-        .product-info { display: flex; flex-direction: column; gap: 6px; }
-        .product-name { font-size: 16px; font-weight: bold; color: #fff; }
-        .product-price { font-size: 15px; font-weight: 800; color: #f59e0b; }
+        .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
+        .product-card:hover { transform: translateY(-3px); border-color: #f59e0b; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+        .product-info { display: flex; flex-direction: column; gap: 8px; }
+        .product-name { font-size: 18px; font-weight: 700; color: #ffffff; }
+        .product-price { font-size: 16px; font-weight: 800; color: #f59e0b; }
         
         /* Botón Añadir Estilizado */
-        .add-btn { background: #f59e0b; color: #111827; border: none; padding: 10px 18px; cursor: pointer; border-radius: 8px; font-weight: bold; font-size: 14px; transition: background 0.2s; }
-        .add-btn:hover { background: #d97706; }
+        .add-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #0f172a; border: none; padding: 12px 24px; cursor: pointer; border-radius: 10px; font-weight: 800; font-size: 14px; box-shadow: 0 4px 14px rgba(245,158,11,0.3); transition: transform 0.2s, box-shadow 0.2s; }
+        .add-btn:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(245,158,11,0.5); }
 
-        /* COLUMNA DERECHA: Carrito y Ticket Fijo */
-        .cart-section { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 20px; height: max-content; }
+        /* COLUMNA DERECHA: Carrito de Compras Digital Inteligente */
+        .cart-section { width: 360px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 30px; height: max-content; }
         
-        /* Botón de Enviar a WhatsApp Integrado al Carrito */
-        .btn-send { padding: 14px; background: #16a34a; color: #fff; border: none; width: 100%; cursor: pointer; font-weight: bold; border-radius: 8px; font-size: 14px; text-align: center; text-decoration: none; box-shadow: 0 4px 10px rgba(22,163,74,0.3); transition: background 0.2s; display: block; box-sizing: border-box; }
-        .btn-send:hover { background: #15803d; }
+        /* Contenedor del nuevo Carrito Tipo App */
+        .digital-cart { background: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 24px; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+        .cart-title { font-size: 18px; font-weight: 800; color: #ffffff; margin: 0 0 20px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 12px; }
+        .cart-count { background: #f59e0b; color: #0f172a; font-size: 12px; padding: 3px 8px; rounded: 20px; border-radius: 20px; font-weight: 900; }
+        
+        /* Input de Cliente Estilizado */
+        .client-box { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+        .client-box label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .client-box input { background: #0f172a; border: 1px solid #334155; border-radius: 10px; color: #fff; padding: 10px 14px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .client-box input:focus { border-color: #f59e0b; }
 
-        /* Diseño Clásico del Ticket Térmico de 80mm */
-        .ticket { width: 100%; background: white; color: #000; padding: 15px; border-radius: 8px; box-sizing: border-box; font-family: 'Courier New', monospace; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
-        .ticket .header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 10px; }
-        .ticket .logo-text { font-size: 22px; color: #000; font-weight: bold; }
-        .ticket .sub-logo { font-size: 10px; color: #555; }
-        .ticket .info { font-size: 11px; margin-bottom: 12px; line-height: 1.4; }
+        /* Lista de Productos en el Carrito */
+        .cart-list { display: flex; flex-direction: column; gap: 16px; max-height: 300px; overflow-y: auto; padding-right: 4px; margin-bottom: 20px; }
+        .cart-list::-webkit-scrollbar { width: 6px; }
+        .cart-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         
-        /* Inputs Invisibles en el Ticket */
-        .ticket input { font-family: 'Courier New', monospace; font-size: 11px; border: none; border-bottom: 1px dashed #000; width: 150px; outline: none; padding: 0 4px; }
+        /* Filas del Carrito */
+        .cart-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; }
+        .item-details { display: flex; flex-direction: column; gap: 4px; }
+        .item-name { font-size: 14px; font-weight: 600; color: #f8fafc; }
+        .item-subtotal { font-size: 13px; font-weight: 700; color: #f59e0b; }
         
-        /* Tabla del Ticket */
-        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th { border-bottom: 1px solid #000; text-align: left; padding: 6px 0; }
-        td { padding: 8px 0; border-bottom: 1px dashed #ccc; vertical-align: top; }
+        /* Controles de Cantidad Modificados */
+        .qty-controls { display: flex; align-items: center; gap: 8px; }
+        .cant-btn { background: #334155; color: #fff; border: none; width: 26px; height: 26px; cursor: pointer; font-weight: bold; border-radius: 6px; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .cant-btn:hover { background: #475569; }
+        .qty-num { font-size: 14px; font-weight: 700; min-width: 16px; text-align: center; }
+        .del-btn { background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 16px; padding: 4px; font-weight: bold; transition: color 0.2s; }
+        .del-btn:hover { color: #f87171; }
         
-        /* Controles Internos del Carrito */
-        .cant-btn { background: #000; color: #fff; border: none; padding: 2px 6px; cursor: pointer; font-weight: bold; margin: 0 2px; border-radius: 3px; font-size: 10px; }
-        .del-btn { background: #dc2626; color: white; border: none; padding: 2px 6px; cursor: pointer; border-radius: 3px; font-size: 10px; margin-right: 4px; }
-        
-        .total-box { margin-top: 15px; text-align: right; border-top: 2px solid #000; padding-top: 8px; font-size: 15px; }
-        .qr-container { display: flex; justify-content: center; margin-top: 15px; }
-        .ticket .footer { text-align: center; font-size: 10px; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 8px; color: #444; }
+        /* Cuadro de Resumen de Pago */
+        .summary-box { border-top: 1px dashed #334155; padding-top: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .summary-label { font-size: 16px; font-weight: 700; color: #94a3b8; }
+        .summary-total { font-size: 22px; font-weight: 900; color: #f59e0b; }
 
-        /* Adaptabilidad para Teléfonos Celulares (Pasa a una Sola Columna) */
+        /* Contenedor QR Digitalizado */
+        .qr-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; background: #ffffff; padding: 16px; border-radius: 14px; margin-top: 15px; }
+        .qr-wrapper span { color: #0f172a; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+
+        /* Botón de Enviar a WhatsApp Estilizado */
+        .btn-send { padding: 16px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; border: none; width: 100%; cursor: pointer; font-weight: 800; border-radius: 12px; font-size: 15px; text-align: center; text-decoration: none; box-shadow: 0 4px 20px rgba(34,197,94,0.3); transition: transform 0.2s, box-shadow 0.2s; display: block; box-sizing: border-box; }
+        .btn-send:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(34,197,94,0.5); }
+
+        /* Adaptabilidad para Dispositivos Móviles */
         @media (max-width: 768px) {
-            .main-container { flex-direction: column; padding: 0 15px; gap: 25px; }
+            .main-container { flex-direction: column; padding: 0 15px; gap: 25px; margin: 15px auto; }
             .cart-section { width: 100%; position: relative; top: 0; }
-            .product-card { padding: 15px; }
+            .product-card { padding: 18px; }
         }
 
-        /* Configuración Oculta para Impresión Física */
+        /* Configuración de Respaldo Oculta por si se requiere enviar a Impresora Física */
         @media print { 
             body, .main-container { background: white; color: black; padding: 0; margin: 0; }
-            header, .catalog-section, .btn-send, .cant-btn, .del-btn, .ticket input { display: none !important; } 
-            .cart-section { width: 280px; }
-            .ticket { width: 280px; padding: 0; margin: 0; box-shadow: none; border-radius: 0; } 
+            header, .catalog-section, .btn-send, .cant-btn, .del-btn, .client-box, .cart-title { display: none !important; } 
+            .cart-section, .digital-cart { width: 280px; background: white; border: none; padding: 0; margin: 0; box-shadow: none; }
+            .cart-item { background: white; border: none; border-bottom: 1px dashed #000; color: #000; padding: 6px 0; border-radius: 0; }
+            .item-name, .item-subtotal { color: #000; }
+            .summary-total { color: #000; font-family: monospace; }
         }
     </style>
 </head>
@@ -88,55 +106,43 @@
 
     <div class="main-container">
         
-        <!-- LADO IZQUIERDO: Catálogo Ampliado -->
+        <!-- LADO IZQUIERDO: Catálogo Ampliado con diseño espacioso -->
         <section class="catalog-section">
             <h2>🔥 NUESTRO MENÚ</h2>
             <div id="lista-productos">
-                <!-- Se inyecta con JavaScript con espaciado amplio -->
+                <!-- Se inyecta dinámicamente con JavaScript -->
             </div>
         </section>
 
-        <!-- LADO DERECHO: Carrito Fijo y Botón de Envío -->
+        <!-- LADO DERECHO: Carrito de Compras Digital Estilo App -->
         <section class="cart-section">
-            <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR PEDIDO POR WHATSAPP</button>
-            
-            <div class="ticket">
-                <div class="header">
-                    <div class="logo-text">SPACE WINGS</div>
-                    <div class="sub-logo">Sabor que te eleva</div>
+            <div class="digital-cart">
+                <div class="cart-title">
+                    <span>🛒 Tu Pedido</span>
+                    <span class="cart-count" id="badge-count">0</span>
                 </div>
 
-                <div class="info">
-                    <b>CLIENTE:</b> <input type="text" id="cliente_input" value="Cliente Nuevo"><br>
-                    <b>Calle:</b> <input type="text" id="cliente_input" value="Cliente Nuevo"><br>
-                    <b>Colonia:</b> <input type="text" id="cliente_input" value="Cliente Nuevo"><br>
-                    <b>FECHA:</b> <span id="fec"></span>
-                </div>
-                
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 80px;">CANT</th>
-                            <th>PRODUCTO</th>
-                            <th style="text-align:right; width: 50px;">TOTAL</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla">
-                        <!-- Productos del carrito -->
-                    </tbody>
-                </table>
-
-                <div class="total-box">
-                    <strong>TOTAL: $<span id="tot">0.00</span></strong>
+                <div class="client-box">
+                    <label for="cliente_input">Nombre del Cliente</label>
+                    <input type="text" id="cliente_input" value="Cliente Nuevo" oninput="actualizarQR()">
                 </div>
 
-                <div class="qr-container">
+                <!-- Lista de artículos agregados -->
+                <div class="cart-list" id="lista-carrito">
+                    <!-- Se llena en tiempo real -->
+                </div>
+
+                <div class="summary-box">
+                    <span class="summary-label">Total a pagar:</span>
+                    <span class="summary-total">$<span id="tot">0.00</span></span>
+                </div>
+
+                <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR PEDIDO POR WHATSAPP</button>
+
+                <!-- Código QR Integrado en la App Visual -->
+                <div class="qr-wrapper" id="qr-block" style="display: none;">
+                    <span>Código de Validación</span>
                     <div id="qrcode"></div>
-                </div>
-
-                <div class="footer">
-                    ¡GRACIAS POR TU PREFERENCIA!<br>
-                    <p style="font-size: 8px; margin-top: 6px; color: #777;">*** Comprobante de Venta ***</p>
                 </div>
             </div>
         </section>
@@ -144,7 +150,7 @@
     </div>
 
     <script>
-        // Estado del Sistema
+        // Catálogo de Productos
         const productosDisponibles = [
             { id: "p1", nombre: "Alitas BBQ Clásicas", precio: 120.00 },
             { id: "p2", nombre: "Papas Gajo Sazonadas", precio: 65.00 },
@@ -154,10 +160,7 @@
 
         let carrito = [];
 
-        // Inicializar Fecha
-        document.getElementById('fec').textContent = new Date().toLocaleString();
-        
-        // Renderizar el catálogo con padding y estructura de tarjeta espaciosa
+        // Generar lista de productos visuales en la interfaz izquierda
         const divCatalog = document.getElementById('lista-productos');
         productosDisponibles.forEach(prod => {
             divCatalog.innerHTML += `
@@ -191,52 +194,67 @@
         }
 
         function actualizarInterfaz() {
-            const t = document.getElementById('tabla');
-            t.innerHTML = "";
+            const listaHTML = document.getElementById('lista-carrito');
+            listaHTML.innerHTML = "";
             let cuentaTotal = 0;
+            let totalArticulos = 0;
 
             if(carrito.length === 0) {
-                t.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#777; padding:20px;">Carrito vacío</td></tr>`;
+                listaHTML.innerHTML = `<div style="text-align:center; color:#64748b; padding:30px; font-size:14px;">El carrito está vacío.<br>¡Agrega tus alitas favoritas!</div>`;
+                document.getElementById('qr-block').style.display = "none";
+            } else {
+                document.getElementById('qr-block').style.display = "flex";
             }
 
             carrito.forEach(item => {
                 let importeItem = item.precio * item.cantidad;
                 cuentaTotal += importeItem;
+                totalArticulos += item.cantidad;
 
-                let row = t.insertRow();
-                row.insertCell(0).innerHTML = `
-                    <button class="del-btn" onclick="eliminarDelCarrito('${item.id}')">×</button>
-                    <button class="cant-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
-                    <span style="font-weight:bold;">${item.cantidad}</span>
-                    <button class="cant-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
-                `;
-                row.insertCell(1).textContent = item.nombre;
-                let pCell = row.insertCell(2);
-                pCell.textContent = importeItem.toFixed(2);
-                pCell.style.textAlign = 'right';
+                listaHTML.innerHTML += `
+                    <div class="cart-item">
+                        <div class="item-details">
+                            <span class="item-name">${item.nombre}</span>
+                            <span class="item-subtotal">$${importeItem.toFixed(2)}</span>
+                        </div>
+                        <div class="qty-controls">
+                            <button class="cant-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                            <span class="qty-num">${item.cantidad}</span>
+                            <button class="cant-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                            <button class="del-btn" onclick="eliminarDelCarrito('${item.id}')">×</button>
+                        </div>
+                    </div>`;
             });
 
-            const totalFormateado = cuentaTotal.toFixed(2);
-            document.getElementById('tot').textContent = totalFormateado;
+            document.getElementById('badge-count').textContent = totalArticulos;
+            document.getElementById('tot').textContent = cuentaTotal.toFixed(2);
 
-            // Re-renderizado del QR local
+            actualizarQR();
+        }
+
+        function actualizarQR() {
+            if (carrito.length === 0) return;
+            
+            const totalFormateado = document.getElementById('tot').textContent;
+            const clienteVal = document.getElementById('cliente_input').value;
+            
             document.getElementById("qrcode").innerHTML = "";
-            const textoQR = `Cliente:${document.getElementById('cliente_input').value}\nTotal:$${totalFormateado}\nSpace Wings`;
+            const textoQR = `Cliente:${clienteVal}\nTotal:$${totalFormateado}\nSpace Wings`;
+            
             new QRCode(document.getElementById("qrcode"), {
-                text: textoQR, width: 130, height: 130, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
+                text: textoQR, width: 120, height: 120, colorDark : "#0f172a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
             });
         }
 
         function enviarWhatsApp() {
             if(carrito.length === 0) {
-                alert("Por favor, agrega productos antes de enviar.");
+                alert("Por favor, agrega productos al carrito antes de continuar.");
                 return;
             }
 
             const nombreCliente = document.getElementById('cliente_input').value.trim();
             let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
             mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
-            mensaje += `📅 *Fecha:* ${document.getElementById('fec').textContent}\n`;
             mensaje += `-------------------------------------\n`;
             
             carrito.forEach(item => {
@@ -252,6 +270,7 @@
             window.open(urlWhatsApp, '_blank');
         }
 
+        // Inicialización inicial
         actualizarInterfaz();
     </script>
 </body>
