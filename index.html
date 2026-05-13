@@ -116,8 +116,8 @@
             {
                 categoria: "Combos",
                 items: [
-                    { id: "c_estrella", nombre: "Combo Estrella (Platillo + 2 Snacks)", precio: 220.00, esComboEspecial: true },
-                    { id: "c_cometa", nombre: "Combo Cometa (Platillo + 2 Snacks)", precio: 220.00, esComboEspecial: true }
+                    { id: "c_estrella", nombre: "Combo Estrella (Platillo + 2 Snacks)", precio: 220.00, tipoCombo: "estrella" },
+                    { id: "c_cometa", nombre: "Combo Cometa (2 Platillos + 1 Snack Fijo)", precio: 260.00, tipoCombo: "cometa" }
                 ]
             }
         ];
@@ -141,10 +141,11 @@
                         </div>`;
                 }
                 
-                if (prod.esComboEspecial) {
+                // Renderizado para el Combo Estrella (1 Platillo + 2 Snacks de libre elección)
+                if (prod.tipoCombo === "estrella") {
                     bloqueSelectores = `
                         <div class="sauce-selector">
-                            <label style="color:#f59e0b; margin-bottom:4px; display:block;">⚙️ Configura tu Combo:</label>
+                            <label style="color:#f59e0b; margin-bottom:4px; display:block;">⚙️ Configura tu Combo Estrella:</label>
                             <div class="combo-grid-selectors">
                                 <select class="sauce-select" id="platillo_${prod.id}">
                                     ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
@@ -158,6 +159,36 @@
                                 </select>
                                 <select class="sauce-select" id="snack2_${prod.id}">
                                     <option value="" disabled selected>Elegir Snack 2</option>
+                                    ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>`;
+                }
+
+                // Renderizado para el Combo Cometa (2 Platillos libres + 1 Snack Predeterminado/Fijo)
+                if (prod.tipoCombo === "cometa") {
+                    bloqueSelectores = `
+                        <div class="sauce-selector">
+                            <label style="color:#f59e0b; margin-bottom:4px; display:block;">⚙️ Configura tu Combo Cometa:</label>
+                            <div class="combo-grid-selectors">
+                                <span style="font-size:11px; font-weight:bold; color:#94a3b8; display:block; margin-top:2px;">PLATILLO PRINCIPAL 1:</span>
+                                <select class="sauce-select" id="c1_p1_${prod.id}">
+                                    ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="c1_s1_${prod.id}">
+                                    ${salsasDisponibles.map(s => `<option value="${s}">Salsa 1: ${s}</option>`).join('')}
+                                </select>
+
+                                <span style="font-size:11px; font-weight:bold; color:#94a3b8; display:block; margin-top:6px;">PLATILLO PRINCIPAL 2:</span>
+                                <select class="sauce-select" id="c2_p2_${prod.id}">
+                                    ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="c2_s2_${prod.id}">
+                                    ${salsasDisponibles.map(s => `<option value="${s}">Salsa 2: ${s}</option>`).join('')}
+                                </select>
+
+                                <span style="font-size:11px; font-weight:bold; color:#94a3b8; display:block; margin-top:6px;">SNACK INCLUIDO (FIJO):</span>
+                                <select class="sauce-select" id="snack_fijo_${prod.id}">
                                     ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
                                 </select>
                             </div>
@@ -185,7 +216,7 @@
             
             let configuracionAdicional = "";
 
-            if (prod.esComboEspecial) {
+            if (prod.tipoCombo === "estrella") {
                 const pBase = document.getElementById(`platillo_${prodId}`).value;
                 const sCombo = document.getElementById(`salsacombo_${prodId}`).value;
                 const s1 = document.getElementById(`snack1_${prodId}`).value;
@@ -195,7 +226,15 @@
                     alert("Por favor, selecciona ambos snacks antes de agregar el combo.");
                     return;
                 }
-                configuracionAdicional = `[${pBase} b. en ${sCombo} + ${s1} + ${s2}]`;
+                configuracionAdicional = `[${pBase} c/ ${sCombo} + ${s1} + ${s2}]`;
+            } else if (prod.tipoCombo === "cometa") {
+                const p1 = document.getElementById(`c1_p1_${prodId}`).value;
+                const s1 = document.getElementById(`c1_s1_${prodId}`).value;
+                const p2 = document.getElementById(`c2_p2_${prodId}`).value;
+                const s2 = document.getElementById(`c2_s2_${prodId}`).value;
+                const snackFijo = document.getElementById(`snack_fijo_${prodId}`).value;
+
+                configuracionAdicional = `[${p1} c/ ${s1} + ${p2} c/ ${s2} + ${snackFijo}]`;
             } else if (prod.requiereSalsa) {
                 configuracionAdicional = document.getElementById(`salsa_${prodId}`).value;
             }
