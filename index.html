@@ -53,7 +53,6 @@
         .del-btn { background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 12px; font-weight: bold; }
         
         .summary-box { border-top: 1px dashed #334155; padding-top: 10px; display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 12px; }
-        .btn-send { padding: 12px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; border: none; width: 100%; cursor: pointer; font-weight: 800; border-radius: 8px; font-size: 13px; text-align: center; text-decoration: none; display: block; box-sizing: border-box; }
         
         .qr-wrapper { display: flex; flex-direction: column; align-items: center; gap: 4px; background: #ffffff; padding: 10px; border-radius: 8px; margin-top: 10px; color: #0f172a; font-size: 10px; font-weight: 800; }
 
@@ -70,10 +69,8 @@
     </header>
 
     <div class="main-container">
-        <!-- SECCIÓN DE PRODUCTOS DINÁMICOS -->
         <section class="catalog-section" id="menu-categorias"></section>
 
-        <!-- CARRITO DE COMPRAS DIGITAL -->
         <section class="cart-section">
             <div class="digital-cart">
                 <div class="cart-title"><span>🛒 Pedido</span><span class="cart-count" id="badge-count">0</span></div>
@@ -87,12 +84,10 @@
     </div>
 
     <script>
-        // Listas globales compartidas extraídas de tu esquema conceptual
         const salsasDisponibles = ["Bbq Hot", "Buffalo", "Maracuya Hot", "Mango Habanero", "Piña Habanero", "Fresa Habanero"];
         const snacksDisponibles = ["Papas a la francesa", "Papas Gajo", "Dedos de queso", "Jalapeños rellenos", "Aros de cebolla"];
         const platillosDisponibles = ["Alitas", "Boneless", "Palomitas"];
 
-        // Catálogo Base Estructurado
         const estructuraMenu = [
             {
                 categoria: "Platillo Principal",
@@ -131,7 +126,6 @@
 
         let carrito = [];
 
-        // Generar la interfaz gráfica
         const contenedorMenu = document.getElementById('menu-categorias');
         estructuraMenu.forEach(cat => {
             let catHTML = `<div class="products-grid"><h2 class="category-title">${cat.categoria}</h2>`;
@@ -156,6 +150,9 @@
                             <div class="combo-grid-selectors">
                                 <select class="sauce-select" id="platillo_${prod.id}">
                                     ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="salsacombo_${prod.id}">
+                                    ${salsasDisponibles.map(s => `<option value="${s}">Salsa: ${s}</option>`).join('')}
                                 </select>
                                 <select class="sauce-select" id="snack1_${prod.id}">
                                     <option value="" disabled selected>Elegir Snack 1</option>
@@ -192,6 +189,7 @@
 
             if (prod.esComboEspecial) {
                 const pBase = document.getElementById(`platillo_${prodId}`).value;
+                const sCombo = document.getElementById(`salsacombo_${prodId}`).value;
                 const s1 = document.getElementById(`snack1_${prodId}`).value;
                 const s2 = document.getElementById(`snack2_${prodId}`).value;
 
@@ -199,7 +197,7 @@
                     alert("Por favor, selecciona ambos snacks antes de agregar el combo.");
                     return;
                 }
-                configuracionAdicional = `[${pBase} + ${s1} + ${s2}]`;
+                configuracionAdicional = `[${pBase} b. en ${sCombo} + ${s1} + ${s2}]`;
             } else if (prod.requiereSalsa) {
                 configuracionAdicional = document.getElementById(`salsa_${prodId}`).value;
             }
@@ -285,52 +283,39 @@
             const textoQR = `Cliente:${clienteVal}\nTotal:$${totalFormateado}\nSpace Wings`;
             document.getElementById("qrcode_img").src = "quickchart.io" + encodeURIComponent(textoQR) + "&size=100";
         }
-        
+
         function enviarWhatsApp() {
-    if(carrito.length === 0) {
-        alert("Por favor, agrega al menos un producto al carrito antes de enviar.");
-        return;
-    }
+            if(carrito.length === 0) {
+                alert("Agrega productos al carrito.");
+                return;
+            }
 
-    const nombreCliente = document.getElementById('cliente_input').value.trim();
-    
-    // Construcción del mensaje de texto formateado para Space Wings
-    let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
-    mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
-    mensaje += `-------------------------------------\n`;
-    
-    carrito.forEach(item => {
-        let subtotal = item.precio * item.cantidad;
-        mensaje += `📦 *${item.cantidad}x* ${item.nombre}\n`;
-        
-        // Inyecta el desglose de salsas o los 2 snacks elegidos en el combo
-        if(item.detalles) {
-            mensaje += `   ✨ _Config: ${item.detalles}_\n`;
+            const nombreCliente = document.getElementById('cliente_input').value.trim();
+            let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
+            mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
+            mensaje += `-------------------------------------\n`;
+            
+            carrito.forEach(item => {
+                let subtotal = item.precio * item.cantidad;
+                mensaje += `📦 *${item.cantidad}x* ${item.nombre}\n`;
+                if(item.detalles) {
+                    mensaje += `   ✨ _Config: ${item.detalles}_\n`;
+                }
+                if (item.comentario.trim() !== "") {
+                    mensaje += `   📝 _Nota: ${item.comentario.trim()}_\n`;
+                }
+                mensaje += `   💰 _Subtotal: $${subtotal.toFixed(2)}_\n`;
+            });
+            
+            mensaje += `-------------------------------------\n`;
+            mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
+            mensaje += `¡Muchas gracias! 🙌`;
+
+            const urlWhatsApp = "wa.me" + encodeURIComponent(mensaje);
+            window.open(urlWhatsApp, '_blank');
         }
-        // Inyecta los comentarios adicionales por artículo si existen
-        if (item.comentario && item.comentario.trim() !== "") {
-            mensaje += `   📝 _Nota: ${item.comentario.trim()}_\n`;
-        }
-        mensaje += `   💰 _Subtotal: $${subtotal.toFixed(2)}_\n`;
-    });
-    
-    mensaje += `-------------------------------------\n`;
-    mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
-    mensaje += `¡Muchas gracias! 🙌`;
 
-    // Enlace de redirección seguro sin texto basura alrededor
-    const urlWhatsApp = "https://wa.me/523411398581?text=" + encodeURIComponent(mensaje);
-    window.open(urlWhatsApp, '_blank');
-}
-
-// Inicialización del carrito vacío en pantalla al cargar
-actualizarInterfaz();
-</script>
-</body>
-</html>
-
-
-               actualizarInterfaz();
+        actualizarInterfaz();
     </script>
 </body>
 </html>
