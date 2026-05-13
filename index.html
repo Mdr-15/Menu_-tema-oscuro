@@ -294,27 +294,40 @@
 
     const nombreCliente = document.getElementById('cliente_input').value.trim();
     
-    // Construcción del mensaje de texto formateado
+    // Construcción del mensaje de texto formateado para Space Wings
     let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
     mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
-    mensaje += `📅 *Fecha:* ${document.getElementById('fec').textContent}\n`;
     mensaje += `-------------------------------------\n`;
     
     carrito.forEach(item => {
         let subtotal = item.precio * item.cantidad;
-        mensaje += `📦 *${item.cantidad}x* ${item.nombre} -> _$${subtotal.toFixed(2)}_\n`;
+        mensaje += `📦 *${item.cantidad}x* ${item.nombre}\n`;
+        
+        // Inyecta el desglose de salsas o los 2 snacks elegidos en el combo
+        if(item.detalles) {
+            mensaje += `   ✨ _Config: ${item.detalles}_\n`;
+        }
+        // Inyecta los comentarios adicionales por artículo si existen
+        if (item.comentario && item.comentario.trim() !== "") {
+            mensaje += `   📝 _Nota: ${item.comentario.trim()}_\n`;
+        }
+        mensaje += `   💰 _Subtotal: $${subtotal.toFixed(2)}_\n`;
     });
     
     mensaje += `-------------------------------------\n`;
     mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
-    mensaje += `¡Muchas gracias! Quedo a la espera de la confirmación. 🙌`;
+    mensaje += `¡Muchas gracias! 🙌`;
 
-    // Línea corregida con concatenación clásica
+    // Enlace de redirección seguro sin texto basura alrededor
     const urlWhatsApp = "https://wa.me/523411398581?text=" + encodeURIComponent(mensaje);
-    
-    // Redirigir de inmediato a la aplicación de WhatsApp
     window.open(urlWhatsApp, '_blank');
-    }
+}
+
+// Inicialización del carrito vacío en pantalla al cargar
+actualizarInterfaz();
+</script>
+</body>
+</html>
 
 
                actualizarInterfaz();
