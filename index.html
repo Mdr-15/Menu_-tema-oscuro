@@ -33,67 +33,62 @@
         .add-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #0f172a; border: none; padding: 12px 24px; cursor: pointer; border-radius: 10px; font-weight: 800; font-size: 14px; box-shadow: 0 4px 14px rgba(245,158,11,0.3); transition: transform 0.2s, box-shadow 0.2s; }
         .add-btn:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(245,158,11,0.5); }
 
-        /* COLUMNA DERECHA: Carrito de Compras Digital Inteligente */
-        .cart-section { width: 360px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 30px; height: max-content; }
+        /* COLUMNA DERECHA: Carrito de Compras Más Pequeño (Reducido a 280px) */
+        .cart-section { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 30px; height: max-content; }
         
-        /* Contenedor del nuevo Carrito Tipo App */
-        .digital-cart { background: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 24px; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
-        .cart-title { font-size: 18px; font-weight: 800; color: #ffffff; margin: 0 0 20px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 12px; }
-        .cart-count { background: #f59e0b; color: #0f172a; font-size: 12px; padding: 3px 8px; rounded: 20px; border-radius: 20px; font-weight: 900; }
+        /* Contenedor del Carrito Tipo App Compacto */
+        .digital-cart { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 16px; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+        .cart-title { font-size: 16px; font-weight: 800; color: #ffffff; margin: 0 0 15px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .cart-count { background: #f59e0b; color: #0f172a; font-size: 11px; padding: 2px 7px; border-radius: 20px; font-weight: 900; }
         
-        /* Input de Cliente Estilizado */
-        .client-box { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
-        .client-box label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
-        .client-box input { background: #0f172a; border: 1px solid #334155; border-radius: 10px; color: #fff; padding: 10px 14px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        /* Input de Cliente Estilizado Compacto */
+        .client-box { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
+        .client-box label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .client-box input { background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #fff; padding: 8px 12px; font-size: 13px; outline: none; transition: border-color 0.2s; }
         .client-box input:focus { border-color: #f59e0b; }
 
         /* Lista de Productos en el Carrito */
-        .cart-list { display: flex; flex-direction: column; gap: 16px; max-height: 300px; overflow-y: auto; padding-right: 4px; margin-bottom: 20px; }
-        .cart-list::-webkit-scrollbar { width: 6px; }
+        .cart-list { display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 2px; margin-bottom: 15px; }
+        .cart-list::-webkit-scrollbar { width: 4px; }
         .cart-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         
-        /* Filas del Carrito */
-        .cart-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 12px; border-radius: 12px; border: 1px solid #334155; }
-        .item-details { display: flex; flex-direction: column; gap: 4px; }
-        .item-name { font-size: 14px; font-weight: 600; color: #f8fafc; }
-        .item-subtotal { font-size: 13px; font-weight: 700; color: #f59e0b; }
+        /* Filas del Carrito Modificadas para soportar Bloque de Comentarios */
+        .cart-item { display: flex; flex-direction: column; gap: 8px; background: #0f172a; padding: 12px; border-radius: 10px; border: 1px solid #334155; }
+        .item-main-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 4px; }
+        .item-details { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+        .item-name { font-size: 13px; font-weight: 600; color: #f8fafc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .item-subtotal { font-size: 12px; font-weight: 700; color: #f59e0b; }
         
-        /* Controles de Cantidad Modificados */
-        .qty-controls { display: flex; align-items: center; gap: 8px; }
-        .cant-btn { background: #334155; color: #fff; border: none; width: 26px; height: 26px; cursor: pointer; font-weight: bold; border-radius: 6px; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        /* Controles de Cantidad */
+        .qty-controls { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+        .cant-btn { background: #334155; color: #fff; border: none; width: 22px; height: 22px; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 12px; display: flex; align-items: center; justify-content: center; }
         .cant-btn:hover { background: #475569; }
-        .qty-num { font-size: 14px; font-weight: 700; min-width: 16px; text-align: center; }
-        .del-btn { background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 16px; padding: 4px; font-weight: bold; transition: color 0.2s; }
-        .del-btn:hover { color: #f87171; }
+        .qty-num { font-size: 12px; font-weight: 700; min-width: 14px; text-align: center; }
+        .del-btn { background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 14px; padding: 2px; font-weight: bold; }
+        
+        /* Input para Comentarios por Artículo */
+        .comment-box { width: 100%; background: #1e293b; border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; padding: 6px 8px; font-size: 11px; font-family: sans-serif; box-sizing: border-box; outline: none; transition: border-color 0.15s; }
+        .comment-box::placeholder { color: #64748b; }
+        .comment-box:focus { border-color: #f59e0b; background: #111827; }
         
         /* Cuadro de Resumen de Pago */
-        .summary-box { border-top: 1px dashed #334155; padding-top: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .summary-label { font-size: 16px; font-weight: 700; color: #94a3b8; }
-        .summary-total { font-size: 22px; font-weight: 900; color: #f59e0b; }
+        .summary-box { border-top: 1px dashed #334155; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .summary-label { font-size: 14px; font-weight: 700; color: #94a3b8; }
+        .summary-total { font-size: 18px; font-weight: 900; color: #f59e0b; }
 
-        /* Contenedor QR Digitalizado */
-        .qr-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; background: #ffffff; padding: 16px; border-radius: 14px; margin-top: 15px; }
-        .qr-wrapper span { color: #0f172a; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        /* Contenedor QR */
+        .qr-wrapper { display: flex; flex-direction: column; align-items: center; gap: 6px; background: #ffffff; padding: 12px; border-radius: 10px; margin-top: 12px; }
+        .qr-wrapper span { color: #0f172a; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
 
-        /* Botón de Enviar a WhatsApp Estilizado */
-        .btn-send { padding: 16px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; border: none; width: 100%; cursor: pointer; font-weight: 800; border-radius: 12px; font-size: 15px; text-align: center; text-decoration: none; box-shadow: 0 4px 20px rgba(34,197,94,0.3); transition: transform 0.2s, box-shadow 0.2s; display: block; box-sizing: border-box; }
-        .btn-send:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(34,197,94,0.5); }
+        /* Botón de Enviar a WhatsApp Compacto */
+        .btn-send { padding: 14px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; border: none; width: 100%; cursor: pointer; font-weight: 800; border-radius: 10px; font-size: 14px; text-align: center; text-decoration: none; box-shadow: 0 4px 14px rgba(34,197,94,0.3); display: block; box-sizing: border-box; }
+        .btn-send:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(34,197,94,0.4); }
 
-        /* Adaptabilidad para Dispositivos Móviles */
+        /* Adaptabilidad Móvil */
         @media (max-width: 768px) {
             .main-container { flex-direction: column; padding: 0 15px; gap: 25px; margin: 15px auto; }
             .cart-section { width: 100%; position: relative; top: 0; }
             .product-card { padding: 18px; }
-        }
-
-        /* Configuración de Respaldo Oculta por si se requiere enviar a Impresora Física */
-        @media print { 
-            body, .main-container { background: white; color: black; padding: 0; margin: 0; }
-            header, .catalog-section, .btn-send, .cant-btn, .del-btn, .client-box, .cart-title { display: none !important; } 
-            .cart-section, .digital-cart { width: 280px; background: white; border: none; padding: 0; margin: 0; box-shadow: none; }
-            .cart-item { background: white; border: none; border-bottom: 1px dashed #000; color: #000; padding: 6px 0; border-radius: 0; }
-            .item-name, .item-subtotal { color: #000; }
-            .summary-total { color: #000; font-family: monospace; }
         }
     </style>
 </head>
@@ -106,15 +101,15 @@
 
     <div class="main-container">
         
-        <!-- LADO IZQUIERDO: Catálogo Ampliado con diseño espacioso -->
+        <!-- LADO IZQUIERDO: Catálogo Ampliado -->
         <section class="catalog-section">
             <h2>🔥 NUESTRO MENÚ</h2>
             <div id="lista-productos">
-                <!-- Se inyecta dinámicamente con JavaScript -->
+                <!-- Se inyecta dinámicamente -->
             </div>
         </section>
 
-        <!-- LADO DERECHO: Carrito de Compras Digital Estilo App -->
+        <!-- LADO DERECHO: Carrito de Compras Compacto Tipo App -->
         <section class="cart-section">
             <div class="digital-cart">
                 <div class="cart-title">
@@ -133,13 +128,13 @@
                 </div>
 
                 <div class="summary-box">
-                    <span class="summary-label">Total a pagar:</span>
+                    <span class="summary-label">Total:</span>
                     <span class="summary-total">$<span id="tot">0.00</span></span>
                 </div>
 
-                <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR PEDIDO POR WHATSAPP</button>
+                <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR POR WHATSAPP</button>
 
-                <!-- Código QR Integrado en la App Visual -->
+                <!-- Código QR Inteligente -->
                 <div class="qr-wrapper" id="qr-block" style="display: none;">
                     <span>Código de Validación</span>
                     <div id="qrcode"></div>
@@ -150,7 +145,7 @@
     </div>
 
     <script>
-        // Catálogo de Productos
+        // Catálogo de Productos disponibles
         const productosDisponibles = [
             { id: "p1", nombre: "Alitas BBQ Clásicas", precio: 120.00 },
             { id: "p2", nombre: "Papas Gajo Sazonadas", precio: 65.00 },
@@ -160,7 +155,7 @@
 
         let carrito = [];
 
-        // Generar lista de productos visuales en la interfaz izquierda
+        // Inicializar catálogo en el lado izquierdo
         const divCatalog = document.getElementById('lista-productos');
         productosDisponibles.forEach(prod => {
             divCatalog.innerHTML += `
@@ -176,7 +171,12 @@
         function agregarAlCarrito(id) {
             const prod = productosDisponibles.find(p => p.id === id);
             const existe = carrito.find(item => item.id === id);
-            if (existe) { existe.cantidad++; } else { carrito.push({ ...prod, cantidad: 1 }); }
+            // Cada elemento del carrito ahora guarda una propiedad "comentario" vacía por defecto
+            if (existe) { 
+                existe.cantidad++; 
+            } else { 
+                carrito.push({ ...prod, cantidad: 1, comentario: "" }); 
+            }
             actualizarInterfaz();
         }
 
@@ -193,6 +193,14 @@
             actualizarInterfaz();
         }
 
+        // Guarda el texto escrito por el usuario en tiempo real dentro del estado del objeto del carrito
+        function guardarComentario(id, texto) {
+            const item = carrito.find(p => p.id === id);
+            if (item) {
+                item.comentario = texto;
+            }
+        }
+
         function actualizarInterfaz() {
             const listaHTML = document.getElementById('lista-carrito');
             listaHTML.innerHTML = "";
@@ -200,7 +208,7 @@
             let totalArticulos = 0;
 
             if(carrito.length === 0) {
-                listaHTML.innerHTML = `<div style="text-align:center; color:#64748b; padding:30px; font-size:14px;">El carrito está vacío.<br>¡Agrega tus alitas favoritas!</div>`;
+                listaHTML.innerHTML = `<div style="text-align:center; color:#64748b; padding:25px; font-size:12px;">Carrito vacío.</div>`;
                 document.getElementById('qr-block').style.display = "none";
             } else {
                 document.getElementById('qr-block').style.display = "flex";
@@ -211,18 +219,22 @@
                 cuentaTotal += importeItem;
                 totalArticulos += item.cantidad;
 
+                // Estructura de fila vertical: arriba datos del producto, abajo la barra de notas
                 listaHTML.innerHTML += `
                     <div class="cart-item">
-                        <div class="item-details">
-                            <span class="item-name">${item.nombre}</span>
-                            <span class="item-subtotal">$${importeItem.toFixed(2)}</span>
+                        <div class="item-main-row">
+                            <div class="item-details">
+                                <span class="item-name">${item.nombre}</span>
+                                <span class="item-subtotal">$${importeItem.toFixed(2)}</span>
+                            </div>
+                            <div class="qty-controls">
+                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
+                                <span class="qty-num">${item.cantidad}</span>
+                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
+                                <button class="del-btn" onclick="eliminarDelCarrito('${item.id}')">×</button>
+                            </div>
                         </div>
-                        <div class="qty-controls">
-                            <button class="cant-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
-                            <span class="qty-num">${item.cantidad}</span>
-                            <button class="cant-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
-                            <button class="del-btn" onclick="eliminarDelCarrito('${item.id}')">×</button>
-                        </div>
+                        <input type="text" class="comment-box" placeholder="Notas (ej. bien doradas, salsa aparte...)" value="${item.comentario}" oninput="guardarComentario('${item.id}', this.value)">
                     </div>`;
             });
 
@@ -234,7 +246,6 @@
 
         function actualizarQR() {
             if (carrito.length === 0) return;
-            
             const totalFormateado = document.getElementById('tot').textContent;
             const clienteVal = document.getElementById('cliente_input').value;
             
@@ -242,13 +253,13 @@
             const textoQR = `Cliente:${clienteVal}\nTotal:$${totalFormateado}\nSpace Wings`;
             
             new QRCode(document.getElementById("qrcode"), {
-                text: textoQR, width: 120, height: 120, colorDark : "#0f172a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
+                text: textoQR, width: 100, height: 100, colorDark : "#0f172a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
             });
         }
 
         function enviarWhatsApp() {
             if(carrito.length === 0) {
-                alert("Por favor, agrega productos al carrito antes de continuar.");
+                alert("Por favor, agrega productos al carrito.");
                 return;
             }
 
@@ -260,6 +271,10 @@
             carrito.forEach(item => {
                 let subtotal = item.precio * item.cantidad;
                 mensaje += `📦 *${item.cantidad}x* ${item.nombre} -> _$${subtotal.toFixed(2)}_\n`;
+                // Si el artículo contiene comentarios escritos, se inyectan tabulados debajo en el mensaje de WhatsApp
+                if (item.comentario.trim() !== "") {
+                    mensaje += `   📝 _Nota: ${item.comentario.trim()}_\n`;
+                }
             });
             
             mensaje += `-------------------------------------\n`;
@@ -270,7 +285,6 @@
             window.open(urlWhatsApp, '_blank');
         }
 
-        // Inicialización inicial
         actualizarInterfaz();
     </script>
 </body>
