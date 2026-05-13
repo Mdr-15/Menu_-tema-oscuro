@@ -3,125 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú con Carrito | Space Wings</title>
+    <title>Menú Interactivo | Space Wings</title>
+    <!-- Librerías nativas para estilos y QR -->
     <script src="jsdelivr.net"></script>
     <style>
-        body { font-family: 'Courier New', monospace; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; background: #eee; }
-        .ticket { width: 280px; background: white; padding: 10px; box-sizing: border-box; margin-bottom: 20px; }
+        /* Estilos Generales Modernos */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: #111827; color: #f3f4f6; display: flex; flex-direction: column; min-height: 100vh; }
         
-        .header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 10px; }
-        .logo-text { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
-        .sub-logo { font-size: 11px; text-transform: uppercase; }
+        /* Encabezado Premium */
+        header { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); text-align: center; padding: 25px 20px; border-bottom: 2px solid #f59e0b; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); }
+        .logo-text { font-size: 28px; font-weight: 900; letter-spacing: 3px; color: #f59e0b; margin: 0; }
+        .sub-logo { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-top: 4px; }
 
-        .info { font-size: 11px; margin-bottom: 12px; line-height: 1.3; }
+        /* Contenedor Principal en Dos Columnas (Escritorio / Tableta) */
+        .main-container { display: flex; flex-direction: row; flex: 1; max-width: 1200px; width: 100%; margin: 20px auto; padding: 0 20px; gap: 30px; box-sizing: border-box; }
+        
+        /* COLUMNA IZQUIERDA: Catálogo de Productos con más espacio */
+        .catalog-section { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .catalog-section h2 { font-size: 18px; margin: 0 0 10px 0; color: #f59e0b; border-bottom: 2px solid #374151; padding-bottom: 8px; letter-spacing: 1px; }
+        
+        /* Tarjetas de Producto Ampliadas */
+        .product-card { background: #1f2937; border: 1px solid #374151; border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.15); transition: transform 0.2s, border-color 0.2s; }
+        .product-card:hover { transform: translateY(-2px); border-color: #f59e0b; }
+        .product-info { display: flex; flex-direction: column; gap: 6px; }
+        .product-name { font-size: 16px; font-weight: bold; color: #fff; }
+        .product-price { font-size: 15px; font-weight: 800; color: #f59e0b; }
+        
+        /* Botón Añadir Estilizado */
+        .add-btn { background: #f59e0b; color: #111827; border: none; padding: 10px 18px; cursor: pointer; border-radius: 8px; font-weight: bold; font-size: 14px; transition: background 0.2s; }
+        .add-btn:hover { background: #d97706; }
+
+        /* COLUMNA DERECHA: Carrito y Ticket Fijo */
+        .cart-section { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 20px; height: max-content; }
+        
+        /* Botón de Enviar a WhatsApp Integrado al Carrito */
+        .btn-send { padding: 14px; background: #16a34a; color: #fff; border: none; width: 100%; cursor: pointer; font-weight: bold; border-radius: 8px; font-size: 14px; text-align: center; text-decoration: none; box-shadow: 0 4px 10px rgba(22,163,74,0.3); transition: background 0.2s; display: block; box-sizing: border-box; }
+        .btn-send:hover { background: #15803d; }
+
+        /* Diseño Clásico del Ticket Térmico de 80mm */
+        .ticket { width: 100%; background: white; color: #000; padding: 15px; border-radius: 8px; box-sizing: border-box; font-family: 'Courier New', monospace; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
+        .ticket .header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 10px; padding-bottom: 10px; }
+        .ticket .logo-text { font-size: 22px; color: #000; font-weight: bold; }
+        .ticket .sub-logo { font-size: 10px; color: #555; }
+        .ticket .info { font-size: 11px; margin-bottom: 12px; line-height: 1.4; }
+        
+        /* Inputs Invisibles en el Ticket */
+        .ticket input { font-family: 'Courier New', monospace; font-size: 11px; border: none; border-bottom: 1px dashed #000; width: 150px; outline: none; padding: 0 4px; }
+        
+        /* Tabla del Ticket */
         table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th { border-bottom: 1px solid #000; text-align: left; padding: 5px 0; }
-        td { padding: 6px 0; border-bottom: 1px dashed #ccc; vertical-align: top; }
+        th { border-bottom: 1px solid #000; text-align: left; padding: 6px 0; }
+        td { padding: 8px 0; border-bottom: 1px dashed #ccc; vertical-align: top; }
         
-        /* Botones para el control del carrito en el ticket */
-        .cant-btn { background: #000; color: #fff; border: none; padding: 2px 6px; cursor: pointer; font-weight: bold; margin: 0 2px; border-radius: 3px; }
-        .del-btn { background: #ff4d4d; color: white; border: none; padding: 2px 5px; cursor: pointer; border-radius: 3px; }
-
-        .total-box { margin-top: 15px; text-align: right; border-top: 2px solid #000; padding-top: 6px; font-size: 16px; }
-        .qr-container { display: flex; justify-content: center; margin-top: 15px; margin-bottom: 5px; }
-        .footer { text-align: center; font-size: 11px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 8px; }
-
-        /* Botón de acción principal fuera del ticket */
-        .btn-send { margin-bottom: 15px; padding: 12px; background: #25D366; color: #fff; border: none; width: 280px; cursor: pointer; font-weight: bold; border-radius: 5px; font-size: 14px; text-align: center; text-decoration: none; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        /* Controles Internos del Carrito */
+        .cant-btn { background: #000; color: #fff; border: none; padding: 2px 6px; cursor: pointer; font-weight: bold; margin: 0 2px; border-radius: 3px; font-size: 10px; }
+        .del-btn { background: #dc2626; color: white; border: none; padding: 2px 6px; cursor: pointer; border-radius: 3px; font-size: 10px; margin-right: 4px; }
         
-        /* Sección de catálogo rápido para que el cliente seleccione */
-        .catalog { width: 280px; background: #fff; padding: 10px; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
-        .catalog h2 { font-size: 14px; margin-top: 0; border-bottom: 1px solid #000; padding-bottom: 5px; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 12px; }
-        .add-btn { background: #000; color: #fff; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .total-box { margin-top: 15px; text-align: right; border-top: 2px solid #000; padding-top: 8px; font-size: 15px; }
+        .qr-container { display: flex; justify-content: center; margin-top: 15px; }
+        .ticket .footer { text-align: center; font-size: 10px; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 8px; color: #444; }
+
+        /* Adaptabilidad para Teléfonos Celulares (Pasa a una Sola Columna) */
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; padding: 0 15px; gap: 25px; }
+            .cart-section { width: 100%; position: relative; top: 0; }
+            .product-card { padding: 15px; }
+        }
+
+        /* Configuración Oculta para Impresión Física */
+        @media print { 
+            body, .main-container { background: white; color: black; padding: 0; margin: 0; }
+            header, .catalog-section, .btn-send, .cant-btn, .del-btn, .ticket input { display: none !important; } 
+            .cart-section { width: 280px; }
+            .ticket { width: 280px; padding: 0; margin: 0; box-shadow: none; border-radius: 0; } 
+        }
     </style>
 </head>
 <body>
 
-    <!-- 1. Catálogo de productos interactivo -->
-    <div class="catalog">
-        <h2>🍔 AGREGAR PRODUCTOS</h2>
-        <div id="lista-productos"></div>
-    </div>
+    <header>
+        <h1 class="logo-text">SPACE WINGS</h1>
+        <p class="sub-logo">Sabor que te eleva</p>
+    </header>
 
-    <!-- 2. Botón flotante para enviar a WhatsApp -->
-    <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR PEDIDO POR WHATSAPP</button>
-    
-    <!-- 3. Previsualización del Ticket físico -->
-    <div class="ticket">
-        <div class="header">
-            <div class="logo-text">SPACE WINGS</div>
-            <div class="sub-logo">Sabor que te eleva</div>
-        </div>
-
-        <div class="info">
-            <b>CLIENTE:</b> <input type="text" id="cliente_input" value="Cliente Nuevo" style="font-family: 'Courier New'; font-size: 11px; border: none; border-bottom: 1px dashed #000; width: 160px; outline: none;"><br>
-            <b>FECHA:</b> <span id="fec"></span>
-        </div>
+    <div class="main-container">
         
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 75px;">CANT</th>
-                    <th>PRODUCTO</th>
-                    <th style="text-align:right; width: 60px;">TOTAL</th>
-                </tr>
-            </thead>
-            <tbody id="tabla">
-                <!-- Se llena dinámicamente al presionar agregar -->
-            </tbody>
-        </table>
+        <!-- LADO IZQUIERDO: Catálogo Ampliado -->
+        <section class="catalog-section">
+            <h2>🔥 NUESTRO MENÚ</h2>
+            <div id="lista-productos">
+                <!-- Se inyecta con JavaScript con espaciado amplio -->
+            </div>
+        </section>
 
-        <div class="total-box">
-            <strong>TOTAL: $<span id="tot">0.00</span></strong>
-        </div>
+        <!-- LADO DERECHO: Carrito Fijo y Botón de Envío -->
+        <section class="cart-section">
+            <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR PEDIDO POR WHATSAPP</button>
+            
+            <div class="ticket">
+                <div class="header">
+                    <div class="logo-text">SPACE WINGS</div>
+                    <div class="sub-logo">Sabor que te eleva</div>
+                </div>
 
-        <div class="qr-container">
-            <div id="qrcode"></div>
-        </div>
+                <div class="info">
+                    <b>CLIENTE:</b> <input type="text" id="cliente_input" value="Cliente Nuevo"><br>
+                    <b>FECHA:</b> <span id="fec"></span>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">CANT</th>
+                            <th>PRODUCTO</th>
+                            <th style="text-align:right; width: 50px;">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla">
+                        <!-- Productos del carrito -->
+                    </tbody>
+                </table>
 
-        <div class="footer">
-            ¡GRACIAS POR TU PREFERENCIA!<br>
-            <p style="font-size: 9px; margin-top: 8px;">*** Comprobante de Venta ***</p>
-        </div>
+                <div class="total-box">
+                    <strong>TOTAL: $<span id="tot">0.00</span></strong>
+                </div>
+
+                <div class="qr-container">
+                    <div id="qrcode"></div>
+                </div>
+
+                <div class="footer">
+                    ¡GRACIAS POR TU PREFERENCIA!<br>
+                    <p style="font-size: 8px; margin-top: 6px; color: #777;">*** Comprobante de Venta ***</p>
+                </div>
+            </div>
+        </section>
+
     </div>
 
     <script>
-        // Número de teléfono de tu negocio (Formato internacional sin el signo +)
-        const TELEFONO_NEGOCIO = "523411398581"; 
-
-        // Lista de productos precargados en el sistema
+        // Estado del Sistema
         const productosDisponibles = [
-            { id: "p1", nombre: "Alitas BBQ", precio: 120.00 },
-            { id: "p2", nombre: "Papas Gajo", precio: 65.00 },
-            { id: "p3", nombre: "Boneless", precio: 140.00 },
-            { id: "p4", nombre: "Refresco Cola", precio: 35.00 }
+            { id: "p1", nombre: "Alitas BBQ Clásicas", precio: 120.00 },
+            { id: "p2", nombre: "Papas Gajo Sazonadas", precio: 65.00 },
+            { id: "p3", nombre: "Boneless Crujientes", precio: 140.00 },
+            { id: "p4", nombre: "Refresco Cola 600ml", precio: 35.00 }
         ];
 
-        // Estado global del carrito de compras
         let carrito = [];
 
-        // Inicializar la interfaz gráfica
+        // Inicializar Fecha
         document.getElementById('fec').textContent = new Date().toLocaleString();
         
+        // Renderizar el catálogo con padding y estructura de tarjeta espaciosa
         const divCatalog = document.getElementById('lista-productos');
         productosDisponibles.forEach(prod => {
             divCatalog.innerHTML += `
-                <div class="item-row">
-                    <div><strong>${prod.nombre}</strong><br>$${prod.precio.toFixed(2)}</div>
-                    <button class="add-btn" onclick="agregarAlCarrito('${prod.id}')">+</button>
+                <div class="product-card">
+                    <div class="product-info">
+                        <span class="product-name">${prod.nombre}</span>
+                        <span class="product-price">$${prod.precio.toFixed(2)}</span>
+                    </div>
+                    <button class="add-btn" onclick="agregarAlCarrito('${prod.id}')">Agregar +</button>
                 </div>`;
         });
 
         function agregarAlCarrito(id) {
             const prod = productosDisponibles.find(p => p.id === id);
             const existe = carrito.find(item => item.id === id);
-            
-            if (existe) {
-                existe.cantidad++;
-            } else {
-                carrito.push({ ...prod, cantidad: 1 });
-            }
+            if (existe) { existe.cantidad++; } else { carrito.push({ ...prod, cantidad: 1 }); }
             actualizarInterfaz();
         }
 
@@ -129,9 +179,7 @@
             const item = carrito.find(p => p.id === id);
             if (!item) return;
             item.cantidad += cambio;
-            if (item.cantidad <= 0) {
-                carrito = carrito.filter(p => p.id !== id);
-            }
+            if (item.cantidad <= 0) { carrito = carrito.filter(p => p.id !== id); }
             actualizarInterfaz();
         }
 
@@ -146,7 +194,7 @@
             let cuentaTotal = 0;
 
             if(carrito.length === 0) {
-                t.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999; padding:15px;">Carrito vacío</td></tr>`;
+                t.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#777; padding:20px;">Carrito vacío</td></tr>`;
             }
 
             carrito.forEach(item => {
@@ -154,16 +202,13 @@
                 cuentaTotal += importeItem;
 
                 let row = t.insertRow();
-                // Columna 1: Botones de control de cantidad
                 row.insertCell(0).innerHTML = `
                     <button class="del-btn" onclick="eliminarDelCarrito('${item.id}')">×</button>
                     <button class="cant-btn" onclick="cambiarCantidad('${item.id}', -1)">-</button>
-                    <span>${item.cantidad}</span>
+                    <span style="font-weight:bold;">${item.cantidad}</span>
                     <button class="cant-btn" onclick="cambiarCantidad('${item.id}', 1)">+</button>
                 `;
-                // Columna 2: Nombre
                 row.insertCell(1).textContent = item.nombre;
-                // Columna 3: Precio total del producto
                 let pCell = row.insertCell(2);
                 pCell.textContent = importeItem.toFixed(2);
                 pCell.style.textAlign = 'right';
@@ -172,7 +217,7 @@
             const totalFormateado = cuentaTotal.toFixed(2);
             document.getElementById('tot').textContent = totalFormateado;
 
-            // Actualizar el código QR local en tiempo real
+            // Re-renderizado del QR local
             document.getElementById("qrcode").innerHTML = "";
             const textoQR = `Cliente:${document.getElementById('cliente_input').value}\nTotal:$${totalFormateado}\nSpace Wings`;
             new QRCode(document.getElementById("qrcode"), {
@@ -180,38 +225,31 @@
             });
         }
 
-        // Función para compilar la lista y abrir la API de WhatsApp
         function enviarWhatsApp() {
-    if(carrito.length === 0) {
-        alert("Por favor, agrega al menos un producto al carrito antes de enviar.");
-        return;
-    }
+            if(carrito.length === 0) {
+                alert("Por favor, agrega productos antes de enviar.");
+                return;
+            }
 
-    const nombreCliente = document.getElementById('cliente_input').value.trim();
-    
-    // Construcción del mensaje de texto formateado
-    let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
-    mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
-    mensaje += `📅 *Fecha:* ${document.getElementById('fec').textContent}\n`;
-    mensaje += `-------------------------------------\n`;
-    
-    carrito.forEach(item => {
-        let subtotal = item.precio * item.cantidad;
-        mensaje += `📦 *${item.cantidad}x* ${item.nombre} -> _$${subtotal.toFixed(2)}_\n`;
-    });
-    
-    mensaje += `-------------------------------------\n`;
-    mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
-    mensaje += `¡Muchas gracias! Quedo a la espera de la confirmación. 🙌`;
+            const nombreCliente = document.getElementById('cliente_input').value.trim();
+            let mensaje = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n`;
+            mensaje += `👤 *Cliente:* ${nombreCliente}\n`;
+            mensaje += `📅 *Fecha:* ${document.getElementById('fec').textContent}\n`;
+            mensaje += `-------------------------------------\n`;
+            
+            carrito.forEach(item => {
+                let subtotal = item.precio * item.cantidad;
+                mensaje += `📦 *${item.cantidad}x* ${item.nombre} -> _$${subtotal.toFixed(2)}_\n`;
+            });
+            
+            mensaje += `-------------------------------------\n`;
+            mensaje += `💰 *TOTAL A PAGO:* $${document.getElementById('tot').textContent}\n\n`;
+            mensaje += `¡Muchas gracias! 🙌`;
 
-    // Línea corregida con concatenación clásica
-    const urlWhatsApp = "https://wa.me/523411398581?text=" + encodeURIComponent(mensaje);
-    
-    // Redirigir de inmediato a la aplicación de WhatsApp
-    window.open(urlWhatsApp, '_blank');
-}
+            const urlWhatsApp = "wa.me" + encodeURIComponent(mensaje);
+            window.open(urlWhatsApp, '_blank');
+        }
 
-        // Primera llamada para inicializar el estado del QR vacío
         actualizarInterfaz();
     </script>
 </body>
