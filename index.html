@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Digital | Space Wings</title>
+    <!-- Tailwind CSS para diseño moderno y responsivo -->
+    <script src="tailwindcss.com"></script>
+    <link rel="stylesheet" href="cloudflare.com">
+</head>
+<body class="bg-gray-900 text-white font-sans antialiased pb-20">
+
+    <!-- Encabezado / Banner Principal -->
+    <header class="relative h-48 bg-cover bg-center flex flex-col justify-center items-center text-center px-4" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('unsplash.com');">
+        <h1 class="text-3xl font-black tracking-widest text-amber-500">SPACE WINGS</h1>
+        <p class="text-sm uppercase tracking-wider text-gray-300 mt-1">Sabor que te eleva</p>
+        <div class="mt-3 flex space-x-4 text-xs text-gray-400">
+            <span><i class="fas fa-motorcycle text-amber-500"></i> Envío a Domicilio</span>
+            <span><i class="fas fa-clock text-amber-500"></i> 2:00 PM - 11:00 PM</span>
+        </div>
+    </header>
+
+    <!-- Barra de Categorías (Fija al hacer scroll) -->
+    <nav class="sticky top-0 bg-gray-800 border-b border-gray-700 z-50 overflow-x-auto whitespace-nowrap scrollbar-none px-4 py-3 flex space-x-2">
+        <button onclick="filtrar('todos')" class="cat-btn bg-amber-500 text-gray-900 font-bold px-4 py-2 rounded-full text-sm transition">Todos</button>
+        <button onclick="filtrar('alitas')" class="cat-btn bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition">Alitas</button>
+        <button onclick="filtrar('boneless')" class="cat-btn bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition">Boneless</button>
+        <button onclick="filtrar('snacks')" class="cat-btn bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition">Snacks</button>
+        <button onclick="filtrar('bebidas')" class="cat-btn bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full text-sm transition">Bebidas</button>
+    </nav>
+
+    <!-- Contenedor del Menú (Cuadrícula) -->
+    <main class="max-w-md mx-auto px-4 mt-6 grid grid-cols-1 gap-4" id="contenedor-menu">
+        <!-- Los platillos se inyectan dinámicamente aquí con JavaScript -->
+    </main>
+
+    <!-- Botón de Pedido Flotante -->
+    <div class="fixed bottom-4 left-0 right-0 max-w-md mx-auto px-4 z-40">
+        <a href="wa.me" target="_blank" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl shadow-2xl flex justify-center items-center space-x-2 text-center transition">
+            <i class="fab fa-whatsapp text-xl"></i>
+            <span>Pedir por WhatsApp</span>
+        </a>
+    </div>
+
+    <!-- Lógica de Datos y Filtrado -->
+    <script>
+        // Base de datos de platillos (Fácil de actualizar)
+        const platillos = [
+            { id: 1, cat: 'alitas', nombre: 'Alitas BBQ Clásicas', desc: '6 piezas bañadas en salsa BBQ dulce artesanal, acompañadas de aderezo ranch.', precio: 120.00, img: 'unsplash.com' },
+            { id: 2, cat: 'alitas', nombre: 'Alitas Buffalo Spicy', desc: '6 piezas con nuestra salsa buffalo picante tradicional y bastones de apio.', precio: 125.00, img: 'unsplash.com' },
+            { id: 3, cat: 'boneless', nombre: 'Boneless Originales', desc: '250g de pechuga de pollo crujiente, bañados en la salsa de tu elección.', precio: 140.00, img: 'unsplash.com' },
+            { id: 4, cat: 'snacks', nombre: 'Papas Gajo Sazonadas', desc: 'Porción individual de papas gajo rústicas con sazonador de la casa.', precio: 65.00, img: 'unsplash.com' },
+            { id: 5, cat: 'bebidas', nombre: 'Refresco de Cola 600ml', desc: 'Frío y refrescante en envase no retornable.', precio: 35.00, img: 'unsplash.com' }
+        ];
+
+        function renderizarMenu(lista) {
+            const contenedor = document.getElementById('contenedor-menu');
+            contenedor.innerHTML = '';
+            
+            lista.forEach(item => {
+                contenedor.innerHTML += `
+                    <div class="bg-gray-800 rounded-2xl overflow-hidden border border-gray-700 flex p-3 items-center space-x-4 shadow-lg">
+                        <img src="${item.img}" alt="${item.nombre}" class="w-20 h-20 object-cover rounded-xl flex-shrink-0 bg-gray-700">
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-bold text-base truncate text-gray-100">${item.nombre}</h3>
+                            <p class="text-xs text-gray-400 line-clamp-2 mt-0.5 leading-relaxed">${item.desc}</p>
+                            <div class="text-amber-500 font-black text-sm mt-1.5">$${item.precio.toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filtrar(categoria) {
+            // Actualizar estilo visual de los botones
+            const botones = document.querySelectorAll('.cat-btn');
+            botones.forEach(btn => {
+                btn.classList.remove('bg-amber-500', 'text-gray-900', 'font-bold');
+                btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+            });
+            event.target.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+            event.target.classList.add('bg-amber-500', 'text-gray-900', 'font-bold');
+
+            // Filtrar elementos de la lista
+            if (categoria === 'todos') {
+                renderizarMenu(platillos);
+            } else {
+                const filtrados = platillos.filter(p => p.cat === categoria);
+                renderizarMenu(filtrados);
+            }
+        }
+
+        // Inicializar el menú al cargar la página
+        renderizarMenu(platillos);
+    </script>
+</body>
+</html>
