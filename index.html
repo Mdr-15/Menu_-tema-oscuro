@@ -23,14 +23,15 @@
         .product-name { font-size: 16px; font-weight: 700; }
         .product-price { font-size: 15px; font-weight: 800; color: #f59e0b; }
         
-        /* Selector de Salsas interno */
-        .sauce-selector { background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+        /* Selectores internos con Grid para Combos */
+        .sauce-selector { background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
         .sauce-selector label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
-        .sauce-select { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px; border-radius: 6px; font-size: 13px; outline: none; width: 100%; }
+        .combo-grid-selectors { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .sauce-select { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 6px; border-radius: 6px; font-size: 13px; outline: none; width: 100%; box-sizing: border-box; }
         
         .add-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #0f172a; border: none; padding: 8px 16px; cursor: pointer; border-radius: 8px; font-weight: 800; font-size: 13px; align-self: flex-end; }
         
-        /* COLUMNA DERECHA: Carrito Compacto (280px) */
+        /* COLUMNA DERECHA: Carrito Compacto */
         .cart-section { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 20px; height: max-content; }
         .digital-cart { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 16px; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
         .cart-title { font-size: 16px; font-weight: 800; border-bottom: 1px solid #334155; padding-bottom: 10px; margin: 0 0 12px 0; display: flex; justify-content: space-between; }
@@ -40,10 +41,10 @@
         .client-box label { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
         .client-box input { background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; padding: 8px; font-size: 13px; outline: none; }
         
-        .cart-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; margin-bottom: 12px; }
+        .cart-list { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; margin-bottom: 12px; }
         .cart-item { display: flex; flex-direction: column; gap: 6px; background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; }
         .item-row { display: flex; justify-content: space-between; font-size: 13px; }
-        .item-sauce { font-size: 11px; color: #f59e0b; font-style: italic; margin-top: -2px; }
+        .item-sauce { font-size: 11px; color: #f59e0b; font-style: italic; margin-top: 2px; line-height: 1.3; }
         
         .comment-box { width: 100%; background: #1e293b; border: 1px solid #475569; border-radius: 4px; color: #e2e8f0; padding: 4px 6px; font-size: 11px; box-sizing: border-box; }
         
@@ -69,10 +70,10 @@
     </header>
 
     <div class="main-container">
-        <!-- SECCIÓN DE PRODUCTOS SEGÚN TU ESQUEMA -->
+        <!-- SECCIÓN DE PRODUCTOS DINÁMICOS -->
         <section class="catalog-section" id="menu-categorias"></section>
 
-        <!-- CARRITO DE COMPRAS -->
+        <!-- CARRITO DE COMPRAS DIGITAL -->
         <section class="cart-section">
             <div class="digital-cart">
                 <div class="cart-title"><span>🛒 Pedido</span><span class="cart-count" id="badge-count">0</span></div>
@@ -86,10 +87,12 @@
     </div>
 
     <script>
-        // Opciones de salsas del esquema
+        // Listas globales compartidas extraídas de tu esquema conceptual
         const salsasDisponibles = ["Bbq Hot", "Buffalo", "Maracuya Hot", "Mango Habanero", "Piña Habanero", "Fresa Habanero"];
+        const snacksDisponibles = ["Papas a la francesa", "Papas Gajo", "Dedos de queso", "Jalapeños rellenos", "Aros de cebolla"];
+        const platillosDisponibles = ["Alitas", "Boneless", "Palomitas"];
 
-        // Estructura jerárquica exacta de tu mapa conceptual
+        // Catálogo Base Estructurado
         const estructuraMenu = [
             {
                 categoria: "Platillo Principal",
@@ -120,41 +123,51 @@
             {
                 categoria: "Combos",
                 items: [
-                    { id: "c_estrella", nombre: "C. Estrella (Platillo + Snack)", precio: 190.00, esCombo: true },
-                    { id: "c_cometa", nombre: "C. Cometa (Platillo + Bebida)", precio: 160.00, esCombo: true }
+                    { id: "c_estrella", nombre: "Combo Estrella", precio: 210.00, esComboEspecial: true },
+                    { id: "c_cometa", nombre: "Combo Cometa", precio: 185.00, esComboEspecial: true }
                 ]
             }
         ];
 
         let carrito = [];
 
-        // Dibujar el menú en la pantalla
+        // Generar la interfaz gráfica
         const contenedorMenu = document.getElementById('menu-categorias');
         estructuraMenu.forEach(cat => {
             let catHTML = `<div class="products-grid"><h2 class="category-title">${cat.categoria}</h2>`;
             
             cat.items.forEach(prod => {
-                let selectorSalsa = "";
-                // Si el producto requiere salsa según tu mapa, dibuja las opciones
+                let bloqueSelectores = "";
+                
+                // Caso 1: Producto Individual con Salsas (Alitas, Boneless, Palomitas)
                 if (prod.requiereSalsa) {
-                    selectorSalsa = `
+                    bloqueSelectores = `
                         <div class="sauce-selector">
-                            <label>Elige tu Salsa:</label>
+                            <label>Salsa para el platillo:</label>
                             <select class="sauce-select" id="salsa_${prod.id}">
                                 ${salsasDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
                             </select>
                         </div>`;
                 }
-                // Si es un Combo, permite elegir el platillo base
-                if (prod.esCombo) {
-                    selectorSalsa = `
+                
+                // Caso 2: Configuración del Combo Especial (1 Platillo + 2 Snacks)
+                if (prod.esComboEspecial) {
+                    bloqueSelectores = `
                         <div class="sauce-selector">
-                            <label>Platillo base del Combo:</label>
-                            <select class="sauce-select" id="salsa_${prod.id}">
-                                <option value="Alitas">Alitas</option>
-                                <option value="Boneless">Boneless</option>
-                                <option value="Palomitas">Palomitas</option>
-                            </select>
+                            <label style="color:#f59e0b; margin-bottom:4px; display:block;">⚙️ Configura tu Combo:</label>
+                            <div class="combo-grid-selectors">
+                                <select class="sauce-select" id="platillo_${prod.id}">
+                                    ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="snack1_${prod.id}">
+                                    <option value="" disabled selected>Elegir Snack 1</option>
+                                    ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="snack2_${prod.id}">
+                                    <option value="" disabled selected>Elegir Snack 2</option>
+                                    ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
+                                </select>
+                            </div>
                         </div>`;
                 }
 
@@ -164,7 +177,7 @@
                             <span class="product-name">${prod.nombre}</span>
                             <span class="product-price">$${prod.precio.toFixed(2)}</span>
                         </div>
-                        ${selectorSalsa}
+                        ${bloqueSelectores}
                         <button class="add-btn" onclick="agregarAlCarrito('${cat.categoria}', '${prod.id}')">Agregar +</button>
                     </div>`;
             });
@@ -177,41 +190,52 @@
             const cat = estructuraMenu.find(c => c.categoria === catNombre);
             const prod = cat.items.find(p => p.id === prodId);
             
-            // Capturar la opción seleccionada del menú desplegable si aplica
-            let salsaSeleccionada = "";
-            const elSelect = document.getElementById(`salsa_${prodId}`);
-            if (elSelect) {
-                salsaSeleccionada = elSelect.value;
+            let configuracionAdicional = "";
+
+            // Lógica para capturar las opciones de los Combos
+            if (prod.esComboEspecial) {
+                const pBase = document.getElementById(`platillo_${prodId}`).value;
+                const s1 = document.getElementById(`snack1_${prodId}`).value;
+                const s2 = document.getElementById(`snack2_${prodId}`).value;
+
+                if (!s1 || !s2) {
+                    alert("Por favor, selecciona ambos snacks antes de agregar el combo.");
+                    return;
+                }
+                configuracionAdicional = `[${pBase} + ${s1} + ${s2}]`;
+            } else if (prod.requiereSalsa) {
+                // Lógica para capturar la salsa de productos individuales
+                configuracionAdicional = document.getElementById(`salsa_${prodId}`).value;
             }
 
-            // Validar si ya existe el mismo artículo con la misma salsa en el carrito
-            const existe = carrito.find(item => item.id === prodId && item.salsa === salsaSeleccionada);
+            // Identificar duplicados basados en id y la configuración exacta de ingredientes
+            const existe = carrito.find(item => item.id === prodId && item.detalles === configuracionAdicional);
             
             if (existe) {
                 existe.cantidad++;
             } else {
-                carrito.push({ ...prod, cantidad: 1, salsa: salsaSeleccionada, comentario: "" });
+                carrito.push({ ...prod, cantidad: 1, detalles: configuracionAdicional, comentario: "" });
             }
             actualizarInterfaz();
         }
 
-        function cambiarCantidad(id, salsa, cambio) {
-            const item = carrito.find(p => p.id === id && p.salsa === salsa);
+        function cambiarCantidad(id, detalles, cambio) {
+            const item = carrito.find(p => p.id === id && p.detalles === detalles);
             if (!item) return;
             item.cantidad += cambio;
             if (item.cantidad <= 0) {
-                carrito = carrito.filter(p => !(p.id === id && p.salsa === salsa));
+                carrito = carrito.filter(p => !(p.id === id && p.detalles === detalles));
             }
             actualizarInterfaz();
         }
 
-        function eliminarDelCarrito(id, salsa) {
-            carrito = carrito.filter(p => !(p.id === id && p.salsa === salsa));
+        function eliminarDelCarrito(id, detalles) {
+            carrito = carrito.filter(p => !(p.id === id && p.detalles === detalles));
             actualizarInterfaz();
         }
 
-        function guardarComentario(id, salsa, texto) {
-            const item = carrito.find(p => p.id === id && p.salsa === salsa);
+        function guardarComentario(id, detalles, texto) {
+            const item = carrito.find(p => p.id === id && p.detalles === detalles);
             if (item) { item.comentario = texto; }
         }
 
@@ -233,24 +257,24 @@
                 cuentaTotal += importeItem;
                 totalArticulos += item.cantidad;
 
-                let textoSalsa = item.salsa ? `<div class="item-sauce">🔥 Sabor: ${item.salsa}</div>` : "";
+                let lineaDetalle = item.detalles ? `<div class="item-sauce">${item.detalles}</div>` : "";
 
                 listaHTML.innerHTML += `
                     <div class="cart-item">
                         <div class="item-row">
-                            <div>
-                                <strong>${item.nombre}</strong>
-                                ${textoSalsa}
-                                <span style="color:#f59e0b; font-weight:700;">$${importeItem.toFixed(2)}</span>
+                            <div style="flex:1; min-width:0; padding-right:4px;">
+                                <strong style="font-size:13px; display:block; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${item.nombre}</strong>
+                                ${lineaDetalle}
+                                <span style="color:#f59e0b; font-weight:700; font-size:12px;">$${importeItem.toFixed(2)}</span>
                             </div>
                             <div class="qty-controls">
-                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', '${item.salsa}', -1)">-</button>
-                                <span>${item.cantidad}</span>
-                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', '${item.salsa}', 1)">+</button>
-                                <button class="del-btn" onclick="eliminarDelCarrito('${item.id}', '${item.salsa}')">×</button>
+                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', '${item.detalles}', -1)">-</button>
+                                <span style="font-size:12px; font-weight:700;">${item.cantidad}</span>
+                                <button class="cant-btn" onclick="cambiarCantidad('${item.id}', '${item.detalles}', 1)">+</button>
+                                <button class="del-btn" onclick="eliminarDelCarrito('${item.id}', '${item.detalles}')">×</button>
                             </div>
                         </div>
-                        <input type="text" class="comment-box" placeholder="Notas especiales..." value="${item.comentario}" oninput="guardarComentario('${item.id}', '${item.salsa}', this.value)">
+                        <input type="text" class="comment-box" placeholder="Notas (salsa, aderezo...)" value="${item.comentario}" oninput="guardarComentario('${item.id}', '${item.detalles}', this.value)">
                     </div>`;
             });
 
@@ -281,8 +305,8 @@
             carrito.forEach(item => {
                 let subtotal = item.precio * item.cantidad;
                 mensaje += `📦 *${item.cantidad}x* ${item.nombre}\n`;
-                if(item.salsa) {
-                    mensaje += `   🔥 _Sabor: ${item.salsa}_\n`;
+                if(item.detalles) {
+                    mensaje += `   ✨ _Config: ${item.detalles}_\n`;
                 }
                 if (item.comentario.trim() !== "") {
                     mensaje += `   📝 _Nota: ${item.comentario.trim()}_\n`;
