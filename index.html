@@ -222,6 +222,10 @@
             font-size: 1rem;
         }
 
+        .cliente-input:focus {
+            outline: 1px solid #fca311;
+        }
+
         /* Lista de Productos del Carrito */
         .carrito-vacio {
             text-align: center;
@@ -377,6 +381,13 @@
         .btn-whatsapp:hover {
             background-color: #20ba59;
         }
+
+        .btn-whatsapp:disabled {
+            background-color: #3a4454 !important;
+            color: #8a99ad !important;
+            cursor: not-allowed;
+            border: 1px solid #2c374e;
+        }
     </style>
 </head>
 <body>
@@ -417,8 +428,8 @@
             </div>
 
             <div class="cliente-seccion">
-                <label class="salsa-label">Cliente</label>
-                <input type="text" id="nombre-cliente" class="cliente-input" placeholder="Cliente Nuevo">
+                <label class="salsa-label">Cliente *</label>
+                <input type="text" id="nombre-cliente" class="cliente-input" placeholder="Ingresa tu nombre">
             </div>
 
             <div id="msg-vacio" class="carrito-vacio">Carrito vacío.</div>
@@ -429,24 +440,46 @@
                 <span id="total-precio">$0.00</span>
             </div>
 
-            <button class="btn-whatsapp" onclick="enviarPedidoWhatsapp()">
+            <button id="btn-enviar-pedido" class="btn-whatsapp" onclick="enviarPedidoWhatsapp()">
                 ⚪ ENVIAR POR WHATSAPP
             </button>
         </aside>
     </div>
 
     <script>
-        // URL DE TU HOJA DE GOOGLE SHEETS EN FORMATO CSV
+        // Enlace CSV principal que lee el menú (Sustituye por tu URL real de Google Sheets)
         const CONFIG_URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv";
 
+        // URL alternativa de tu pestaña de configuración (Cambia el número de 'gid=' por el de tu pestaña 'Configuracion')
+        const CONFIG_URL_HORARIO_CSV = "google.com";
+
         let carrito = [];
-        
         let listaPlatillosGlobal = [];
         let listaSalsasGlobal = [];
         let listaSnacksGlobal = [];
 
+        // Horarios por defecto si falla la descarga desde Sheets
+        let horaAperturaDinamica = 14; 
+        let horaCierreDinamico = 23;   
+
         async function ejecutarCargaMenu() {
             try {
+                // Intentar leer los límites de horario desde la hoja de control
+                try {
+                    const resHorario = await fetch(CONFIG_URL_HORARIO_CSV);
+                    const txtHorario = await resHorario.text();
+                    const lineasHorario = txtHorario.split("\n").map(l => l.trim()).filter(l => l);
+                    if(lineasHorario.length >= 2) {
+                        const columnasConfig = lineasHorario[1].split(",");
+                        const ap = parseInt(columnasConfig[0].replace(/"/g, "").trim());
+                        const ci = parseInt(columnasConfig[1].replace(/"/g, "").trim());
+                        if(!isNaN(ap)) horaAperturaDinamica = ap;
+                        if(!isNaN(ci)) horaCierreDinamico = ci;
+                    }
+                } catch (e) {
+                    console.warn("No se pudo cargar el horario desde Sheets, usando horario base (2PM - 11PM)", e);
+                }
+
                 const res = await fetch(CONFIG_URL_CSV);
                 const txt = await res.text();
                 const lineas = txt.split("\n").map(l => l.trim()).filter(l => l);
@@ -462,7 +495,7 @@
 
                 // Primer recorrido: Almacenar listas globales de ingredientes desde tu inventario activo
                 filas.forEach(fila => {
-                    const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*\$)/);
                     if (col.length >= 5) {
                         const cat = col[1].replace(/"/g, "").trim();
                         const prod = col[2].replace(/"/g, "").trim();
@@ -475,20 +508,21 @@
                             const salsas = col.slice(5).map(s => s.replace(/"/g, "").trim()).filter(s => s);
                             salsas.forEach(s => { if(!listaSalsasGlobal.includes(s)) listaSalsasGlobal.push(s); });
                         } else if (cat === "Snacks") {
-                            if (!listaSnacksGlobal.includes(prod)) pointer = listaSnacksGlobal.push(prod);
+                            if (!listaSnacksGlobal.includes(prod)) listaSnacksGlobal.push(prod);
                         }
                     }
                 });
 
                 // Segundo recorrido: Renderizar elementos individuales e identificar IDs de Combo
                 filas.forEach(fila => {
-                    const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    if (col.length >= 5) {
-                        const idPlatillo = col[0].replace(/"/g, "").trim();
-                        const cat = col[1].replace(/"/g, "").trim();
-                        const prod = col[2].replace(/"/g, "").trim();
-                        const prec = parseFloat(col[3].replace(/"/g, "").trim()) || 0;
-                        const disp = col[4].replace(/"/g, "").trim().toUpperCase();
+                    const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*\$)/);
+                    const colClean = col.map(c => c.replace(/"/g, "").trim());
+                    if (colClean.length >= 5) {
+                        const idPlatillo = colClean[0];
+                        const cat = colClean[1];
+                        const prod = colClean[2];
+                        const prec = parseFloat(colClean[3]) || 0;
+                        const disp = colClean[4].toUpperCase();
 
                         if (disp !== "SI") return;
 
@@ -540,7 +574,7 @@
                     }
                 });
 
-                // Renderizar los Combos según sus reglas específicas estructurales
+                // Renderizar los Combos
                 rawCombos.forEach(combo => {
                     let configInputsHtml = "";
                     const esComboCometa = combo.nombre.toLowerCase().includes("cometa") || combo.id.toUpperCase() === "C2";
@@ -561,7 +595,7 @@
                             <div class="salsa-contenedor" style="margin-top:12px;">
                                 <label class="salsa-label">Platillo Principal 2:</label>
                                 <select id="combo-p2-${itemIndex}" class="salsa-select">
-                                    ${listaPlatillosGlobal.map(p => `<option value="${p}">${p}</option>`).join("")}
+                                    ${listaPlatillosGlobal.map(p => `<option value="${p}">${p}</option> Poles `).join("")}
                                 </select>
                             </div>
                             <div class="salsa-contenedor">
@@ -572,6 +606,7 @@
                             <div class="salsa-contenedor" style="margin-top:12px;">
                                 <label class="salsa-label">Snack Incluido:</label>
                                 <select id="combo-snack1-${itemIndex}" class="salsa-select">
+                                    <option value="">-- Elegir Snack --</option>
                                     ${listaSnacksGlobal.map(sn => `<option value="${sn}">${sn}</option>`).join("")}
                                 </select>
                             </div>
@@ -592,12 +627,14 @@
                             <div class="salsa-contenedor" style="margin-top:12px;">
                                 <label class="salsa-label">Snack 1:</label>
                                 <select id="combo-snack1-${itemIndex}" class="salsa-select">
+                                    <option value="">-- Elegir Snack 1 --</option>
                                     ${listaSnacksGlobal.map(sn => `<option value="${sn}">${sn}</option>`).join("")}
                                 </select>
                             </div>
                             <div class="salsa-contenedor">
                                 <label class="salsa-label">Snack 2:</label>
                                 <select id="combo-snack2-${itemIndex}" class="salsa-select">
+                                    <option value="">-- Elegir Snack 2 --</option>
                                     ${listaSnacksGlobal.map(sn => `<option value="${sn}">${sn}</option>`).join("")}
                                 </select>
                             </div>
@@ -627,9 +664,26 @@
                     itemIndex++;
                 });
 
+                // Control de horario comercial
+                verificarHorarioApertura();
+
             } catch (err) {
                 console.error("Error al procesar la carga remota:", err);
             }
+        }
+
+        // VALIDACIÓN DE APERTURA BASADA EN VALORES DINÁMICOS DE SHEETS
+        function verificarHorarioApertura() {
+            const ahora = new Date();
+            const horaActual = ahora.getHours();
+            const botonWhatsapp = document.getElementById("btn-enviar-pedido");
+
+            if (horaActual < horaAperturaDinamica || horaActual >= horaCierreDinamico) {
+                botonWhatsapp.disabled = true;
+                botonWhatsapp.innerText = `🔒 CERRADO (ABRIMOS DE ${horaAperturaDinamica}:00 A ${horaCierreDinamico}:00)`;
+                return false;
+            }
+            return true;
         }
 
         function meterAlCarrito(nombre, precio, indexElemento, esCombo, esComboCometa) {
@@ -640,12 +694,22 @@
                 const s1 = document.getElementById(`combo-s1-${indexElemento}`).value;
                 const snack1 = document.getElementById(`combo-snack1-${indexElemento}`).value;
 
+                // VALIDACIÓN FORZOSA DE OPCIONES DE COMBOS
+                if (!snack1) {
+                    alert(`Por favor configura por completo las opciones del ${nombre} antes de agregarlo.`);
+                    return; 
+                }
+
                 if (esComboCometa) {
                     const p2 = document.getElementById(`combo-p2-${indexElemento}`).value;
                     const s2 = document.getElementById(`combo-s2-${indexElemento}`).value;
                     detallesVariante = `• ${p1} (${s1})\n• ${p2} (${s2})\n• Snack: ${snack1}`;
                 } else {
                     const snack2 = document.getElementById(`combo-snack2-${indexElemento}`).value;
+                    if (!snack2) {
+                        alert(`Por favor selecciona el Snack 2 para completar tu ${nombre}.`);
+                        return;
+                    }
                     detallesVariante = `• ${p1} (${s1})\n• Snack 1: ${snack1}\n• Snack 2: ${snack2}`;
                 }
             } else if (indexElemento !== null) {
@@ -730,8 +794,18 @@
         }
 
         function enviarPedidoWhatsapp() {
+            if (!verificarHorarioApertura()) {
+                alert("Lo sentimos, Space Wings se encuentra cerrado en este momento.");
+                return;
+            }
+
+            // VALIDACIÓN DE NOMBRE OBLIGATORIO
             const inputCliente = document.getElementById("nombre-cliente").value.trim();
-            const cliente = inputCliente || "Cliente Nuevo";
+            if (inputCliente === "") {
+                alert("Por favor, ingresa tu nombre en la sección 'Cliente' para poder enviar tu pedido.");
+                document.getElementById("nombre-cliente").focus();
+                return;
+            }
 
             if (carrito.length === 0) {
                 alert("Agrega productos antes de mandar tu orden");
@@ -739,27 +813,6 @@
             }
 
             let msg = `*SPACE WINGS - NUEVO PEDIDO*\n`;
-            msg += `*Cliente:* ${cliente}\n`;
+            msg += `*Cliente:* ${inputCliente}\n`;
             msg += `---------------------------\n`;
             
-            let total = 0;
-            carrito.forEach(item => {
-                const subtotal = item.precio * item.cantidad;
-                msg += `*${item.cantidad}x* ${item.nombre}\n`;
-                if(item.salsa) msg += `${item.salsa}\n`;
-                if(item.notas.trim() !== "") msg += `   _Nota: ${item.notas}_\n`;
-                msg += `   Subtotal: $${subtotal.toFixed(2)}\n\n`;
-                total += subtotal;
-            });
-
-            msg += `---------------------------\n`;
-            msg += `*Total a Pagar:* $${total.toFixed(2)}`;
-
-            const telefonoLocal = "5210000000000"; // Configura el número real de tu negocio
-            window.open(`wa.me{telefonoLocal}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        window.onload = ejecutarCargaMenu;
-    </script>
-</body>
-</html>
