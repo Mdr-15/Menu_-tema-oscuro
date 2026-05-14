@@ -67,7 +67,7 @@
             margin: 10px 0; 
         }
 
-        /* --- CONFIGURADOR DE COMBOS CORREGIDO (ESTILO TU IMAGEN) --- */
+        /* --- CONFIGURADOR DE COMBOS --- */
         .tarjeta-combo-full {
             background-color: #161a1f;
             border: 1px solid #232931;
@@ -211,7 +211,6 @@
     </aside>
 
     <script>
-        // Si tienes tu enlace en vivo de Google Sheets, pégalo en lugar de "productos.csv"
         const urlGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv"; 
 
         let baseDatosProductos = { individuales: [], combos: [] };
@@ -247,25 +246,25 @@
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                if (columnas && columnas.toLowerCase().includes('id_platillo') && i > 3) {
+                if (columnas[0] && columnas[0].toLowerCase().includes('id_platillo') && i > 3) {
                     leyendoCombos = true;
                     continue;
                 }
 
-                if (!columnas || columnas === 'CONF' || columnas.toLowerCase().includes('id_platillo')) {
+                if (!columnas[0] || columnas[0] === 'CONF' || columnas[0].toLowerCase().includes('id_platillo')) {
                     continue;
                 }
 
-                const disponible = columnas ? columnas.toLowerCase() === 'si' : false;
+                const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
                 if (!leyendoCombos) {
-                    if (columnas.startsWith('P')) {
+                    if (columnas[0].startsWith('P')) {
                         const producto = {
-                            id: columnas,
-                            categoria: columnas || 'General',
-                            nombre: columnas || 'Producto',
-                            precio: parseFloat(columnas) || 0,
+                            id: columnas[0],
+                            categoria: columnas[1] || 'General',
+                            nombre: columnas[2] || 'Producto',
+                            precio: parseFloat(columnas[3]) || 0,
                             salsas: []
                         };
                         for (let s = 5; s < columnas.length; s++) {
@@ -274,14 +273,14 @@
                         individuales.push(producto);
                     }
                 } else {
-                    if (columnas.startsWith('C')) {
-                        const comboId = columnas;
-                        const nombreCombo = columnas || 'Combo Especial';
-                        const precioCombo = parseFloat(columnas) || 0;
+                    if (columnas[0].startsWith('C')) {
+                        const comboId = columnas[0];
+                        const nombreCombo = columnas[1] || 'Combo Especial';
+                        const precioCombo = parseFloat(columnas[2]) || 0;
                         
                         const filaItem = {
-                            categoriaItem: columnas || '',
-                            nombreItem: columnas || '',
+                            categoriaItem: columnas[5] || '',
+                            nombreItem: columnas[6] || '',
                             salsasEspecificas: []
                         };
                         
@@ -327,7 +326,6 @@
             });
         }
 
-        // === RENDERIZADO INTERACTIVO CORREGIDO CON AUTO-CARGA DE SALSAS ===
         function renderizarCombosDinamicos(combos) {
             const contenedor = document.getElementById('contenedor-combos');
             if (!contenedor) return;
@@ -337,8 +335,6 @@
                 let htmlCampos = '';
                 let contadorPlatillo = 1;
                 let contadorSalsa = 1;
-                
-                // Arreglo temporal para guardar qué selectores debemos rellenar en el arranque automático
                 let selectoresAInicializar = [];
 
                 combo.filas.forEach((fila, index) => {
@@ -359,11 +355,7 @@
                     const productosOpcion = baseDatosProductos.individuales.filter(p => p.categoria.toLowerCase() === fila.categoriaItem.toLowerCase());
 
                     let opcionesProductos = `<option value="">-- Selecciona un artículo --</option>`;
-                    let idPreseleccionado = "";
-
                     if(productosOpcion.length > 0) {
-                        // Preselecciona automáticamente la primera opción del menú (ej. "Alitas") para agilizar el proceso
-                        idPreseleccionado = productosOpcion.id;
                         opcionesProductos = productosOpcion.map((p, idx) => `<option value="${p.id}" ${idx === 0 || esFijo ? 'selected' : ''}>${p.nombre}</option>`).join('');
                     } else {
                         opcionesProductos = `<option value="${fila.nombreItem}" selected>${fila.nombreItem}</option>`;
@@ -379,12 +371,7 @@
                                 </select>
                             </div>`;
                         
-                        // Guardamos las coordenadas de este selector para inyectarle las salsas inmediatamente después
-                        selectoresAInicializar.push({
-                            idProd: idSelectProducto,
-                            idSalsa: idSelectSalsa
-                        });
-                        
+                        selectoresAInicializar.push({ idProd: idSelectProducto, idSalsa: idSelectSalsa });
                         contadorSalsa++;
                     }
 
@@ -413,7 +400,6 @@
                         </div>
                     </div>`;
 
-                // SOLUCIÓN: Ciclo inmediato que rellena las salsas de la primera opción ("Alitas") sin esperar al "onchange"
                 setTimeout(() => {
                     selectoresAInicializar.forEach(sel => {
                         const pSelect = document.getElementById(sel.idProd);
@@ -569,7 +555,7 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            const miTelefonoSpaceWings = "521234567890"; // Reemplaza con tu número real de WhatsApp
+            const miTelefonoSpaceWings = "521234567890"; 
 
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
             msg += `👤 *Cliente:* ${cliente}\n`;
