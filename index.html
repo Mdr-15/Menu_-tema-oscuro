@@ -67,7 +67,7 @@
             margin: 10px 0; 
         }
 
-        /* --- CONFIGURADOR DE COMBOS (ESTILO EXACTO DE TU IMAGEN) --- */
+        /* --- CONFIGURADOR DE COMBOS CORREGIDO --- */
         .tarjeta-combo-full {
             background-color: #161a1f;
             border: 1px solid #232931;
@@ -101,17 +101,6 @@
             padding: 20px;
             margin-bottom: 20px;
         }
-        .config-box-titulo {
-            color: #ff9f00;
-            font-size: 0.85rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            letter-spacing: 0.5px;
-        }
         .campo-grupo {
             margin-bottom: 18px;
         }
@@ -133,16 +122,6 @@
             border-radius: 6px; 
             font-size: 0.95rem;
             box-sizing: border-box;
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='w3.org'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-            background-repeat: no-repeat;
-            background-position: calc(100% - 12px) center;
-        }
-        select:disabled {
-            color: #718096;
-            background-color: #13171c;
-            cursor: not-allowed;
-            border-color: #1a202c;
         }
         .btn-agregar-combo {
             background-color: #ff9f00;
@@ -155,9 +134,7 @@
             float: right;
             font-size: 1rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
-        .btn-agregar-combo:hover { background-color: #e68f00; }
         .btn-agregar-individual {
             background-color: #ff9f00;
             color: #0d0f12;
@@ -171,7 +148,7 @@
             text-transform: uppercase;
         }
 
-        /* --- DISEÑO DEL PANEL LATERAL DEL PEDIDO --- */
+        /* --- PANEL LATERAL DEL PEDIDO --- */
         aside.panel-pedido { 
             width: 380px; 
             background-color: #161a1f; 
@@ -193,8 +170,7 @@
         .item-botones-qty button { background-color: #232931; color: white; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .Total { border-top: 1px solid #232931; padding-top: 15px; display: flex; justify-content: space-between; font-size: 1.4rem; font-weight: bold; }
         .Total span:last-child { color: #ff9f00; }
-        .Boton-enviar { background-color: #25d366; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px; }
-        .Boton-enviar:hover { background-color: #20ba5a; }
+        .Boton-enviar { background-color: #25d366; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; font-size: 1rem; }
 
         @media (max-width: 990px) { body { flex-direction: column; } aside.panel-pedido { width: 100%; height: auto; position: relative; } }
     </style>
@@ -235,9 +211,7 @@
     </aside>
 
     <script>
-        // =========================================================================
-        // CONFIGURACIÓN: CAMBIA ESTO POR TU LINK DE GOOGLE SHEETS EN FORMATO CSV SI LO USAS EN VIVO
-        // =========================================================================
+        // Si usas Google Sheets directo en vivo, reemplaza "productos.csv" por tu URL pública
         const urlGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv"; 
 
         let baseDatosProductos = { individuales: [], combos: [] };
@@ -273,12 +247,12 @@
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                if (columnas[0] && columnas[0].toLowerCase().includes('id_platillo') && i > 3) {
+                if (columnas && columnas[0].toLowerCase().includes('id_platillo') && i > 3) {
                     leyendoCombos = true;
                     continue;
                 }
 
-                if (!columnas[0] || columnas[0] === 'CONF' || columnas[0].toLowerCase().includes('id_platillo')) {
+                if (!columnas || columnas[0] === 'CONF' || columnas[0].toLowerCase().includes('id_platillo')) {
                     continue;
                 }
 
@@ -308,10 +282,12 @@
                         const filaItem = {
                             categoriaItem: columnas[5] || '',
                             nombreItem: columnas[6] || '',
-                            salsas: []
+                            salsasEspecificas: []
                         };
+                        
+                        // Extrae todas las columnas de salsas de la fila del combo (desde columna 7 en adelante)
                         for (let s = 7; s < columnas.length; s++) {
-                            if (columnas[s]) filaItem.salsas.push(columnas[s]);
+                            if (columnas[s]) filaItem.salsasEspecificas.push(columnas[s]);
                         }
 
                         if (!combosAgrupados[comboId]) {
@@ -352,7 +328,7 @@
             });
         }
 
-        // === CONVERSOR DE SELECTORES DE COMBO CON ETIQUETADO FIEL A TU IMAGEN ===
+        // === RENDERIZADO INTERACTIVO REPARADO ===
         function renderizarCombosDinamicos(combos) {
             const contenedor = document.getElementById('contenedor-combos');
             if (!contenedor) return;
@@ -370,7 +346,6 @@
                     const esFijo = combo.filas.filter(f => f.categoriaItem === fila.categoriaItem).length === 1 && fila.categoriaItem.toLowerCase().includes("snack");
                     const esPlatilloPrincipal = fila.categoriaItem.toLowerCase().includes("platillo principal");
                     
-                    // Asignación de etiquetas según tu imagen de referencia
                     let etiquetaItem = `${fila.categoriaItem.toUpperCase()} ${contadorPlatillo}:`;
                     if (esPlatilloPrincipal) {
                         etiquetaItem = `PLATILLO PRINCIPAL ${contadorPlatillo}:`;
@@ -388,14 +363,18 @@
                         opcionesProductos = `<option value="${fila.nombreItem}" selected>${fila.nombreItem}</option>`;
                     }
 
+                    // REPARACIÓN: Si la fila tiene salsas explícitas, las usa. Si no, busca las salsas globales del menú del platillo.
+                    let salsasAElegir = [...fila.salsasEspecificas];
+                    
                     let bloqueSalsa = '';
-                    if (fila.salsas.length > 0) {
+                    // Mostramos la caja de salsa únicamente para platillos principales
+                    if (esPlatilloPrincipal) {
                         bloqueSalsa = `
                             <div class="campo-grupo" style="margin-top:10px;">
-                                <label>SALSA ${contadorSalsa}: ${fila.salsas[0] || ''}</label>
+                                <label>SALSA ${contadorSalsa}:</label>
                                 <select id="${idSelectSalsa}">
                                     <option value="">-- Selecciona tu Salsa --</option>
-                                    ${fila.salsas.map(s => `<option value="${s}">${s}</option>`).join('')}
+                                    ${salsasAElegir.map(s => `<option value="${s}">${s}</option>`).join('')}
                                 </select>
                             </div>`;
                         contadorSalsa++;
@@ -404,7 +383,7 @@
                     htmlCampos += `
                         <div class="campo-grupo">
                             <label>${etiquetaItem}</label>
-                            <select id="${idSelectProducto}" onchange="actualizarSalsasCombo('${combo.id}', ${index})">
+                            <select id="${idSelectProducto}" onchange="actualizarSalsasCombo('${combo.id}', ${index}, ${contadorSalsa - 1})">
                                 ${opcionesProductos}
                             </select>
                             ${bloqueSalsa}
@@ -418,7 +397,7 @@
                             <span class="precio-combo">$${combo.precio.toFixed(2)}</span>
                         </div>
                         <div class="config-box">
-                            <div class="config-box-titulo">⚙️ Configura tu ${combo.nombre.toLowerCase()}:</div>
+                            <div style="color: #ff9f00; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin-bottom: 20px;">⚙️ Configura tu ${combo.nombre.toLowerCase()}:</div>
                             ${htmlCampos}
                         </div>
                         <div style="overflow:hidden;">
@@ -428,12 +407,15 @@
             });
         }
 
-        function actualizarSalsasCombo(comboId, index) {
+        // SOLUCIÓN AL FALLO: Busca dinámicamente las salsas correspondientes al platillo seleccionado (ej. Alitas, Boneless o Palomitas)
+        function actualizarSalsasCombo(comboId, index, numeroSalsa) {
             const prodSelect = document.getElementById(`combo-${comboId}-prod-${index}`);
             const salsaSelect = document.getElementById(`combo-${comboId}-salsa-${index}`);
             if (!prodSelect || !salsaSelect) return;
 
             const prodId = prodSelect.value;
+            
+            // Buscamos el platillo seleccionado en la base de datos de especialidades individuales
             const productoReal = baseDatosProductos.individuales.find(p => p.id === prodId);
 
             if (productoReal && productoReal.salsas.length > 0) {
@@ -566,7 +548,7 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            const miTelefonoSpaceWings = "521234567890"; 
+            const miTelefonoSpaceWings = "521234567890"; // Reemplaza con tu número real de celular
 
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
             msg += `👤 *Cliente:* ${cliente}\n`;
