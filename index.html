@@ -221,49 +221,34 @@
             return celda.trim().replace(/^"|"$/g, '').trim();
         }
 
-        // === ESCÁNER MAPEADOR INTELIGENTE BASADO EN TU IMAGEN REAL ===
+        // === REPARACIÓN DE LA LÓGICA DE DETECCIÓN DE SALSAS HORIZONTALES ===
         function parsearEstructuraMenu(texto) {
             const lineas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             const individuales = [];
             const combosAgrupados = {};
+            let leyendoCombos = false;
 
-            // Índices de la cabecera del archivo
-            let cabeceraGlobal = lineas[0].split(',').map(limpiarTextoSheets);
-            
-            // Localizamos dinámicamente las columnas de la tabla superior de productos individuales
-            let idxId = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'id_platillo');
-            let idxCat = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'categoria');
-            let idxNom = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'producto');
-            let idxPre = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'precio');
-            let idxDisp = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'disponible');
-
-            // Índices especiales para la tabla de Combos (Segunda estructura)
-            let idxComboPaso = -1;
-            let idxComboProd = -1;
+            // Índices basados rigurosamente en tu captura de imagen
+            const idxId = 0, idxCat = 1, idxNom = 2, idxPre = 3, idxDisp = 4;
+            const idxComboPaso = 5; // Columna F (Categoria de paso interno)
+            const idxComboProd = 6; // Columna G (Producto interno)
 
             for (let i = 0; i < lineas.length; i++) {
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
                 if (!columnas || columnas[idxId] === 'Id_platillo' || columnas[idxId] === 'CONF') {
-                    // Si encontramos una fila que redefine cabeceras abajo, recalculamos los índices de combos
-                    if (columnas && columnas[idxId] === 'Id_platillo' && i > 1) {
-                        // Encontramos los índices de los pasos de combos basados en la fila de títulos
-                        idxComboPaso = columnas.findIndex((c, idx) => c.toLowerCase() === 'categoria' && idx > idxCat);
-                        idxComboProd = columnas.findIndex((c, idx) => c.toLowerCase() === 'producto' && idx > idxNom);
+                    if (i > 1 && columnas[idxId] === 'Id_platillo') {
+                        leyendoCombos = true;
                     }
                     continue;
                 }
 
-                // Si por alguna razón no se auto-detectaron las columnas de combos, fijamos los valores de tu imagen
-                if (idxComboPaso === -1) idxComboPaso = 5;  // Columna F (Categoria interna)
-                if (idxComboProd === -1) idxComboProd = 6;  // Columna G (Producto interno)
-
                 const disponible = columnas[idxDisp] ? columnas[idxDisp].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
-                // 1. CARGA DE PLATILLOS INDIVIDUALES (P)
-                if (columnas[idxId].startsWith('P')) {
+                // 1. EXTRAER PLATILLOS INDIVIDUALES CON SUS SALSAS HORIZONTALES (P)
+                if (columnas[idxId].startsWith('P') && !leyendoCombos) {
                     const producto = {
                         id: columnas[idxId],
                         categoria: columnas[idxCat],
@@ -271,28 +256,28 @@
                         precio: parseFloat(columnas[idxPre]) || 0,
                         salsas: []
                     };
-                    // Las salsas inician a la derecha de la columna Disponible (columna F en adelante)
-                    for (let s = idxDisp + 1; s < columnas.length; s++) {
-                        // Saltamos las celdas vacías intermedias que genera Google Sheets
-                        if (columnas[s] && s < idxComboPaso) {
+                    
+                    // CORRECCIÓN: Las salsas inician a partir del índice 5 (Columna F) en adelante de forma ilimitada
+                    for (let s = 5; s < columnas.length; s++) {
+                        if (columnas[s]) {
                             producto.salsas.push(columnas[s]);
                         }
                     }
                     individuales.push(producto);
                 } 
                 
-                // 2. CARGA DE COMBOS DINÁMICOS CON COMBINACIÓN LIBRE (C)
+                // 2. EXTRAER COMBOS CONFIGURABLES CON SUS SALSAS (C)
                 if (columnas[idxId].startsWith('C')) {
                     const comboId = columnas[idxId];
-                    const nombreCombo = columnas[idxNom]; // Columna C ("C.Estrella", "C.cometa", "Super wolf")
-                    const precioCombo = parseFloat(columnas[idxPre]) || 0; // Columna D (200, 300, 150)
+                    const nombreCombo = columnas[idxNom]; 
+                    const precioCombo = parseFloat(columnas[idxPre]) || 0; 
                     
-                    const componenteCategoria = columnas[idxComboPaso]; // Columna F ("Platillo Principal 1", "Snacks 1")
-                    const componenteProducto = columnas[idxComboProd];  // Columna G ("Alitas", "Boneless", "Palomitas")
+                    const componenteCategoria = columnas[idxComboPaso]; 
+                    const componenteProducto = columnas[idxComboProd];  
                     
-                    // Las salsas opcionales del combo inician en la columna H en adelante
                     const salsasComponente = [];
-                    for (let s = idxComboProd + 1; s < columnas.length; s++) {
+                    // Las salsas de los combos inician justo en la columna H (índice 7) en adelante
+                    for (let s = 7; s < columnas.length; s++) {
                         if (columnas[s]) salsasComponente.push(columnas[s]);
                     }
 
@@ -571,8 +556,8 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            const urlWhatsApp = "https://wa.me/523411398581?text=" + encodeURIComponent(mensaje);
-            
+            const miTelefonoSpaceWings = "521234567890"; 
+
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
             msg += `👤 *Cliente:* ${cliente}\n`;
             msg += `-------------------------------------------\n`;
