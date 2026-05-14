@@ -149,7 +149,7 @@
             font-size: 0.85rem;
         }
 
-        /* --- INTERFAZ LATERAL COMPACTA (CARRITO IGUAL A LA IMAGEN) --- */
+        /* --- INTERFAZ LATERAL COMPACTA DEL PEDIDO --- */
         aside.panel-pedido { 
             width: 350px; 
             background-color: #161a1f; 
@@ -210,7 +210,7 @@
             margin-top: 15px; 
         }
         
-        /* --- FILA DEL ARTÍCULO (ESTILO DE LA IMAGEN) --- */
+        /* --- FILA DEL ARTÍCULO COMPACTO --- */
         .item-carrito-fila { 
             background-color: #0d0f12; 
             padding: 12px; 
@@ -249,7 +249,6 @@
             margin: 4px 0 0 0;
         }
         
-        /* Controles de cantidad y cancelar compactos */
         .controles-contenedor {
             display: flex;
             align-items: center;
@@ -393,6 +392,7 @@
             return celda.trim().replace(/^"|"$/g, '').trim();
         }
 
+        // === MOTOR DE PARSEO CORREGIDO CON INDEXACIÓN DE ARREGLOS ===
         function parsearEstructuraMenu(texto) {
             const lineas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             const individuales = [];
@@ -403,24 +403,27 @@
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                if (columnas && columnas.toLowerCase() === 'categoria' && i > 3) {
+                // Corrección: Evaluamos el contenido de la columna B (índice 1) para el salto de tabla
+                if (columnas[1] && columnas[1].toLowerCase() === 'categoria' && i > 3) {
                     leyendoCombos = true;
                     continue;
                 }
 
-                if (!columnas || columnas === 'Id_platillo' || columnas === 'CONF') {
+                if (!columnas[0] || columnas[0] === 'Id_platillo' || columnas[0] === 'CONF') {
                     continue;
                 }
 
-                const disponible = columnas ? columnas.toLowerCase() === 'si' : false;
+                // Switch de disponibilidad en la columna E (índice 4)
+                const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
-                if (columnas.startsWith('P') && !leyendoCombos) {
+                // REPARACIÓN CRÍTICA: Apuntamos al índice [0] del arreglo para usar .startsWith()
+                if (columnas[0].startsWith('P') && !leyendoCombos) {
                     const producto = {
-                        id: columnas,
-                        categoria: columnas,
-                        nombre: columnas,
-                        precio: parseFloat(columnas) || 0,
+                        id: columnas[0],
+                        categoria: columnas[1],
+                        nombre: columnas[2],
+                        precio: parseFloat(columnas[3]) || 0,
                         salsas: []
                     };
                     for (let s = 5; s < columnas.length; s++) {
@@ -429,12 +432,12 @@
                     individuales.push(producto);
                 } 
                 
-                if (columnas.startsWith('C')) {
-                    const comboId = columnas;
-                    const nombreCombo = columnas;
-                    const precioCombo = parseFloat(columnas) || 0;
-                    const componenteCategoria = columnas; 
-                    const componenteProducto = columnas;  
+                if (columnas[0].startsWith('C')) {
+                    const comboId = columnas[0];
+                    const nombreCombo = columnas[2];
+                    const precioCombo = parseFloat(columnas[3]) || 0;
+                    const componenteCategoria = columnas[5]; 
+                    const componenteProducto = columnas[6];  
                     
                     const salsasComponente = [];
                     for (let s = 7; s < columnas.length; s++) {
@@ -596,7 +599,6 @@
             const itemExistente = carrito.find(item => item.id === id && item.salsa === salsaSeleccionada);
             if (itemExistente) { itemExistente.cantidad++; } 
             else {
-                // Se genera un identificador único numérico para la fila de carrito
                 carrito.push({ uid: Date.now() + Math.random(), id: producto.id, nombre: producto.nombre, precio: producto.precio, salsa: salsaSeleccionada, cantidad: 1, nota: "" });
             }
             if (selectSalsa) selectSalsa.value = '';
@@ -653,19 +655,16 @@
             }
         }
 
-        // FUNCIÓN ELIMINAR / CANCELAR ARTÍCULO DIRECTO (BOTÓN ROJO X)
         function eliminarDelCarrito(uid) {
             carrito = carrito.filter(item => item.uid !== uid);
             actualizarInterfazCarrito();
         }
 
-        // Almacena el texto de las notas en tiempo real dentro del arreglo del carrito
         function actualizarNotaItem(uid, textoNota) {
             const item = carrito.find(i => i.uid === uid);
             if (item) item.nota = textoNota;
         }
 
-        // === INTERFAZ RECONSTRUIDA COMPACTA (IGUAL A LA CAPTURA DE PANTALLA) ===
         function actualizarInterfazCarrito() {
             const contenedorLista = document.getElementById('carrito-lista');
             const badgeContador = document.getElementById('badge-contador');
@@ -719,7 +718,7 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            const miTelefonoSpaceWings = "521234567890"; // Reemplaza con tu celular comercial real
+            const miTelefonoSpaceWings = "521234567890"; 
 
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
             msg += `👤 *Cliente:* ${cliente}\n`;
