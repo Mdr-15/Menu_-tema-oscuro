@@ -391,6 +391,7 @@
             return celda.trim().replace(/^"|"$/g, '').trim();
         }
 
+        // === CORRECCIÓN ESTRICTA DE MAPEO DE COLUMNAS PARA NOMBRE Y PRECIO ===
         function parsearEstructuraMenu(texto) {
             const lineas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             const individuales = [];
@@ -413,7 +414,6 @@
                 const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
-                // REPARACIÓN EN LAS SIGUIENTES DOS LÍNEAS CRÍTICAS: apuntamos al índice [0] del arreglo
                 if (columnas[0].startsWith('P') && !leyendoCombos) {
                     const producto = {
                         id: columnas[0],
@@ -428,12 +428,13 @@
                     individuales.push(producto);
                 } 
                 
+                // REPARADO: Mapeo exacto de los índices para combos (Id, Nombre, Precio, Categoría interna, Producto interno)
                 if (columnas[0].startsWith('C')) {
                     const comboId = columnas[0];
-                    const nombreCombo = columnas[1];
-                    const precioCombo = parseFloat(columnas[2]) || 0;
-                    const componenteCategoria = columnas[5]; 
-                    const componenteProducto = columnas[6];  
+                    const nombreCombo = columnas[2]; // Captura el Nombre de tu celda de Google Sheets
+                    const precioCombo = parseFloat(columnas[3]) || 0; // Captura el Precio real
+                    const componenteCategoria = columnas[1]; 
+                    const componenteProducto = columnas[5];  
                     
                     const salsasComponente = [];
                     for (let s = 7; s < columnas.length; s++) {
@@ -665,7 +666,6 @@
             actualizarInterfazCarrito();
         }
 
-        // Corrección de la persistencia de las notas escritas en el carrito
         function actualizarNotaItem(uid, textoNota) {
             const item = carrito.find(i => i.uid === uid);
             if (item) item.nota = textoNota;
