@@ -551,33 +551,38 @@
             if (totalTexto) totalTexto.innerText = `$${montoTotal.toFixed(2)}`;
         }
 
-        function despacharPedidoAWhatsApp() {
-            const cliente = document.getElementById('nombre-cliente').value.trim();
-            if (!cliente) { alert("Por favor escribe tu nombre."); return; }
-            if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
+function despacharPedidoAWhatsApp() {
+    const cliente = document.getElementById('nombre-cliente').value.trim();
+    if (!cliente) { alert("Por favor escribe tu nombre."); return; }
+    if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            const miTelefonoSpaceWings = "521234567890"; 
+    // === REEMPLAZA ESTE NÚMERO CON TU TELÉFONO REAL DE ATENCIÓN ===
+    // Debe incluir código de país, sin espacios ni signos de más (Ej: 521XXXXXXXXXX)
+    const miTelefonoSpaceWings = "523411398581"; 
 
-            let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
-            msg += `👤 *Cliente:* ${cliente}\n`;
-            msg += `-------------------------------------------\n`;
+    let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
+    msg += `👤 *Cliente:* ${cliente}\n`;
+    msg += `-------------------------------------------\n`;
 
-            let total = 0;
-            carrito.forEach(item => {
-                const sub = item.precio * item.cantidad;
-                total += sub;
-                msg += `📦 *${item.cantidad}x* ${item.nombre}\n`;
-                if (item.salsa) msg += `   └ Salsa: ${item.salsa}\n`;
-                if (item.descripcion) msg += `   └ ${item.descripcion}\n`;
-                if (item.nota) msg += `   └ Nota especial: _${item.nota}_\n`;
-                msg += `   └ Subtotal: $${sub.toFixed(2)}\n\n`;
-            });
+    let total = 0;
+    carrito.forEach(item => {
+        const sub = item.precio * item.cantidad;
+        total += sub;
+        msg += `📦 *${item.cantidad}x* ${item.nombre}\n`;
+        if (item.salsa) msg += `   └ Salsa: ${item.salsa}\n`;
+        if (item.descripcion) msg += `   └ ${item.descripcion}\n`;
+        if (item.nota) msg += `   └ Nota especial: _${item.nota}_\n`;
+        msg += `   └ Subtotal: $${sub.toFixed(2)}\n\n`;
+    });
 
-            msg += `-------------------------------------------\n`;
-            msg += `💰 *TOTAL A PAGAR:* $${total.toFixed(2)}`;
+    msg += `-------------------------------------------\n`;
+    msg += `💰 *TOTAL A PAGAR:* $${total.toFixed(2)}`;
 
-            window.open(`whatsapp.com{miTelefonoSpaceWings}&text=${encodeURIComponent(msg)}`, '_blank');
-        }
+    // CORRECCIÓN CRÍTICA: Cambiada la estructura del enlace por el formato oficial wa.me
+    const urlApi = `wa.me{miTelefonoSpaceWings}?text=${encodeURIComponent(msg)}`;
+    window.open(urlApi, '_blank');
+}
+
 
         document.addEventListener('DOMContentLoaded', () => {
             cargarMenuCompleto();
