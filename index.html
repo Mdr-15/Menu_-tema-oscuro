@@ -264,7 +264,8 @@
             margin: 4px 0 0 0;
             font-size: 0.9rem;
             color: #fca311;
-            font-style: italic;
+            white-space: pre-line;
+            line-height: 1.3;
         }
 
         .item-precio-sub {
@@ -274,7 +275,7 @@
             color: #fca311;
         }
 
-        /* Controles de Cantidad y Borrado */
+        /* Contoles de Cantidad y Borrado */
         .item-controles-col {
             display: flex;
             align-items: center;
@@ -440,7 +441,6 @@
 
         let carrito = [];
         
-        // Listas globales compartidas para rellenar los selectores de los combos
         let listaPlatillosGlobal = [];
         let listaSalsasGlobal = [];
         let listaSnacksGlobal = [];
@@ -460,13 +460,13 @@
                 let rawCombos = [];
                 let itemIndex = 0;
 
-                // Primer recorrido: Guardar ingredientes y mapear productos individuales
+                // Primer recorrido: Almacenar listas de ingredientes basados en tus filas activas
                 filas.forEach(fila => {
                     const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (col.length >= 5) {
-                        const cat = col[1].replace(/"/g, "").trim();
-                        const prod = col[2].replace(/"/g, "").trim();
-                        const disp = col[4].replace(/"/g, "").trim().toUpperCase();
+                        const cat = col.replace(/"/g, "").trim();
+                        const prod = col.replace(/"/g, "").trim();
+                        const disp = col.replace(/"/g, "").trim().toUpperCase();
 
                         if (disp !== "SI") return;
 
@@ -480,21 +480,21 @@
                     }
                 });
 
-                // Segundo recorrido: Renderizar elementos individuales y acumular los combos
+                // Segundo recorrido: Renderizar elementos individuales e identificar IDs de Combo
                 filas.forEach(fila => {
                     const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (col.length >= 5) {
-                        const cat = col[1].replace(/"/g, "").trim();
-                        const prod = col[2].replace(/"/g, "").trim();
-                        const prec = parseFloat(col[3].replace(/"/g, "").trim()) || 0;
-                        const disp = col[4].replace(/"/g, "").trim().toUpperCase();
+                        const idPlatillo = col.replace(/"/g, "").trim();
+                        const cat = col.replace(/"/g, "").trim();
+                        const prod = col.replace(/"/g, "").trim();
+                        const prec = parseFloat(col.replace(/"/g, "").trim()) || 0;
+                        const disp = col.replace(/"/g, "").trim().toUpperCase();
 
                         if (disp !== "SI") return;
 
                         if (cat === "Combo") {
-                            // Guardamos la configuración del combo para procesarla junta al final
-                            if (!rawCombos.find(c => c.nombre === prod)) {
-                                rawCombos.push({ nombre: prod, precio: prec });
+                            if (!rawCombos.find(c => c.id === idPlatillo)) {
+                                rawCombos.push({ id: idPlatillo, nombre: prod, precio: prec });
                             }
                         } else {
                             const salsas = col.slice(5).map(s => s.replace(/"/g, "").trim()).filter(s => s);
@@ -518,7 +518,7 @@
                                     </div>
                                     ${selectSalsaHtml}
                                     <div class="btn-wrapper">
-                                        <button class="btn-agregar" onclick="meterAlCarrito('${prod}', ${prec}, ${salsas.length > 0 ? itemIndex : null}, false)">
+                                        <button class="btn-agregar" onclick="meterAlCarrito('${prod}', ${prec}, ${salsas.length > 0 ? itemIndex : null}, false, null)">
                                             Agregar +
                                         </button>
                                     </div>
@@ -540,8 +540,74 @@
                     }
                 });
 
-                // Renderizar los Combos con los selectores solicitados
+                // Renderizar los Combos según sus reglas específicas estructurales
                 rawCombos.forEach(combo => {
+                    let configInputsHtml = "";
+                    
+                    // Identificamos el tipo de combo según su nombre o ID de tu excel
+                    const esComboCometa = combo.nombre.toLowerCase().includes("cometa") || combo.id.toUpperCase() === "C2";
+
+                    if (esComboCometa) {
+                        // Combo Cometa: 2 Platillos Principales (con sus respectivas salsas) + 1 Snack
+                        configInputsHtml = `
+                            <div class="salsa-contenedor">
+                                <label class="salsa-label">Platillo Principal 1:</label>
+                                <select id="combo-p1-${itemIndex}" class="salsa-select">
+                                    ${listaPlatillosGlobal.map(p => `<option value="${p}">${p}</option>`).join("")}
+                                </select>
+                            </div>
+                            <div class="salsa-contenedor">
+                                <select id="combo-s1-${itemIndex}" class="salsa-select">
+                                    ${listaSalsasGlobal.map(s => `<option value="Salsa 1: ${s}">Salsa 1: ${s}</option>`).join("")}
+                                </select>
+                            </div>
+                            <div class="salsa-contenedor" style="margin-top:12px;">
+                                <label class="salsa-label">Platillo Principal 2:</label>
+                                <select id="combo-p2-${itemIndex}" class="salsa-select">
+                                    ${listaPlatillosGlobal.map(p => `<option value="${p}">${p}</option>`).join("")}
+                                </select>
+                            </div>
+                            <div class="salsa-contenedor">
+                                <select id="combo-s2-${itemIndex}" class="salsa-select">
+                                    ${listaSalsasGlobal.map(s => `<option value="Salsa 2: ${s}">Salsa 2: ${s}</option>`).join("")}
+                                </select>
+                            </div>
+                            <div class="salsa-contenedor" style="margin-top:12px;">
+                                <label class="salsa-label">Snack Incluido:</label>
+                                <select id="combo-snack1-${itemIndex}" class="salsa-select">
+                                    ${listaSnacksGlobal.map(sn => `<option value="${sn}">${sn}</option>`).join("")}
+                                </select>
+                            </div>
+                        `;
+                    } else {
+                        // Combo Estrella (Por defecto): 1 Platillo Principal (con su salsa) + 2 Snacks
+                        configInputsHtml = `
+                            <div class="salsa-contenedor">
+                                <label class="salsa-label">Platillo Principal:</label>
+                                <select id="combo-p1-${itemIndex}" class="salsa-select">
+                                    ${listaPlatillosGlobal.map(p => `<option value="${p}">${p}</option>`).join("")}
+                                </select>
+                            </div>
+                            <div class="salsa-contenedor">
+                                <select id="combo-s1-${itemIndex}" class="salsa-select">
+                                    ${listaSalsasGlobal.map(s => `<option value="Salsa: ${s}">Salsa: ${s}</option>`).join("")}
+                                </select>
+                            </div>
+                            <div class="salsa-contenedor" style="margin-top:12px;">
+                                <label class="salsa-label">Snack 1:</label>
+                                <select id="combo-snack1-${itemIndex}" class="salsa-select">
+                                    ${listaSnacksGlobal.map(sn => `<option value="${sn}">${sn}</option>`).join("")}
+                                </select>
+                            </div>
+                            <div class="salsa-contenedor">
+                                <label class="salsa-label">Snack 2:</label>
+                                <select id="combo-snack2-${itemIndex}" class="salsa-select">
+                                    ${listaSnacksGlobal.map(sn => `<option value="${sn}">${sn}</option>`).join("")}
+                                </select>
+                            </div>
+                        `;
+                    }
+
                     divCombos.innerHTML += `
                         <div class="producto-card">
                             <div class="producto-header">
@@ -551,36 +617,11 @@
                             
                             <div class="combo-config-box">
                                 <div class="combo-config-titulo">⚙ CONFIGURA TU ${combo.nombre.toUpperCase()}:</div>
-                                
-                                <div class="salsa-contenedor">
-                                    <select id="combo-platillo-${itemIndex}" class="salsa-select">
-                                        ${listaPlatillosGlobal.map(p => `<option value="${p}">${p}</option>`).join("")}
-                                    </select>
-                                </div>
-
-                                <div class="salsa-contenedor">
-                                    <select id="combo-salsa-${itemIndex}" class="salsa-select">
-                                        ${listaSalsasGlobal.map(s => `<option value="Salsa: ${s}">Salsa: ${s}</option>`).join("")}
-                                    </select>
-                                </div>
-
-                                <div class="salsa-contenedor">
-                                    <select id="combo-snack1-${itemIndex}" class="salsa-select">
-                                        <option value="">Elegir Snack 1</option>
-                                        ${listaSnacksGlobal.map(sn => `<option value="${sn}">${sn}</option>`).join("")}
-                                    </select>
-                                </div>
-
-                                <div class="salsa-contenedor">
-                                    <select id="combo-snack2-${itemIndex}" class="salsa-select">
-                                        <option value="">Elegir Snack 2</option>
-                                        ${listaSnacksGlobal.map(sn => `<option value="${sn}">${sn}</option>`).join("")}
-                                    </select>
-                                </div>
+                                ${configInputsHtml}
                             </div>
 
                             <div class="btn-wrapper">
-                                <button class="btn-agregar" onclick="meterAlCarrito('${combo.nombre}', ${combo.precio}, ${itemIndex}, true)">
+                                <button class="btn-agregar" onclick="meterAlCarrito('${combo.nombre}', ${combo.precio}, ${itemIndex}, true, ${esComboCometa})">
                                     Agregar +
                                 </button>
                             </div>
@@ -591,20 +632,26 @@
                 });
 
             } catch (err) {
-                console.error("Fallo de red:", err);
+                console.error("Error al procesar la carga remota:", err);
             }
         }
 
-        function meterAlCarrito(nombre, precio, indexElemento, esCombo) {
+        function meterAlCarrito(nombre, precio, indexElemento, esCombo, esComboCometa) {
             let detallesVariante = "";
 
             if (esCombo) {
-                const platillo = document.getElementById(`combo-platillo-${indexElemento}`).value;
-                const salsa = document.getElementById(`combo-salsa-${indexElemento}`).value;
-                const snack1 = document.getElementById(`combo-snack1-${indexElemento}`).value || "Sin Snack 1";
-                const snack2 = document.getElementById(`combo-snack2-${indexElemento}`).value || "Sin Snack 2";
-                
-                detallesVariante = `${platillo}, ${salsa}, ${snack1}, ${snack2}`;
+                const p1 = document.getElementById(`combo-p1-${indexElemento}`).value;
+                const s1 = document.getElementById(`combo-s1-${indexElemento}`).value;
+                const snack1 = document.getElementById(`combo-snack1-${indexElemento}`).value;
+
+                if (esComboCometa) {
+                    const p2 = document.getElementById(`combo-p2-${indexElemento}`).value;
+                    const s2 = document.getElementById(`combo-s2-${indexElemento}`).value;
+                    detallesVariante = `• ${p1} (${s1})\n• ${p2} (${s2})\n• Snack: ${snack1}`;
+                } else {
+                    const snack2 = document.getElementById(`combo-snack2-${indexElemento}`).value;
+                    detallesVariante = `• ${p1} (${s1})\n• Snack 1: ${snack1}\n• Snack 2: ${snack2}`;
+                }
             } else if (indexElemento !== null) {
                 const selector = document.getElementById(`salsa-${indexElemento}`);
                 detallesVariante = selector ? selector.value : "";
@@ -702,17 +749,17 @@
             let total = 0;
             carrito.forEach(item => {
                 const subtotal = item.precio * item.cantidad;
-                msg += `*${item.cantidad}x* ${item.nombre}`;
-                if(item.salsa) msg += `\n   _Configuración: ${item.salsa}_`;
-                msg += `\n   Precio: $${subtotal.toFixed(2)}\n`;
+                msg += `*${item.cantidad}x* ${item.nombre}\n`;
+                if(item.salsa) msg += `${item.salsa}\n`;
                 if(item.notas.trim() !== "") msg += `   _Nota: ${item.notas}_\n`;
+                msg += `   Subtotal: $${subtotal.toFixed(2)}\n\n`;
                 total += subtotal;
             });
 
             msg += `---------------------------\n`;
             msg += `*Total a Pagar:* $${total.toFixed(2)}`;
 
-            const telefonoLocal = "5210000000000"; // Configura el número real de tu negocio
+            const telefonoLocal = "5210000000000"; // Reemplaza por tu celular comercial real
             window.open(`wa.me{telefonoLocal}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
