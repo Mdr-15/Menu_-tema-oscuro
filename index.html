@@ -9,17 +9,21 @@
         header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); text-align: center; padding: 20px; border-bottom: 1px solid #334155; }
         .logo-text { font-size: 28px; font-weight: 900; letter-spacing: 4px; color: #f59e0b; margin: 0; }
         
+        /* Contenedor Principal */
         .main-container { display: flex; flex-direction: row; flex: 1; max-width: 1200px; width: 100%; margin: 20px auto; padding: 0 20px; gap: 30px; box-sizing: border-box; }
         
+        /* COLUMNA IZQUIERDA: Categorías y Productos */
         .catalog-section { flex: 1; display: flex; flex-direction: column; gap: 25px; }
-        .category-block { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; }
         .category-title { font-size: 18px; color: #f59e0b; border-bottom: 2px solid #1e293b; padding-bottom: 8px; margin: 0; font-weight: 800; text-transform: uppercase; }
+        .products-grid { display: flex; flex-direction: column; gap: 12px; }
         
+        /* Tarjeta de Producto */
         .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .product-main { display: flex; justify-content: space-between; align-items: center; }
-        .product-name { font-size: 16px; font-weight: 700; color: #ffffff; }
+        .product-name { font-size: 16px; font-weight: 700; }
         .product-price { font-size: 15px; font-weight: 800; color: #f59e0b; }
         
+        /* Selectores internos con Grid para Combos */
         .sauce-selector { background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
         .sauce-selector label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
         .combo-grid-selectors { display: grid; grid-template-columns: 1fr; gap: 8px; }
@@ -27,6 +31,7 @@
         
         .add-btn { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #0f172a; border: none; padding: 8px 16px; cursor: pointer; border-radius: 8px; font-weight: 800; font-size: 13px; align-self: flex-end; }
         
+        /* COLUMNA DERECHA: Carrito Compacto */
         .cart-section { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 20px; height: max-content; }
         .digital-cart { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 16px; box-sizing: border-box; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
         .cart-title { font-size: 16px; font-weight: 800; border-bottom: 1px solid #334155; padding-bottom: 10px; margin: 0 0 12px 0; display: flex; justify-content: space-between; }
@@ -48,7 +53,7 @@
         .del-btn { background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 12px; font-weight: bold; }
         
         .summary-box { border-top: 1px dashed #334155; padding-top: 10px; display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 12px; }
-        .loading-text { text-align: center; font-size: 14px; color: #94a3b8; padding: 10px; }
+        .btn-send { padding: 12px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; border: none; width: 100%; cursor: pointer; font-weight: 800; border-radius: 8px; font-size: 13px; text-align: center; text-decoration: none; display: block; box-sizing: border-box; }
 
         @media (max-width: 768px) {
             .main-container { flex-direction: column; padding: 0 10px; }
@@ -63,9 +68,7 @@
     </header>
 
     <div class="main-container">
-        <section class="catalog-section" id="menu-categorias">
-            <div class="loading-text">🔄 Sincronizando menú con Google Sheets...</div>
-        </section>
+        <section class="catalog-section" id="menu-categorias"></section>
 
         <section class="cart-section">
             <div class="digital-cart">
@@ -73,178 +76,176 @@
                 <div class="client-box"><label>Cliente</label><input type="text" id="cliente_input" value="Cliente Nuevo"></div>
                 <div class="cart-list" id="lista-carrito"></div>
                 <div class="summary-box"><span>Total:</span><strong>$<span id="tot">0.00</span></strong></div>
-                <button class="btn-send" style="padding: 12px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #fff; border: none; width: 100%; cursor: pointer; font-weight: 800; border-radius: 8px; font-size: 13px; text-align: center; text-decoration: none; display: block; box-sizing: border-box;" onclick="enviarWhatsApp()">💬 ENVIAR POR WHATSAPP</button>
+                <button class="btn-send" onclick="enviarWhatsApp()">💬 ENVIAR POR WHATSAPP</button>
             </div>
         </section>
     </div>
 
     <script>
-        // Enlace oficial de tu Google Sheets (Formato CSV)
-        const URL_SHEET = "google.com";
-
         const salsasDisponibles = ["Bbq Hot", "Buffalo", "Maracuya Hot", "Mango Habanero", "Piña Habanero", "Fresa Habanero"];
         const snacksDisponibles = ["Papas a la francesa", "Papas Gajo", "Dedos de queso", "Jalapeños rellenos", "Aros de cebolla"];
         const platillosDisponibles = ["Alitas", "Boneless", "Palomitas"];
 
-        let productosCargados = [];
+        const estructuraMenu = [
+            {
+                categoria: "Platillo Principal",
+                items: [
+                    { id: "alitas", nombre: "Alitas", precio: 120.00, requiereSalsa: true },
+                    { id: "boneless", nombre: "Boneless", precio: 120.00, requiereSalsa: true },
+                    { id: "palomitas", nombre: "Palomitas", precio: 120.00, requiereSalsa: true }
+                ]
+            },
+            {
+                categoria: "Snacks",
+                items: [
+                    { id: "Papas_francesa", nombre: "Papas a la francesa", precio: 70.00 },
+                    { id: "Papas_gajo", nombre: "Papas Gajo", precio: 70.00 },
+                    { id: "Dedos_queso", nombre: "Dedos de queso", precio: 80.00 },
+                    { id: "Jalapenos", nombre: "Jalapeños rellenos", precio: 80.00 },
+                    { id: "Aros_cebolla", nombre: "Aros de cebolla", precio: 70.00 }
+                ]
+            },
+            {
+                categoria: "Bebidas",
+                items: [
+                    { id: "coca_400", nombre: "Coca Cola 400 ml", precio: 25.00 },
+                    { id: "coca_600", nombre: "Coca Cola 600 ml", precio: 35.00 },
+                    { id: "coca_25", nombre: "Coca Cola 2.5 Lts", precio: 55.00 }
+                ]
+            },
+            {
+                categoria: "Combos",
+                items: [
+                    { id: "c_estrella", nombre: "Combo Estrella (Platillo + 2 Snacks)", precio: 220.00, tipoCombo: "estrella" },
+                    { id: "c_cometa", nombre: "Combo Cometa (2 Platillos + 1 Snack Fijo)", precio: 260.00, tipoCombo: "cometa" }
+                ]
+            }
+        ];
+
         let carrito = [];
 
-        async function conectarGoogleSheets() {
-            try {
-                const res = await fetch(URL_SHEET);
-                const csvData = await res.text();
+        const contenedorMenu = document.getElementById('menu-categorias');
+        estructuraMenu.forEach(cat => {
+            let catHTML = `<div class="products-grid"><h2 class="category-title">${cat.categoria}</h2>`;
+            
+            cat.items.forEach(prod => {
+                let bloqueSelectores = "";
                 
-                // Procesar saltos de línea sin importar el sistema operativo
-                const lineas = csvData.split(/\r?\n/).slice(1);
-                const mapaCategorias = {};
-
-                lineas.forEach(linea => {
-                    if (!linea.trim()) return;
-                    
-                    // Mapeo seguro limpiando comillas extras y espacios blancos
-                    const col = linea.split(",").map(c => c.replace(/^"|"$/g, '').trim());
-                    if (col.length < 6) return;
-
-                    const producto = {
-                        id: col[0],
-                        categoria: col[1],
-                        nombre: col[2],
-                        precio: parseFloat(col[3]) || 0.00,
-                        config: col[4] ? col[4].toLowerCase() : "individual",
-                        disponible: col[5] ? col[5].toLowerCase() : "no"
-                    };
-
-                    // Validación estricta del filtro de disponibilidad
-                    if (producto.disponible !== "sí" && producto.disponible !== "si") return;
-
-                    if (!mapaCategorias[producto.categoria]) {
-                        mapaCategorias[producto.categoria] = [];
-                    }
-                    mapaCategorias[producto.categoria].push(producto);
-                    productosCargados.push(producto);
-                });
-
-                dibujarMenuDesdeSheets(mapaCategorias);
-
-            } catch (err) {
-                document.getElementById('menu-categorias').innerHTML = `<div class="loading-text" style="color:#ef4444;">❌ Error al conectar con el inventario. Verifica tu enlace de Google Sheets.</div>`;
-            }
-        }
-
-        function dibujarMenuDesdeSheets(categorias) {
-            const contenedor = document.getElementById('menu-categorias');
-            contenedor.innerHTML = "";
-
-            // Validar si la hoja vino vacía
-            if (Object.keys(categorias).length === 0) {
-                contenedor.innerHTML = `<div class="loading-text" style="color:#94a3b8;">⚠️ No hay productos marcados como "Si" en la columna Disponible de tu Sheets.</div>`;
-                return;
-            }
-
-            for (const [nombreCat, items] of Object.entries(categorias)) {
-                let bloqueHTML = `<div class="category-block"><h2 class="category-title">${nombreCat}</h2>`;
-                
-                items.forEach(prod => {
-                    let selectores = "";
-                    
-                    if (prod.config === "salsa") {
-                        selectores = `
-                            <div class="sauce-selector">
-                                <label>Salsa para el platillo:</label>
-                                <select class="sauce-select" id="sel_${prod.id}">
-                                    ${salsasDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
-                                </select>
-                            </div>`;
-                    } else if (prod.config === "estrella") {
-                        selectores = `
-                            <div class="sauce-selector">
-                                <label style="color:#f59e0b; margin-bottom:4px; display:block;">⚙️ Configura tu Combo Estrella:</label>
-                                <div class="combo-grid-selectors">
-                                    <select class="sauce-select" id="platillo_${prod.id}">
-                                        ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
-                                    </select>
-                                    <select class="sauce-select" id="salsacombo_${prod.id}">
-                                        ${salsasDisponibles.map(s => `<option value="${s}">Salsa: ${s}</option>`).join('')}
-                                    </select>
-                                    <select class="sauce-select" id="snack1_${prod.id}">
-                                        <option value="" disabled selected>Elegir Snack 1</option>
-                                        ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
-                                    </select>
-                                    <select class="sauce-select" id="snack2_${prod.id}">
-                                        <option value="" disabled selected>Elegir Snack 2</option>
-                                        ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
-                                    </select>
-                                </div>
-                            </div>`;
-                    } else if (prod.config === "cometa") {
-                        selectores = `
-                            <div class="sauce-selector">
-                                <label style="color:#f59e0b; margin-bottom:4px; display:block;">⚙️ Configura tu Combo Cometa:</label>
-                                <div class="combo-grid-selectors">
-                                    <span style="font-size:11px; font-weight:bold; color:#94a3b8;">PLATILLO PRINCIPAL 1:</span>
-                                    <select class="sauce-select" id="c1_p1_${prod.id}">
-                                        ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
-                                    </select>
-                                    <select class="sauce-select" id="c1_s1_${prod.id}">
-                                        ${salsasDisponibles.map(s => `<option value="${s}">Salsa 1: ${s}</option>`).join('')}
-                                    </select>
-
-                                    <span style="font-size:11px; font-weight:bold; color:#94a3b8; margin-top:4px;">PLATILLO PRINCIPAL 2:</span>
-                                    <select class="sauce-select" id="c2_p2_${prod.id}">
-                                        ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
-                                    </select>
-                                    <select class="sauce-select" id="c2_s2_${prod.id}">
-                                        ${salsasDisponibles.map(s => `<option value="${s}">Salsa 2: ${s}</option>`).join('')}
-                                    </select>
-
-                                    <span style="font-size:11px; font-weight:bold; color:#94a3b8; margin-top:4px;">SNACK INCLUIDO (FIJO):</span>
-                                    <select class="sauce-select" id="snack_fijo_${prod.id}">
-                                        ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
-                                    </select>
-                                </div>
-                            </div>`;
-                    }
-
-                    bloqueHTML += `
-                        <div class="product-card">
-                            <div class="product-main">
-                                <span class="product-name">${prod.nombre}</span>
-                                <span class="product-price">$${prod.precio.toFixed(2)}</span>
-                            </div>
-                            ${selectores}
-                            <button class="add-btn" onclick="agregarAlCarrito('${prod.id}')">Agregar +</button>
+                if (prod.requiereSalsa) {
+                    bloqueSelectores = `
+                        <div class="sauce-selector">
+                            <label>Salsa para el platillo:</label>
+                            <select class="sauce-select" id="salsa_${prod.id}">
+                                ${salsasDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
+                            </select>
                         </div>`;
-                });
+                }
+                
+                // Renderizado para el Combo Estrella (1 Platillo + 2 Snacks de libre elección)
+                if (prod.tipoCombo === "estrella") {
+                    bloqueSelectores = `
+                        <div class="sauce-selector">
+                            <label style="color:#f59e0b; margin-bottom:4px; display:block;">⚙️ Configura tu Combo Estrella:</label>
+                            <div class="combo-grid-selectors">
+                                <select class="sauce-select" id="platillo_${prod.id}">
+                                    ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="salsacombo_${prod.id}">
+                                    ${salsasDisponibles.map(s => `<option value="${s}">Salsa: ${s}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="snack1_${prod.id}">
+                                    <option value="" disabled selected>Elegir Snack 1</option>
+                                    ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="snack2_${prod.id}">
+                                    <option value="" disabled selected>Elegir Snack 2</option>
+                                    ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>`;
+                }
 
-                bloqueHTML += `</div>`;
-                contenedor.innerHTML += bloqueHTML;
-            }
-        }
+                // Renderizado para el Combo Cometa (2 Platillos libres + 1 Snack Predeterminado/Fijo)
+                if (prod.tipoCombo === "cometa") {
+                    bloqueSelectores = `
+                        <div class="sauce-selector">
+                            <label style="color:#f59e0b; margin-bottom:4px; display:block;">⚙️ Configura tu Combo Cometa:</label>
+                            <div class="combo-grid-selectors">
+                                <span style="font-size:11px; font-weight:bold; color:#94a3b8; display:block; margin-top:2px;">PLATILLO PRINCIPAL 1:</span>
+                                <select class="sauce-select" id="c1_p1_${prod.id}">
+                                    ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="c1_s1_${prod.id}">
+                                    ${salsasDisponibles.map(s => `<option value="${s}">Salsa 1: ${s}</option>`).join('')}
+                                </select>
 
-        function agregarAlCarrito(prodId) {
-            const prod = productosCargados.find(p => p.id === prodId);
+                                <span style="font-size:11px; font-weight:bold; color:#94a3b8; display:block; margin-top:6px;">PLATILLO PRINCIPAL 2:</span>
+                                <select class="sauce-select" id="c2_p2_${prod.id}">
+                                    ${platillosDisponibles.map(p => `<option value="${p}">${p}</option>`).join('')}
+                                </select>
+                                <select class="sauce-select" id="c2_s2_${prod.id}">
+                                    ${salsasDisponibles.map(s => `<option value="${s}">Salsa 2: ${s}</option>`).join('')}
+                                </select>
+
+                                <span style="font-size:11px; font-weight:bold; color:#94a3b8; display:block; margin-top:6px;">SNACK INCLUIDO (FIJO):</span>
+                                <select class="sauce-select" id="snack_fijo_${prod.id}">
+                                    ${snacksDisponibles.map(s => `<option value="${s}">${s}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>`;
+                }
+
+                catHTML += `
+                    <div class="product-card">
+                        <div class="product-main">
+                            <span class="product-name">${prod.nombre}</span>
+                            <span class="product-price">$${prod.precio.toFixed(2)}</span>
+                        </div>
+                        ${bloqueSelectores}
+                        <button class="add-btn" onclick="agregarAlCarrito('${cat.categoria}', '${prod.id}')">Agregar +</button>
+                    </div>`;
+            });
+            
+            catHTML += `</div>`;
+            contenedorMenu.innerHTML += catHTML;
+        });
+
+        function agregarAlCarrito(catNombre, prodId) {
+            const cat = estructuraMenu.find(c => c.categoria === catNombre);
+            const prod = cat.items.find(p => p.id === prodId);
+            
             let configuracionAdicional = "";
 
-            if (prod.config === "estrella") {
+            if (prod.tipoCombo === "estrella") {
                 const pBase = document.getElementById(`platillo_${prodId}`).value;
                 const sCombo = document.getElementById(`salsacombo_${prodId}`).value;
                 const s1 = document.getElementById(`snack1_${prodId}`).value;
                 const s2 = document.getElementById(`snack2_${prodId}`).value;
-                if (!s1 || !s2) { alert("Selecciona ambos snacks."); return; }
-                configuracionAdicional = `[${pBase} b. en ${sCombo} + ${s1} + ${s2}]`;
-            } else if (prod.config === "cometa") {
+
+                if (!s1 || !s2) {
+                    alert("Por favor, selecciona ambos snacks antes de agregar el combo.");
+                    return;
+                }
+                configuracionAdicional = `[${pBase} c/ ${sCombo} + ${s1} + ${s2}]`;
+            } else if (prod.tipoCombo === "cometa") {
                 const p1 = document.getElementById(`c1_p1_${prodId}`).value;
                 const s1 = document.getElementById(`c1_s1_${prodId}`).value;
                 const p2 = document.getElementById(`c2_p2_${prodId}`).value;
                 const s2 = document.getElementById(`c2_s2_${prodId}`).value;
                 const snackFijo = document.getElementById(`snack_fijo_${prodId}`).value;
+
                 configuracionAdicional = `[${p1} c/ ${s1} + ${p2} c/ ${s2} + ${snackFijo}]`;
-            } else if (prod.config === "salsa") {
-                configuracionAdicional = document.getElementById(`sel_${prodId}`).value;
+            } else if (prod.requiereSalsa) {
+                configuracionAdicional = document.getElementById(`salsa_${prodId}`).value;
             }
 
             const existe = carrito.find(item => item.id === prodId && item.detalles === configuracionAdicional);
-            if (existe) { existe.cantidad++; } else { carrito.push({ ...prod, cantidad: 1, detalles: configuracionAdicional, comentario: "" }); }
+            
+            if (existe) {
+                existe.cantidad++;
+            } else {
+                carrito.push({ ...prod, cantidad: 1, detalles: configuracionAdicional, comentario: "" });
+            }
             actualizarInterfaz();
         }
 
@@ -252,7 +253,9 @@
             const item = carrito.find(p => p.id === id && p.detalles === detalles);
             if (!item) return;
             item.cantidad += cambio;
-            if (item.cantidad <= 0) { carrito = carrito.filter(p => !(p.id === id && p.detalles === detalles)); }
+            if (item.cantidad <= 0) {
+                carrito = carrito.filter(p => !(p.id === id && p.detalles === detalles));
+            }
             actualizarInterfaz();
         }
 
@@ -268,14 +271,19 @@
 
         function actualizarInterfaz() {
             const listaHTML = document.getElementById('lista-carrito');
-            listaHTML.innerHTML = (carrito.length === 0) ? `<div style="text-align:center; color:#64748b; padding:20px; font-size:12px;">Carrito vacío.</div>` : "";
-            
-            let cuentaTotal = 0, totalArticulos = 0;
+            listaHTML.innerHTML = "";
+            let cuentaTotal = 0;
+            let totalArticulos = 0;
+
+            if(carrito.length === 0) {
+                listaHTML.innerHTML = `<div style="text-align:center; color:#64748b; padding:20px; font-size:12px;">Carrito vacío.</div>`;
+            }
 
             carrito.forEach(item => {
                 let importeItem = item.precio * item.cantidad;
                 cuentaTotal += importeItem;
                 totalArticulos += item.cantidad;
+
                 let lineaDetalle = item.detalles ? `<div class="item-sauce">${item.detalles}</div>` : "";
 
                 listaHTML.innerHTML += `
@@ -301,7 +309,7 @@
             document.getElementById('tot').textContent = cuentaTotal.toFixed(2);
         }
 
-       function enviarWhatsApp() {
+        function enviarWhatsApp() {
     if(carrito.length === 0) {
         alert("Por favor, agrega al menos un producto al carrito antes de enviar.");
         return;
