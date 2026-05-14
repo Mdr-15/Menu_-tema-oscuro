@@ -221,32 +221,48 @@
             return celda.trim().replace(/^"|"$/g, '').trim();
         }
 
-        // === PROCESADOR INDEPENDIENTE DE CABECERAS ===
+        // === ESCÁNER MAPEADOR INTELIGENTE BASADO EN TU IMAGEN REAL ===
         function parsearEstructuraMenu(texto) {
             const lineas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             const individuales = [];
             const combosAgrupados = {};
 
-            // Mapeo de columnas fijas seguras para la tabla superior
-            const idxId = 0, idxCat = 1, idxNom = 2, idxPre = 3, idxDisp = 4;
+            // Índices de la cabecera del archivo
+            let cabeceraGlobal = lineas[0].split(',').map(limpiarTextoSheets);
             
-            // Mapeo seguro para la tabla de combos (Estructura de tu captura)
-            const idxComboId = 0, idxComboNom = 1, idxComboPre = 2, idxComboPaso = 5, idxComboProd = 6;
+            // Localizamos dinámicamente las columnas de la tabla superior de productos individuales
+            let idxId = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'id_platillo');
+            let idxCat = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'categoria');
+            let idxNom = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'producto');
+            let idxPre = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'precio');
+            let idxDisp = cabeceraGlobal.findIndex(c => c.toLowerCase() === 'disponible');
+
+            // Índices especiales para la tabla de Combos (Segunda estructura)
+            let idxComboPaso = -1;
+            let idxComboProd = -1;
 
             for (let i = 0; i < lineas.length; i++) {
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                // Omitir líneas de control o vacías
                 if (!columnas || columnas[idxId] === 'Id_platillo' || columnas[idxId] === 'CONF') {
+                    // Si encontramos una fila que redefine cabeceras abajo, recalculamos los índices de combos
+                    if (columnas && columnas[idxId] === 'Id_platillo' && i > 1) {
+                        // Encontramos los índices de los pasos de combos basados en la fila de títulos
+                        idxComboPaso = columnas.findIndex((c, idx) => c.toLowerCase() === 'categoria' && idx > idxCat);
+                        idxComboProd = columnas.findIndex((c, idx) => c.toLowerCase() === 'producto' && idx > idxNom);
+                    }
                     continue;
                 }
 
-                // Switch de disponibilidad en la columna E (índice 4)
+                // Si por alguna razón no se auto-detectaron las columnas de combos, fijamos los valores de tu imagen
+                if (idxComboPaso === -1) idxComboPaso = 5;  // Columna F (Categoria interna)
+                if (idxComboProd === -1) idxComboProd = 6;  // Columna G (Producto interno)
+
                 const disponible = columnas[idxDisp] ? columnas[idxDisp].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
-                // DETECCIÓN INDEPENDIENTE: Si el ID empieza con P, va a productos individuales
+                // 1. CARGA DE PLATILLOS INDIVIDUALES (P)
                 if (columnas[idxId].startsWith('P')) {
                     const producto = {
                         id: columnas[idxId],
@@ -255,22 +271,26 @@
                         precio: parseFloat(columnas[idxPre]) || 0,
                         salsas: []
                     };
-                    for (let s = 5; s < columnas.length; s++) {
-                        if (columnas[s]) producto.salsas.push(columnas[s]);
+                    // Las salsas inician a la derecha de la columna Disponible (columna F en adelante)
+                    for (let s = idxDisp + 1; s < columnas.length; s++) {
+                        // Saltamos las celdas vacías intermedias que genera Google Sheets
+                        if (columnas[s] && s < idxComboPaso) {
+                            producto.salsas.push(columnas[s]);
+                        }
                     }
                     individuales.push(producto);
                 } 
                 
-                // DETECCIÓN INDEPENDIENTE: Si el ID empieza con C, va a la matriz de combos configurables
+                // 2. CARGA DE COMBOS DINÁMICOS CON COMBINACIÓN LIBRE (C)
                 if (columnas[idxId].startsWith('C')) {
-                    const comboId = columnas[idxComboId];
-                    const nombreCombo = columnas[idxComboNom]; 
-                    const precioCombo = parseFloat(columnas[idxComboPre]) || 0; 
+                    const comboId = columnas[idxId];
+                    const nombreCombo = columnas[idxNom]; // Columna C ("C.Estrella", "C.cometa", "Super wolf")
+                    const precioCombo = parseFloat(columnas[idxPre]) || 0; // Columna D (200, 300, 150)
                     
-                    const componenteCategoria = columnas[idxComboPaso]; // "Platillo Principal 1", "Snacks 1"
-                    const componenteProducto = columnas[idxComboProd];  // "Alitas", "Boneless", "Papas"
+                    const componenteCategoria = columnas[idxComboPaso]; // Columna F ("Platillo Principal 1", "Snacks 1")
+                    const componenteProducto = columnas[idxComboProd];  // Columna G ("Alitas", "Boneless", "Palomitas")
                     
-                    // Extraer salsas específicas si existen a la derecha de la comida
+                    // Las salsas opcionales del combo inician en la columna H en adelante
                     const salsasComponente = [];
                     for (let s = idxComboProd + 1; s < columnas.length; s++) {
                         if (columnas[s]) salsasComponente.push(columnas[s]);
@@ -564,7 +584,7 @@
                 msg += `📦 *${item.cantidad}x* ${item.nombre}\n`;
                 if (item.salsa) msg += `   └ Salsa: ${item.salsa}\n`;
                 if (item.descripcion) msg += `   └ ${item.descripcion}\n`;
-                if (item.nota) msg += `   └ Note especial: _${item.nota}_\n`;
+                if (item.nota) msg += `   └ Nota especial: _${item.nota}_\n`;
                 msg += `   └ Subtotal: $${sub.toFixed(2)}\n\n`;
             });
 
