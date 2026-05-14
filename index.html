@@ -329,10 +329,7 @@
             font-size: 0.85rem; 
             letter-spacing: 0.5px; 
         }
-
-        /* ======================================================== */
-        /* --- ESTILOS DE REDISEÑO: CARRITO FLOTANTE EN CELULARES --- */
-        /* ======================================================== */
+        /* --- DISEÑO RESPONSIVO: CARRITO FLOTANTE MINIMIZABLE EN CELULAR --- */
         @media (max-width: 990px) { 
             body { 
                 flex-direction: column; 
@@ -342,24 +339,73 @@
             }
             main {
                 padding: 15px;
-                padding-bottom: 340px; /* Deja espacio abajo para que los combos no queden tapados por el carrito flotante */
+                padding-bottom: 90px; /* Deja espacio exacto para la barra delgada flotante */
             }
+            
+            /* El panel lateral se convierte en una barra colapsable */
             aside.panel-pedido { 
                 width: 100%; 
-                height: 300px; /* Tamaño fijo reducido para el celular */
-                position: fixed; /* Se vuelve flotante fijo */
+                height: auto;
+                max-height: 60px; /* Altura compacta por defecto: NO tapa tus artículos */
+                position: fixed; 
                 bottom: 0; 
                 left: 0;
                 right: 0;
                 border-left: none; 
-                border-top: 3px solid #ff9f00; /* Borde dorado característico en la parte superior */
+                border-top: 2px solid #ff9f00; 
                 background-color: #161a1f;
-                padding: 12px;
-                box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5); /* Sombra elegante para dar efecto de flotado */
-                border-radius: 12px 12px 0 0; /* Bordes redondeados superiores */
+                padding: 10px 15px;
+                box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.7); 
+                border-radius: 16px 16px 0 0; 
+                overflow: hidden;
+                transition: max-height 0.4s ease-in-out; /* Animación suave al abrir/cerrar */
+                z-index: 9999;
             } 
+            
+            /* Clase dinámica que se activará desde JS para expandir el carrito completo */
+            aside.panel-pedido.expandido {
+                max-height: 80vh; /* Se abre hacia arriba cubriendo el 80% de la pantalla de forma controlada */
+                overflow-y: auto;
+            }
+
+            /* Forzamos que la cabecera del pedido actúe como un botón táctil */
+            .cabecera-pedido {
+                cursor: pointer;
+                padding-bottom: 5px;
+            }
+
             .Carrito-elementos {
-                max-height: 110px; /* Limita las filas internas para que quepa todo sin desbordar el tamaño flotante */
+                max-height: 250px; 
+                margin-top: 10px;
+            }
+            
+            /* Ocultamos el campo del cliente si el carrito está cerrado para ahorrar espacio */
+            aside.panel-pedido:not(.expandido) .Cliente,
+            aside.panel-pedido:not(.expandido) .Carrito-elementos,
+            aside.panel-pedido:not(.expandido) .Boton-enviar {
+                display: none !important;
+            }
+            
+            /* Rediseño de la barra delgada inferior cuando está colapsado */
+            aside.panel-pedido:not(.expandido) .Total {
+                border-top: none;
+                margin-top: 0;
+                padding-top: 0;
+                display: inline-flex;
+                float: left;
+                font-size: 1rem;
+                line-height: 24px;
+            }
+            
+            /* Añadimos una flecha indicadora o texto de apoyo visual en móviles */
+            .cabecera-pedido::after {
+                content: ' 🔼 Ver Carrito';
+                color: #ff9f00;
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
+            aside.panel-pedido.expandido .cabecera-pedido::after {
+                content: ' 🔽 Ocultar';
             }
         }
     </style>
@@ -539,7 +585,7 @@
 
                 for (const [nombreSeccion, opciones] of Object.entries(combo.secciones)) {
                     const idSelectProducto = `combo-${combo.id}-prod-${indexPaso}`;
-                    const idSelectSalsa = `combo-${combo.id}-salsa-${indexPaso}`;
+                    const idSelectSalsa = `combo-${combo.id}-salsa-${indexPaso}`;        
                     
                     const esPlatilloPrincipal = nombreSeccion.toLowerCase().includes("platillo principal");
                     const esFijo = opciones.length === 1;
@@ -767,7 +813,7 @@ function despacharPedidoAWhatsApp() {
     // COLOCA AQUÍ TU TELÉFONO REAL DE ATENCIÓN (CON CLAVE DE PAÍS, SIN ESPACIOS NI SIGNOS +)
     // Ej: "521XXXXXXXXXX" (Si es México, pon 521 seguido de tus 10 dígitos)
     // =========================================================================
-    const miTelefonoSpaceWings = "521234567890"; 
+    //const miTelefonoSpaceWings = "521234567890"; 
 
     // Estructurar el texto que llegará a tu celular
     let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
@@ -813,10 +859,49 @@ function despacharPedidoAWhatsApp() {
             document.getElementById('nombre-cliente').value = '';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarMenuCompleto();
-            document.getElementById('btn-whatsapp').addEventListener('click', despacharPedidoAWhatsApp);
+       document.addEventListener('DOMContentLoaded', () => {
+    cargarMenuCompleto();
+    
+    const btnWhatsapp = document.getElementById('btn-whatsapp');
+    if (btnWhatsapp) {
+        btnWhatsapp.addEventListener('click', despacharPedidoAWhatsApp);
+    }
+
+    // LÓGICA MÓVIL: Abre/cierra el carrito al tocar la barra superior en celular
+    const panelPedido = document.querySelector('aside.panel-pedido');
+    const cabeceraPedido = document.querySelector('.cabecera-pedido') || document.querySelector('aside.panel-pedido h2');
+    
+    if (cabeceraPedido && panelPedido) {
+        cabeceraPedido.addEventListener('click', () => {
+            if (window.innerWidth <= 990) {
+                panelPedido.classList.toggle('expandido');
+            }
         });
+    }
+});
+
+// Interceptores para abrir el carrito hacia arriba de forma automática al presionar "AGREGAR +"
+const originalAgregarIndividual = agregarIndividualAlCarrito;
+agregarIndividualAlCarrito = function(id) {
+    originalAgregarIndividual(id);
+    forzarAperturaCarritoMovil();
+};
+
+const originalAgregarCombo = agregarComboEstructuraNueva;
+if (typeof agregarComboEstructuraNueva !== 'undefined') {
+    agregarComboEstructuraNueva = function(comboId) {
+        originalAgregarCombo(comboId);
+        forzarAperturaCarritoMovil();
+    };
+}
+
+function forzarAperturaCarritoMovil() {
+    if (window.innerWidth <= 990) {
+        const panel = document.querySelector('aside.panel-pedido');
+        if (panel) panel.classList.add('expandido');
+    }
+}
+
     </script>
 </body>
 </html>
