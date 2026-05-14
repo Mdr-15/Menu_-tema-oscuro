@@ -67,7 +67,7 @@
             margin: 10px 0; 
         }
 
-        /* --- CONFIGURADOR DE COMBOS (ESTILO DE TU INTERFAZ GRÁFICA) --- */
+        /* --- CONFIGURADOR DE COMBOS (ESTILO EXACTO DE TU IMAGEN) --- */
         .tarjeta-combo-full {
             background-color: #161a1f;
             border: 1px solid #232931;
@@ -139,7 +139,7 @@
             background-position: calc(100% - 12px) center;
         }
         select:disabled {
-            color: #4a5568;
+            color: #718096;
             background-color: #13171c;
             cursor: not-allowed;
             border-color: #1a202c;
@@ -236,7 +236,7 @@
 
     <script>
         // =========================================================================
-        // CONFIGURACIÓN: INSERTA TU ENLACE CSV PUBLICADO DE GOOGLE SHEETS EN ESTA VARIABLE
+        // CONFIGURACIÓN: CAMBIA ESTO POR TU LINK DE GOOGLE SHEETS EN FORMATO CSV SI LO USAS EN VIVO
         // =========================================================================
         const urlGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv"; 
 
@@ -258,7 +258,6 @@
             }
         }
 
-        // CONTROLADOR SANITIZADOR: Remueve de forma segura comillas dobles y saltos internos de línea
         function limpiarTextoSheets(celda) {
             if (!celda) return '';
             return celda.trim().replace(/^"|"$/g, '').trim();
@@ -272,27 +271,21 @@
 
             for (let i = 0; i < lineas.length; i++) {
                 const linea = lineas[i];
-                
-                // Mapeo inicial de separación limpiando comillas automáticas del CSV de Google
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                // Control de salto de sección lógica hacia la matriz de combos inferiores
                 if (columnas[0] && columnas[0].toLowerCase().includes('id_platillo') && i > 3) {
                     leyendoCombos = true;
                     continue;
                 }
 
-                // Evita procesar marcas de configuración de la hoja de cálculo
                 if (!columnas[0] || columnas[0] === 'CONF' || columnas[0].toLowerCase().includes('id_platillo')) {
                     continue;
                 }
 
-                // Validar bandera booleana de disponibilidad en la columna E (Índice 4)
                 const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
                 if (!leyendoCombos) {
-                    // === PARSEO DE PRODUCTOS INDIVIDUALES (P1 - P8) ===
                     if (columnas[0].startsWith('P')) {
                         const producto = {
                             id: columnas[0],
@@ -301,14 +294,12 @@
                             precio: parseFloat(columnas[3]) || 0,
                             salsas: []
                         };
-                        // Colecciona dinámicamente el listado de salsas mapeadas horizontalmente
                         for (let s = 5; s < columnas.length; s++) {
                             if (columnas[s]) producto.salsas.push(columnas[s]);
                         }
                         individuales.push(producto);
                     }
                 } else {
-                    // === PARSEO Y AGRUPACIÓN DE COMBOS DINÁMICOS (C1 - C3) ===
                     if (columnas[0].startsWith('C')) {
                         const comboId = columnas[0];
                         const nombreCombo = columnas[2] || 'Combo Especial';
@@ -319,7 +310,6 @@
                             nombreItem: columnas[6] || '',
                             salsas: []
                         };
-                        // Colecciona las variantes de salsa elegibles del artículo interno
                         for (let s = 7; s < columnas.length; s++) {
                             if (columnas[s]) filaItem.salsas.push(columnas[s]);
                         }
@@ -362,6 +352,7 @@
             });
         }
 
+        // === CONVERSOR DE SELECTORES DE COMBO CON ETIQUETADO FIEL A TU IMAGEN ===
         function renderizarCombosDinamicos(combos) {
             const contenedor = document.getElementById('contenedor-combos');
             if (!contenedor) return;
@@ -369,13 +360,25 @@
 
             combos.forEach(combo => {
                 let htmlCampos = '';
+                let contadorPlatillo = 1;
+                let contadorSalsa = 1;
                 
                 combo.filas.forEach((fila, index) => {
                     const idSelectProducto = `combo-${combo.id}-prod-${index}`;
                     const idSelectSalsa = `combo-${combo.id}-salsa-${index}`;
                     
-                    // Condicionamiento automático si el snack viene bloqueado fijo (ej. Papas)
                     const esFijo = combo.filas.filter(f => f.categoriaItem === fila.categoriaItem).length === 1 && fila.categoriaItem.toLowerCase().includes("snack");
+                    const esPlatilloPrincipal = fila.categoriaItem.toLowerCase().includes("platillo principal");
+                    
+                    // Asignación de etiquetas según tu imagen de referencia
+                    let etiquetaItem = `${fila.categoriaItem.toUpperCase()} ${contadorPlatillo}:`;
+                    if (esPlatilloPrincipal) {
+                        etiquetaItem = `PLATILLO PRINCIPAL ${contadorPlatillo}:`;
+                        contadorPlatillo++;
+                    } else if (esFijo) {
+                        etiquetaItem = `SNACK INCLUIDO (FIJO):`;
+                    }
+
                     const productosOpcion = baseDatosProductos.individuales.filter(p => p.categoria.toLowerCase() === fila.categoriaItem.toLowerCase());
 
                     let opcionesProductos = `<option value="">-- Selecciona un artículo --</option>`;
@@ -389,17 +392,18 @@
                     if (fila.salsas.length > 0) {
                         bloqueSalsa = `
                             <div class="campo-grupo" style="margin-top:10px;">
-                                <label>Salsa ${index + 1}:</label>
+                                <label>SALSA ${contadorSalsa}: ${fila.salsas[0] || ''}</label>
                                 <select id="${idSelectSalsa}">
                                     <option value="">-- Selecciona tu Salsa --</option>
                                     ${fila.salsas.map(s => `<option value="${s}">${s}</option>`).join('')}
                                 </select>
                             </div>`;
+                        contadorSalsa++;
                     }
 
                     htmlCampos += `
                         <div class="campo-grupo">
-                            <label>${fila.categoriaItem === 'Snacks' && esFijo ? 'SNACK INCLUIDO (FIJO):' : `${fila.categoriaItem} ${index + 1}:`}</label>
+                            <label>${etiquetaItem}</label>
                             <select id="${idSelectProducto}" onchange="actualizarSalsasCombo('${combo.id}', ${index})">
                                 ${opcionesProductos}
                             </select>
@@ -414,7 +418,7 @@
                             <span class="precio-combo">$${combo.precio.toFixed(2)}</span>
                         </div>
                         <div class="config-box">
-                            <div class="config-box-titulo">⚙️ Configura tu ${combo.nombre}:</div>
+                            <div class="config-box-titulo">⚙️ Configura tu ${combo.nombre.toLowerCase()}:</div>
                             ${htmlCampos}
                         </div>
                         <div style="overflow:hidden;">
@@ -562,7 +566,6 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            // MODIFICA ESTA VARIABLE CON TU NÚMERO DE TELÉFONO DE ATENCIÓN REAL
             const miTelefonoSpaceWings = "521234567890"; 
 
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
