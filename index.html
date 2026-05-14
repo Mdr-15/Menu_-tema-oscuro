@@ -67,7 +67,7 @@
             margin: 10px 0; 
         }
 
-        /* --- CONFIGURADOR DE COMBOS CORREGIDO --- */
+        /* --- CONFIGURADOR DE COMBOS CORREGIDO (ESTILO TU IMAGEN) --- */
         .tarjeta-combo-full {
             background-color: #161a1f;
             border: 1px solid #232931;
@@ -211,7 +211,7 @@
     </aside>
 
     <script>
-        // Si usas Google Sheets directo en vivo, reemplaza "productos.csv" por tu URL pública
+        // Si tienes tu enlace en vivo de Google Sheets, pégalo en lugar de "productos.csv"
         const urlGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv"; 
 
         let baseDatosProductos = { individuales: [], combos: [] };
@@ -247,25 +247,25 @@
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                if (columnas && columnas[0].toLowerCase().includes('id_platillo') && i > 3) {
+                if (columnas && columnas.toLowerCase().includes('id_platillo') && i > 3) {
                     leyendoCombos = true;
                     continue;
                 }
 
-                if (!columnas || columnas[0] === 'CONF' || columnas[0].toLowerCase().includes('id_platillo')) {
+                if (!columnas || columnas === 'CONF' || columnas.toLowerCase().includes('id_platillo')) {
                     continue;
                 }
 
-                const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
+                const disponible = columnas ? columnas.toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
                 if (!leyendoCombos) {
-                    if (columnas[0].startsWith('P')) {
+                    if (columnas.startsWith('P')) {
                         const producto = {
-                            id: columnas[0],
-                            categoria: columnas[1] || 'General',
-                            nombre: columnas[2] || 'Producto',
-                            precio: parseFloat(columnas[3]) || 0,
+                            id: columnas,
+                            categoria: columnas || 'General',
+                            nombre: columnas || 'Producto',
+                            precio: parseFloat(columnas) || 0,
                             salsas: []
                         };
                         for (let s = 5; s < columnas.length; s++) {
@@ -274,18 +274,17 @@
                         individuales.push(producto);
                     }
                 } else {
-                    if (columnas[0].startsWith('C')) {
-                        const comboId = columnas[0];
-                        const nombreCombo = columnas[2] || 'Combo Especial';
-                        const precioCombo = parseFloat(columnas[3]) || 0;
+                    if (columnas.startsWith('C')) {
+                        const comboId = columnas;
+                        const nombreCombo = columnas || 'Combo Especial';
+                        const precioCombo = parseFloat(columnas) || 0;
                         
                         const filaItem = {
-                            categoriaItem: columnas[5] || '',
-                            nombreItem: columnas[6] || '',
+                            categoriaItem: columnas || '',
+                            nombreItem: columnas || '',
                             salsasEspecificas: []
                         };
                         
-                        // Extrae todas las columnas de salsas de la fila del combo (desde columna 7 en adelante)
                         for (let s = 7; s < columnas.length; s++) {
                             if (columnas[s]) filaItem.salsasEspecificas.push(columnas[s]);
                         }
@@ -328,7 +327,7 @@
             });
         }
 
-        // === RENDERIZADO INTERACTIVO REPARADO ===
+        // === RENDERIZADO INTERACTIVO CORREGIDO CON AUTO-CARGA DE SALSAS ===
         function renderizarCombosDinamicos(combos) {
             const contenedor = document.getElementById('contenedor-combos');
             if (!contenedor) return;
@@ -339,6 +338,9 @@
                 let contadorPlatillo = 1;
                 let contadorSalsa = 1;
                 
+                // Arreglo temporal para guardar qué selectores debemos rellenar en el arranque automático
+                let selectoresAInicializar = [];
+
                 combo.filas.forEach((fila, index) => {
                     const idSelectProducto = `combo-${combo.id}-prod-${index}`;
                     const idSelectSalsa = `combo-${combo.id}-salsa-${index}`;
@@ -357,33 +359,39 @@
                     const productosOpcion = baseDatosProductos.individuales.filter(p => p.categoria.toLowerCase() === fila.categoriaItem.toLowerCase());
 
                     let opcionesProductos = `<option value="">-- Selecciona un artículo --</option>`;
+                    let idPreseleccionado = "";
+
                     if(productosOpcion.length > 0) {
-                        opcionesProductos = productosOpcion.map(p => `<option value="${p.id}" ${esFijo ? 'selected' : ''}>${p.nombre}</option>`).join('');
+                        // Preselecciona automáticamente la primera opción del menú (ej. "Alitas") para agilizar el proceso
+                        idPreseleccionado = productosOpcion.id;
+                        opcionesProductos = productosOpcion.map((p, idx) => `<option value="${p.id}" ${idx === 0 || esFijo ? 'selected' : ''}>${p.nombre}</option>`).join('');
                     } else {
                         opcionesProductos = `<option value="${fila.nombreItem}" selected>${fila.nombreItem}</option>`;
                     }
 
-                    // REPARACIÓN: Si la fila tiene salsas explícitas, las usa. Si no, busca las salsas globales del menú del platillo.
-                    let salsasAElegir = [...fila.salsasEspecificas];
-                    
                     let bloqueSalsa = '';
-                    // Mostramos la caja de salsa únicamente para platillos principales
                     if (esPlatilloPrincipal) {
                         bloqueSalsa = `
                             <div class="campo-grupo" style="margin-top:10px;">
                                 <label>SALSA ${contadorSalsa}:</label>
                                 <select id="${idSelectSalsa}">
-                                    <option value="">-- Selecciona tu Salsa --</option>
-                                    ${salsasAElegir.map(s => `<option value="${s}">${s}</option>`).join('')}
+                                    <option value="">-- Cargando Salsas... --</option>
                                 </select>
                             </div>`;
+                        
+                        // Guardamos las coordenadas de este selector para inyectarle las salsas inmediatamente después
+                        selectoresAInicializar.push({
+                            idProd: idSelectProducto,
+                            idSalsa: idSelectSalsa
+                        });
+                        
                         contadorSalsa++;
                     }
 
                     htmlCampos += `
                         <div class="campo-grupo">
                             <label>${etiquetaItem}</label>
-                            <select id="${idSelectProducto}" onchange="actualizarSalsasCombo('${combo.id}', ${index}, ${contadorSalsa - 1})">
+                            <select id="${idSelectProducto}" onchange="actualizarSalsasCombo('${combo.id}', ${index})">
                                 ${opcionesProductos}
                             </select>
                             ${bloqueSalsa}
@@ -404,18 +412,31 @@
                             <button class="btn-agregar-combo" onclick="agregarComboConfiguradoAlCarrito('${combo.id}')">Agregar +</button>
                         </div>
                     </div>`;
+
+                // SOLUCIÓN: Ciclo inmediato que rellena las salsas de la primera opción ("Alitas") sin esperar al "onchange"
+                setTimeout(() => {
+                    selectoresAInicializar.forEach(sel => {
+                        const pSelect = document.getElementById(sel.idProd);
+                        const sSelect = document.getElementById(sel.idSalsa);
+                        if(pSelect && sSelect) {
+                            const prodId = pSelect.value;
+                            const prodReal = baseDatosProductos.individuales.find(p => p.id === prodId);
+                            if(prodReal && prodReal.salsas.length > 0) {
+                                sSelect.innerHTML = `<option value="">-- Selecciona tu Salsa --</option>` + 
+                                    prodReal.salsas.map(s => `<option value="${s}">${s}</option>`).join('');
+                            }
+                        }
+                    });
+                }, 50);
             });
         }
 
-        // SOLUCIÓN AL FALLO: Busca dinámicamente las salsas correspondientes al platillo seleccionado (ej. Alitas, Boneless o Palomitas)
-        function actualizarSalsasCombo(comboId, index, numeroSalsa) {
+        function actualizarSalsasCombo(comboId, index) {
             const prodSelect = document.getElementById(`combo-${comboId}-prod-${index}`);
             const salsaSelect = document.getElementById(`combo-${comboId}-salsa-${index}`);
             if (!prodSelect || !salsaSelect) return;
 
             const prodId = prodSelect.value;
-            
-            // Buscamos el platillo seleccionado en la base de datos de especialidades individuales
             const productoReal = baseDatosProductos.individuales.find(p => p.id === prodId);
 
             if (productoReal && productoReal.salsas.length > 0) {
@@ -548,7 +569,7 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            const miTelefonoSpaceWings = "521234567890"; // Reemplaza con tu número real de celular
+            const miTelefonoSpaceWings = "521234567890"; // Reemplaza con tu número real de WhatsApp
 
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
             msg += `👤 *Cliente:* ${cliente}\n`;
