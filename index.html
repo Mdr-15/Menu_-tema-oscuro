@@ -21,31 +21,31 @@
         }
         h1.logo { 
             color: #ff9f00; 
-            font-size: 3rem; 
+            font-size: 2.5rem; 
             text-transform: uppercase; 
             text-align: center; 
-            margin-bottom: 40px; 
+            margin-bottom: 30px; 
             font-weight: 900; 
         }
         h2.seccion-titulo { 
             color: #ff9f00; 
             border-bottom: 2px solid #ff9f00; 
             padding-bottom: 8px; 
-            margin-top: 40px; 
+            margin-top: 30px; 
             text-transform: uppercase; 
-            font-size: 1.5rem; 
+            font-size: 1.3rem; 
         }
         .grid-productos { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); 
-            gap: 25px; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 20px; 
             margin-top: 20px; 
         }
         .tarjeta-producto { 
             background-color: #161a1f; 
             border: 1px solid #232931; 
             border-radius: 12px; 
-            padding: 20px; 
+            padding: 18px; 
             display: flex; 
             flex-direction: column; 
             justify-content: space-between;
@@ -53,27 +53,27 @@
         .tag-categoria { 
             background-color: #232931; 
             color: #ff9f00; 
-            padding: 4px 10px; 
+            padding: 4px 8px; 
             border-radius: 4px; 
-            font-size: 0.8rem; 
+            font-size: 0.75rem; 
             font-weight: bold; 
-            margin-bottom: 10px; 
+            margin-bottom: 8px; 
             display: inline-block;
         }
         .precio { 
-            font-size: 1.4rem; 
+            font-size: 1.2rem; 
             color: #ff9f00; 
             font-weight: bold; 
-            margin: 10px 0; 
+            margin: 8px 0; 
         }
 
-        /* --- CONFIGURADOR DE COMBOS BASADO EN TU NUEVA ESTRUCTURA --- */
+        /* --- CONFIGURADOR DE COMBOS --- */
         .tarjeta-combo-full {
             background-color: #161a1f;
             border: 1px solid #232931;
             border-radius: 12px;
-            padding: 25px;
-            margin-top: 25px;
+            padding: 20px;
+            margin-top: 20px;
             width: 100%;
             box-sizing: border-box;
         }
@@ -81,36 +81,36 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .header-combo h3 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: #ffffff;
             font-weight: bold;
         }
         .header-combo .precio-combo {
             color: #ff9f00;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: bold;
         }
         .config-box {
             background-color: #111418;
             border: 1px solid #1f242b;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
         }
         .campo-grupo {
-            margin-bottom: 18px;
+            margin-bottom: 15px;
         }
         .campo-grupo label {
             display: block;
             color: #a0aec0;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             letter-spacing: 0.5px;
         }
         select { 
@@ -118,42 +118,43 @@
             background-color: #161a1f; 
             color: #ffffff; 
             border: 1px solid #2d3748; 
-            padding: 12px; 
+            padding: 10px; 
             border-radius: 6px; 
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             box-sizing: border-box;
         }
         .btn-agregar-combo {
             background-color: #ff9f00;
             color: #0d0f12;
             border: none;
-            padding: 14px 28px;
+            padding: 12px 24px;
             border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
             float: right;
-            font-size: 1rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
         }
         .btn-agregar-individual {
             background-color: #ff9f00;
             color: #0d0f12;
             border: none;
-            padding: 12px;
+            padding: 10px;
             border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            margin-top: 15px;
+            margin-top: 12px;
             text-transform: uppercase;
+            font-size: 0.85rem;
         }
 
-        /* --- PANEL LATERAL DEL PEDIDO --- */
+        /* --- INTERFAZ LATERAL COMPACTA (CARRITO IGUAL A LA IMAGEN) --- */
         aside.panel-pedido { 
-            width: 380px; 
+            width: 350px; 
             background-color: #161a1f; 
             border-left: 1px solid #232931; 
-            padding: 30px; 
+            padding: 20px; 
             position: sticky; 
             top: 0; 
             height: 100vh; 
@@ -161,16 +162,172 @@
             display: flex;
             flex-direction: column;
         }
-        .cabecera-pedido { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #232931; padding-bottom: 15px; }
-        .contador-badge { background-color: #ff9f00; color: #0d0f12; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .input-nombre { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #3a4454; background-color: #0d0f12; color: white; box-sizing: border-box; font-size: 1rem; }
-        .Carrito-elementos { flex: 1; overflow-y: auto; margin-top: 20px; }
-        .item-carrito-fila { background-color: #0d0f12; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #232931; }
-        .item-controles { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid #161a1f; padding-top: 8px; }
-        .item-botones-qty button { background-color: #232931; color: white; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .Total { border-top: 1px solid #232931; padding-top: 15px; display: flex; justify-content: space-between; font-size: 1.4rem; font-weight: bold; }
-        .Total span:last-child { color: #ff9f00; }
-        .Boton-enviar { background-color: #25d366; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; font-size: 1rem; }
+        .cabecera-pedido { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #232931; 
+            padding-bottom: 12px; 
+        }
+        .cabecera-pedido h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        .contador-badge { 
+            background-color: #ff9f00; 
+            color: #0d0f12; 
+            border-radius: 50%; 
+            width: 26px; 
+            height: 26px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            font-size: 0.9rem;
+        }
+        .label-cliente {
+            display: block; 
+            color: #a0aec0; 
+            margin-bottom: 6px; 
+            font-size: 0.75rem; 
+            font-weight: bold; 
+            text-transform: uppercase;
+        }
+        .input-nombre { 
+            width: 100%; 
+            padding: 10px; 
+            border-radius: 6px; 
+            border: 1px solid #3a4454; 
+            background-color: #0d0f12; 
+            color: white; 
+            box-sizing: border-box; 
+            font-size: 0.9rem; 
+        }
+        .Carrito-elementos { 
+            flex: 1; 
+            overflow-y: auto; 
+            margin-top: 15px; 
+        }
+        
+        /* --- FILA DEL ARTÍCULO (ESTILO DE LA IMAGEN) --- */
+        .item-carrito-fila { 
+            background-color: #0d0f12; 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-bottom: 10px; 
+            border: 1px solid #232931; 
+        }
+        .item-encabezado-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .item-titulo-carrito {
+            margin: 0;
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #ffffff;
+        }
+        .item-salsa-carrito {
+            margin: 2px 0 0 0;
+            color: #ff9f00;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+        .item-desc-carrito {
+            margin: 4px 0 0 0;
+            color: #a0aec0;
+            font-size: 0.75rem;
+            font-style: italic;
+            line-height: 1.2;
+        }
+        .item-precio-carrito {
+            font-weight: bold;
+            color: #ff9f00;
+            font-size: 0.9rem;
+            margin: 4px 0 0 0;
+        }
+        
+        /* Controles de cantidad y cancelar compactos */
+        .controles-contenedor {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .item-botones-qty { 
+            display: flex; 
+            align-items: center; 
+            background-color: #232931;
+            border-radius: 4px;
+            padding: 2px;
+        }
+        .item-botones-qty button { 
+            background: none;
+            color: #ffffff; 
+            border: none; 
+            width: 20px; 
+            height: 20px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 0.85rem;
+        }
+        .item-botones-qty span {
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 0 6px;
+        }
+        .btn-cancelar {
+            background: none;
+            border: none;
+            color: #e53e3e;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+        .btn-cancelar:hover {
+            color: #fc8181;
+        }
+        .input-nota-carrito {
+            width: 100%;
+            background-color: #161a1f;
+            border: 1px solid #232931;
+            border-radius: 4px;
+            color: #ffffff;
+            padding: 6px;
+            font-size: 0.75rem;
+            margin-top: 8px;
+            box-sizing: border-box;
+        }
+
+        /* --- TOTALES Y BOTÓN WHATSAPP --- */
+        .Total { 
+            border-top: 1px solid #232931; 
+            padding-top: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            margin-top: 8px;
+        }
+        .Total span:last-child { color: #ffffff; }
+        .Boton-enviar { 
+            background-color: #25d366; 
+            color: white; 
+            border: none; 
+            width: 100%; 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 12px; 
+            text-transform: uppercase; 
+            font-size: 0.9rem; 
+            letter-spacing: 0.5px; 
+        }
 
         @media (max-width: 990px) { body { flex-direction: column; } aside.panel-pedido { width: 100%; height: auto; position: relative; } }
     </style>
@@ -193,13 +350,13 @@
             <div class="contador-badge" id="badge-contador">0</div>
         </div>
         
-        <div style="margin-top: 20px;">
-            <label style="display: block; color: #a0aec0; margin-bottom: 8px; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Cliente *</label>
+        <div style="margin-top: 15px;">
+            <label class="label-cliente">Cliente *</label>
             <input type="text" id="nombre-cliente" class="input-nombre" placeholder="Ingresa tu nombre">
         </div>
         
         <div class="Carrito-elementos" id="carrito-lista">
-            <p id="carrito-vacio-texto" style="color: #718096; text-align: center; margin-top: 40px;">Carrito vacío.</p>
+            <p id="carrito-vacio-texto" style="color: #718096; text-align: center; margin-top: 30px; font-size: 0.85rem;">Carrito vacío.</p>
         </div>
         
         <div class="Total">
@@ -211,7 +368,6 @@
     </aside>
 
     <script>
-        // Recuerda colocar aquí tu enlace público de Google Sheets (.csv) cuando lo uses en producción
         const urlGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv"; 
 
         let baseDatosProductos = { individuales: [], combos: [] };
@@ -237,7 +393,6 @@
             return celda.trim().replace(/^"|"$/g, '').trim();
         }
 
-        // === NUEVO MOTOR DE PARSEO ADAPTADO A TU NUEVA TABLA ===
         function parsearEstructuraMenu(texto) {
             const lineas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             const individuales = [];
@@ -248,70 +403,51 @@
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                // Detectamos la cabecera de la segunda tabla (Combos) mediante la columna F
-                if (columnas[5] && columnas[5].toLowerCase() === 'categoria' && i > 3) {
+                if (columnas && columnas.toLowerCase() === 'categoria' && i > 3) {
                     leyendoCombos = true;
                     continue;
                 }
 
-                if (!columnas[0] || columnas[0] === 'Id_platillo' || columnas[0] === 'CONF') {
+                if (!columnas || columnas === 'Id_platillo' || columnas === 'CONF') {
                     continue;
                 }
 
-                const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
+                const disponible = columnas ? columnas.toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
-                // 1. CARGAR ESPECIALIDADES INDIVIDUALES (Tabla de arriba)
-                if (columnas[0].startsWith('P') && !leyendoCombos) {
+                if (columnas.startsWith('P') && !leyendoCombos) {
                     const producto = {
-                        id: columnas[0],
-                        categoria: columnas[1],
-                        nombre: columnas[2],
-                        precio: parseFloat(columnas[3]) || 0,
+                        id: columnas,
+                        categoria: columnas,
+                        nombre: columnas,
+                        precio: parseFloat(columnas) || 0,
                         salsas: []
                     };
-                    // Extraemos las salsas horizontales (Columnas F en adelante)
                     for (let s = 5; s < columnas.length; s++) {
                         if (columnas[s]) producto.salsas.push(columnas[s]);
                     }
                     individuales.push(producto);
                 } 
                 
-                // 2. CARGAR COMBOS AGRUPADOS INTELIGENTEMENTE (Tabla de abajo)
-                if (columnas[0].startsWith('C')) {
-                    const comboId = columnas[0];
-                    const nombreCombo = columnas[2];
-                    const precioCombo = parseFloat(columnas[3]) || 0;
+                if (columnas.startsWith('C')) {
+                    const comboId = columnas;
+                    const nombreCombo = columnas;
+                    const precioCombo = parseFloat(columnas) || 0;
+                    const componenteCategoria = columnas; 
+                    const componenteProducto = columnas;  
                     
-                    const componenteCategoria = columnas[5]; // Ej: "Platillo Principal 1"
-                    const componenteProducto = columnas[6];  // Ej: "Alitas"
-                    
-                    // Extraemos las salsas específicas de esta opción del combo
                     const salsasComponente = [];
                     for (let s = 7; s < columnas.length; s++) {
                         if (columnas[s]) salsasComponente.push(columnas[s]);
                     }
 
-                    // Inicializamos el objeto del combo si no existe
                     if (!combosAgrupados[comboId]) {
-                        combosAgrupados[comboId] = {
-                            id: comboId,
-                            nombre: nombreCombo,
-                            precio: precioCombo,
-                            secciones: {} // Agrupador por tipo de paso (Platillo 1, Platillo 2, Snack 1)
-                        };
+                        combosAgrupados[comboId] = { id: comboId, nombre: nombreCombo, precio: precioCombo, secciones: {} };
                     }
-
-                    // Inicializamos la sección interna (Ej: "Platillo Principal 1")
                     if (!combosAgrupados[comboId].secciones[componenteCategoria]) {
                         combosAgrupados[comboId].secciones[componenteCategoria] = [];
                     }
-
-                    // Guardamos la opción ejecutable dentro de su sección
-                    combosAgrupados[comboId].secciones[componenteCategoria].push({
-                        nombre: componenteProducto,
-                        salsas: salsasComponente
-                    });
+                    combosAgrupados[comboId].secciones[componenteCategoria].push({ nombre: componenteProducto, salsas: salsasComponente });
                 }
             }
             return { individuales, combos: Object.values(combosAgrupados) };
@@ -326,7 +462,7 @@
                 let selectSalsas = '';
                 if (prod.salsas.length > 0) {
                     selectSalsas = `
-                        <select id="salsa-${prod.id}" style="margin-top:10px;">
+                        <select id="salsa-${prod.id}" style="margin-top:8px;">
                             <option value="">-- Selecciona Salsa --</option>
                             ${prod.salsas.map(s => `<option value="${s}">${s}</option>`).join('')}
                         </select>`;
@@ -336,7 +472,7 @@
                     <div class="tarjeta-producto">
                         <div>
                             <span class="tag-categoria">${prod.categoria}</span>
-                            <h3 style="margin:5px 0;">${prod.nombre}</h3>
+                            <h3 style="margin:4px 0; font-size:1.1rem;">${prod.nombre}</h3>
                             <p class="precio">$${prod.precio.toFixed(2)}</p>
                             ${selectSalsas}
                         </div>
@@ -345,7 +481,6 @@
             });
         }
 
-        // === NUEVO RENDERIZADOR DE COMBOS MULTI-OPCIÓN (ESTILO EXACTO DE TU IMAGEN) ===
         function renderizarCombosDinamicos(combos) {
             const contenedor = document.getElementById('contenedor-combos');
             if (!contenedor) return;
@@ -356,7 +491,6 @@
                 let indexPaso = 0;
                 let referenciasAInicializar = [];
 
-                // Recorremos cada sección agrupada (Ej: "Platillo Principal 1", "Platillo Principal 2", "Snacks 1")
                 for (const [nombreSeccion, opciones] of Object.entries(combo.secciones)) {
                     const idSelectProducto = `combo-${combo.id}-prod-${indexPaso}`;
                     const idSelectSalsa = `combo-${combo.id}-salsa-${indexPaso}`;
@@ -364,34 +498,24 @@
                     const esPlatilloPrincipal = nombreSeccion.toLowerCase().includes("platillo principal");
                     const esFijo = opciones.length === 1;
 
-                    // Creamos las opciones del menú desplegable con los productos que tú definiste en tu Google Sheet
                     let htmlOpciones = opciones.map(opc => `<option value="${opc.nombre}">${opc.nombre}</option>`).join('');
-
-                    // Renderizado de la etiqueta superior (Forzamos mayúsculas)
                     let etiquetaLabel = `${nombreSeccion.toUpperCase()}:`;
                     if (esFijo && nombreSeccion.toLowerCase().includes("snack")) {
                         etiquetaLabel = `SNACK INCLUIDO (FIJO):`;
                     }
 
-                    // Bloque condicional de salsas
                     let bloqueSalsa = '';
                     if (esPlatilloPrincipal) {
-                        const numeroSalsa = nombreSeccion.replace(/\D/g, ""); // Extrae el número de la sección (1, 2, etc)
+                        const numeroSalsa = nombreSeccion.replace(/\D/g, ""); 
                         bloqueSalsa = `
-                            <div class="campo-grupo" style="margin-top:10px;">
+                            <div class="campo-grupo" style="margin-top:8px;">
                                 <label>SALSA ${numeroSalsa || 1}:</label>
                                 <select id="${idSelectSalsa}">
                                     <option value="">-- Selecciona tu Salsa --</option>
                                 </select>
                             </div>`;
                         
-                        // Guardamos la referencia para inyectar la lista de salsas al arrancar
-                        referenciasAInicializar.push({
-                            idCombo: combo.id,
-                            nombreSeccion: nombreSeccion,
-                            idProd: idSelectProducto,
-                            idSalsa: idSelectSalsa
-                        });
+                        referenciasAInicializar.push({ idCombo: combo.id, nombreSeccion: nombreSeccion, idProd: idSelectProducto, idSalsa: idSelectSalsa });
                     }
 
                     htmlCampos += `
@@ -413,15 +537,14 @@
                             <span class="precio-combo">$${combo.precio.toFixed(2)}</span>
                         </div>
                         <div class="config-box">
-                            <div style="color: #ff9f00; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; margin-bottom: 20px;">⚙️ Configura tu ${combo.nombre.toLowerCase()}:</div>
+                            <div style="color: #ff9f00; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; margin-bottom: 15px;">⚙️ Configura tu ${combo.nombre.toLowerCase()}:</div>
                             ${htmlCampos}
                         </div>
                         <div style="overflow:hidden;">
-                            <button class="btn-agregar-combo" onclick="agregarComboEstructuraNueva('${combo.id}', ${indexPaso})">Agregar +</button>
+                            <button class="btn-agregar-combo" onclick="agregarComboEstructuraNueva('${combo.id}')">Agregar +</button>
                         </div>
                     </div>`;
 
-                // Auto-inicializador: Carga de inmediato las salsas correspondientes a la primera opción ("Alitas")
                 setTimeout(() => {
                     referenciasAInicializar.forEach(ref => {
                         const pSel = document.getElementById(ref.idProd);
@@ -439,7 +562,6 @@
             });
         }
 
-        // Ejecuta el cambio de salsas en tiempo real si el usuario cambia el platillo (ej: de Alitas a Boneless)
         function actualizarSalsasEstructuraNueva(comboId, nombreSeccion, indexPaso) {
             const combo = baseDatosProductos.combos.find(c => c.id === comboId);
             const prodSelect = document.getElementById(`combo-${comboId}-prod-${indexPaso}`);
@@ -474,13 +596,14 @@
             const itemExistente = carrito.find(item => item.id === id && item.salsa === salsaSeleccionada);
             if (itemExistente) { itemExistente.cantidad++; } 
             else {
-                carrito.push({ id: producto.id, nombre: producto.nombre, precio: producto.precio, salsa: salsaSeleccionada, cantidad: 1 });
+                // Se genera un identificador único numérico para la fila de carrito
+                carrito.push({ uid: Date.now() + Math.random(), id: producto.id, nombre: producto.nombre, precio: producto.precio, salsa: salsaSeleccionada, cantidad: 1, nota: "" });
             }
             if (selectSalsa) selectSalsa.value = '';
             actualizarInterfazCarrito();
         }
 
-        function agregarComboEstructuraNueva(comboId, totalPasos) {
+        function agregarComboEstructuraNueva(comboId) {
             const combo = baseDatosProductos.combos.find(c => c.id === comboId);
             if (!combo) return;
 
@@ -514,17 +637,35 @@
 
             if (itemExistente) { itemExistente.cantidad++; } 
             else {
-                carrito.push({ id: combo.id, nombre: combo.nombre, descripcion: descripcionCombo, precio: combo.precio, cantidad: 1 });
+                carrito.push({ uid: Date.now() + Math.random(), id: combo.id, nombre: combo.nombre, descripcion: descripcionCombo, precio: combo.precio, cantidad: 1, nota: "" });
             }
             actualizarInterfazCarrito();
         }
 
-        function cambiarCantidad(index, cambio) {
-            carrito[index].cantidad += cambio;
-            if (carrito[index].cantidad <= 0) carrito.splice(index, 1);
+        function cambiarCantidad(uid, cambio) {
+            const item = carrito.find(i => i.uid === uid);
+            if (!item) return;
+            item.cantidad += cambio;
+            if (item.cantidad <= 0) {
+                eliminarDelCarrito(uid);
+            } else {
+                actualizarInterfazCarrito();
+            }
+        }
+
+        // FUNCIÓN ELIMINAR / CANCELAR ARTÍCULO DIRECTO (BOTÓN ROJO X)
+        function eliminarDelCarrito(uid) {
+            carrito = carrito.filter(item => item.uid !== uid);
             actualizarInterfazCarrito();
         }
 
+        // Almacena el texto de las notas en tiempo real dentro del arreglo del carrito
+        function actualizarNotaItem(uid, textoNota) {
+            const item = carrito.find(i => i.uid === uid);
+            if (item) item.nota = textoNota;
+        }
+
+        // === INTERFAZ RECONSTRUIDA COMPACTA (IGUAL A LA CAPTURA DE PANTALLA) ===
         function actualizarInterfazCarrito() {
             const contenedorLista = document.getElementById('carrito-lista');
             const badgeContador = document.getElementById('badge-contador');
@@ -533,13 +674,13 @@
             let montoTotal = 0;
             let piezasTotales = 0;
 
-            contenedorLista.innerHTML = '<p id="carrito-vacio-texto" style="color: #718096; text-align: center; margin-top: 40px;">Carrito vacío.</p>';
+            contenedorLista.innerHTML = '<p id="carrito-vacio-texto" style="color: #718096; text-align: center; margin-top: 30px; font-size: 0.85rem;">Carrito vacío.</p>';
             const txtRef = document.getElementById('carrito-vacio-texto');
 
             if (carrito.length > 0) {
                 if (txtRef) txtRef.style.display = 'none';
                 
-                carrito.forEach((item, index) => {
+                carrito.forEach((item) => {
                     const subtotal = item.precio * item.cantidad;
                     montoTotal += subtotal;
                     piezasTotales += item.cantidad;
@@ -547,21 +688,24 @@
                     const fila = document.createElement('div');
                     fila.classList.add('item-carrito-fila');
                     fila.innerHTML = `
-                        <div style="display:flex; justify-content:space-between;">
+                        <div class="item-encabezado-flex">
                             <div>
-                                <p style="margin:0; font-weight:bold;">${item.nombre}</p>
-                                ${item.salsa ? `<p style="margin:4px 0 0 0; color:#ff9f00; font-size:0.85rem;">Salsa: ${item.salsa}</p>` : ''}
-                                ${item.descripcion ? `<p style="margin:4px 0 0 0; color:#a0aec0; font-size:0.8rem; font-style:italic;">${item.descripcion}</p>` : ''}
+                                <p class="item-titulo-carrito">${item.nombre}</p>
+                                ${item.salsa ? `<p class="item-salsa-carrito">${item.salsa}</p>` : ''}
+                                ${item.descripcion ? `<p class="item-desc-carrito">${item.descripcion}</p>` : ''}
+                                <p class="item-precio-carrito">$${subtotal.toFixed(2)}</p>
+                            </div>
+                            <div class="controles-contenedor">
+                                <div class="item-botones-qty">
+                                    <button onclick="cambiarCantidad(${item.uid}, -1)">-</button>
+                                    <span>${item.cantidad}</span>
+                                    <button onclick="cambiarCantidad(${item.uid}, 1)">+</button>
+                                </div>
+                                <button class="btn-cancelar" onclick="eliminarDelCarrito(${item.uid})">×</button>
                             </div>
                         </div>
-                        <div class="item-controles">
-                            <div class="item-botones-qty">
-                                <button onclick="cambiarCantidad(${index}, -1)">-</button>
-                                <span>${item.cantidad}</span>
-                                <button onclick="cambiarCantidad(${index}, 1)">+</button>
-                            </div>
-                            <span style="font-weight:bold; color:#ff9f00;">$${subtotal.toFixed(2)}</span>
-                        </div>`;
+                        <input type="text" class="input-nota-carrito" placeholder="Notas (salsa, aderezo...)" value="${item.nota}" oninput="actualizarNotaItem(${item.uid}, this.value)">
+                    `;
                     contenedorLista.appendChild(fila);
                 });
             }
@@ -575,7 +719,7 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            const miTelefonoSpaceWings = "521234567890"; // Reemplaza con tu celular real
+            const miTelefonoSpaceWings = "521234567890"; // Reemplaza con tu celular comercial real
 
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
             msg += `👤 *Cliente:* ${cliente}\n`;
@@ -588,6 +732,7 @@
                 msg += `📦 *${item.cantidad}x* ${item.nombre}\n`;
                 if (item.salsa) msg += `   └ Salsa: ${item.salsa}\n`;
                 if (item.descripcion) msg += `   └ ${item.descripcion}\n`;
+                if (item.nota) msg += `   └ Nota especial: _${item.nota}_\n`;
                 msg += `   └ Subtotal: $${sub.toFixed(2)}\n\n`;
             });
 
