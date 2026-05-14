@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Wings - Menú Digital</title>
     <style>
-        /* --- ESTILOS GENERALES (Space Wings Dark Mode) --- */
+        /* --- CONFIGURACIÓN DE COLORES Y CUERPO GENERAL --- */
         body { 
             background-color: #0d0f12; 
             color: #ffffff; 
@@ -37,7 +37,7 @@
         }
         .grid-productos { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); 
             gap: 25px; 
             margin-top: 20px; 
         }
@@ -50,8 +50,24 @@
             flex-direction: column; 
             justify-content: space-between;
         }
-        
-        /* --- CONFIGURADOR DE COMBOS RECTIFICADO --- */
+        .tag-categoria { 
+            background-color: #232931; 
+            color: #ff9f00; 
+            padding: 4px 10px; 
+            border-radius: 4px; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+            display: inline-block;
+        }
+        .precio { 
+            font-size: 1.4rem; 
+            color: #ff9f00; 
+            font-weight: bold; 
+            margin: 10px 0; 
+        }
+
+        /* --- CONFIGURADOR DE COMBOS INTERACTIVOS (ESTILO DE LA IMAGEN) --- */
         .tarjeta-combo-full {
             background-color: #161a1f;
             border: 1px solid #232931;
@@ -135,6 +151,7 @@
             cursor: pointer;
             float: right;
             font-size: 1rem;
+            text-transform: uppercase;
         }
         .btn-agregar-combo:hover { background-color: #e68f00; }
         .btn-agregar-individual {
@@ -147,9 +164,10 @@
             cursor: pointer;
             width: 100%;
             margin-top: 15px;
+            text-transform: uppercase;
         }
 
-        /* --- PANEL LATERAL DEL PEDIDO --- */
+        /* --- CONTENEDOR LATERAL (CARRITO DE PEDIDO) --- */
         aside.panel-pedido { 
             width: 380px; 
             background-color: #161a1f; 
@@ -164,15 +182,15 @@
         }
         .cabecera-pedido { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #232931; padding-bottom: 15px; }
         .contador-badge { background-color: #ff9f00; color: #0d0f12; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .input-nombre { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #3a4454; background-color: #0d0f12; color: white; box-sizing: border-box; }
+        .input-nombre { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #3a4454; background-color: #0d0f12; color: white; box-sizing: border-box; font-size: 1rem; }
         .Carrito-elementos { flex: 1; overflow-y: auto; margin-top: 20px; }
         .item-carrito-fila { background-color: #0d0f12; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #232931; }
         .item-controles { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid #161a1f; padding-top: 8px; }
         .item-botones-qty button { background-color: #232931; color: white; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .Total { border-top: 1px solid #232931; padding-top: 15px; display: flex; justify-content: space-between; font-size: 1.4rem; font-weight: bold; }
         .Total span:last-child { color: #ff9f00; }
-        .Boton-enviar { background-color: #25d366; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; font-size: 1rem; }
-        .tag-categoria { background-color: #232931; color: #ff9f00; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; display: inline-block;}
+        .Boton-enviar { background-color: #25d366; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px; }
+        .Boton-enviar:hover { background-color: #20ba5a; }
 
         @media (max-width: 990px) { body { flex-direction: column; } aside.panel-pedido { width: 100%; height: auto; position: relative; } }
     </style>
@@ -213,7 +231,9 @@
     </aside>
 
     <script>
-        // === PEGA AQUÍ TU LINK DE GOOGLE SHEETS EN MEDIO DE LAS COMILLAS SI USAS LA HOJA EN VIVO ===
+        // =========================================================================
+        // REEMPLAZA EL CONTENIDO DE ABAJO CON TU ENLACE DE PUBLICACIÓN CSV DE GOOGLE SHEETS:
+        // =========================================================================
         const urlGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv";
 
         let baseDatosProductos = { individuales: [], combos: [] };
@@ -221,7 +241,9 @@
 
         async function cargarMenuCompleto() {
             try {
-                const respuesta = await fetch(urlGoogleSheets);
+                // Caída automática a respaldo local si no has configurado tu link de Google Sheets
+                const origen = urlGoogleSheets.includes("AQUÍ_PEGA") ? 'productos.csv' : urlGoogleSheets;
+                const respuesta = await fetch(origen);
                 const textoCSV = await respuesta.text();
                 
                 baseDatosProductos = parsearEstructuraMenu(textoCSV);
@@ -234,10 +256,10 @@
             }
         }
 
-        // LIMPIADOR AVANZADO: Quita comillas de Google Sheets y limpia los espacios vacíos
-        function limpiarCelda(texto) {
-            if (!texto) return '';
-            return texto.trim().replace(/^"|"$/g, '').trim();
+        // LIMPIADOR DE COMILLAS Y ESPACIOS NATIVOS DE GOOGLE SHEETS
+        function limpiarTextoSheets(celda) {
+            if (!celda) return '';
+            return celda.trim().replace(/^"|"$/g, '').trim();
         }
 
         function parsearEstructuraMenu(texto) {
@@ -248,8 +270,9 @@
 
             for (let i = 0; i < lineas.length; i++) {
                 const linea = lineas[i];
-                const columnas = linea.split(',').map(limpiarCelda);
+                const columnas = linea.split(',').map(limpiarTextoSheets);
 
+                // Detecta el brinco de tabla hacia los combos
                 if (columnas[0] && columnas[0].toLowerCase().includes('id_platillo') && i > 3) {
                     leyendoCombos = true;
                     continue;
@@ -259,10 +282,12 @@
                     continue;
                 }
 
+                // Switch de disponibilidad en la columna 4 (índice 4)
                 const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
                 if (!leyendoCombos) {
+                    // === PARSEO PLATILLOS INDIVIDUALES (P1 - P8) ===
                     if (columnas[0].startsWith('P')) {
                         const producto = {
                             id: columnas[0],
@@ -277,6 +302,7 @@
                         individuales.push(producto);
                     }
                 } else {
+                    // === PARSEO COMBOS AGRUPADOS (C1 - C3) ===
                     if (columnas[0].startsWith('C')) {
                         const comboId = columnas[0];
                         const nombreCombo = columnas[2] || 'Combo Especial';
@@ -310,7 +336,7 @@
                 let selectSalsas = '';
                 if (prod.salsas.length > 0) {
                     selectSalsas = `
-                        <select id="salsa-${prod.id}">
+                        <select id="salsa-${prod.id}" style="margin-top:10px;">
                             <option value="">-- Selecciona Salsa --</option>
                             ${prod.salsas.map(s => `<option value="${s}">${s}</option>`).join('')}
                         </select>`;
@@ -329,6 +355,7 @@
             });
         }
 
+        // === CREACIÓN DEL CONFIGURADOR INTERACTIVO COPIADO FIELMENTE DE TU INTERFAZ ===
         function renderizarCombosDinamicos(combos) {
             const contenedor = document.getElementById('contenedor-combos');
             if (!contenedor) return;
@@ -341,6 +368,7 @@
                     const idSelectProducto = `combo-${combo.id}-prod-${index}`;
                     const idSelectSalsa = `combo-${combo.id}-salsa-${index}`;
                     
+                    // Condicionamiento automático si el snack viene bloqueado fijo (ej. Papas)
                     const esFijo = combo.filas.filter(f => f.categoriaItem === fila.categoriaItem).length === 1 && fila.categoriaItem.toLowerCase().includes("snack");
                     const productosOpcion = baseDatosProductos.individuales.filter(p => p.categoria.toLowerCase() === fila.categoriaItem.toLowerCase());
 
@@ -416,7 +444,7 @@
             const salsaSeleccionada = selectSalsa ? selectSalsa.value : '';
 
             if (producto.salsas.length > 0 && !salsaSeleccionada) {
-                alert("Por favor selecciona una salsa.");
+                alert("Por favor selecciona una salsa para completar el pedido.");
                 return;
             }
 
@@ -454,10 +482,13 @@
                     return;
                 }
 
-                configuracionFinal.push(`${nombreLegible}${salsaArticulo ? ` (🌶️ ${sArticulo})` : ''}`);
+                configuracionFinal.push(`${nombreLegible}${salsaArticulo ? ` (Salsa: ${salsaArticulo})` : ''}`);
             });
 
-            if (!validacionCorrecta) return;
+            if (!validacionCorrecta) {
+                alert("Por favor, selecciona todos los componentes de tu combo.");
+                return;
+            }
 
             const descripcionCombo = `[${configuracionFinal.join(' + ')}]`;
             const itemExistente = carrito.find(item => item.id === comboId && item.descripcion === descripcionCombo);
@@ -525,7 +556,8 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            const miTelefonoSpaceWings = "521234567890"; // Reemplaza con tu teléfono real
+            // PON TU NÚMERO DE TELÉFONO AQUÍ (CON CLAVE DE PAÍS INCLUIDA)
+            const miTelefonoSpaceWings = "521234567890"; 
 
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
             msg += `👤 *Cliente:* ${cliente}\n`;
