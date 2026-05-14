@@ -558,7 +558,7 @@ function despacharPedidoAWhatsApp() {
 
     // === REEMPLAZA ESTE NÚMERO CON TU TELÉFONO REAL DE ATENCIÓN ===
     // Debe incluir código de país, sin espacios ni signos de más (Ej: 521XXXXXXXXXX)
-    const miTelefonoSpaceWings = "523411398581"; 
+   // const miTelefonoSpaceWings = "523411398581"; 
 
     let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
     msg += `👤 *Cliente:* ${cliente}\n`;
@@ -579,7 +579,7 @@ function despacharPedidoAWhatsApp() {
     msg += `💰 *TOTAL A PAGAR:* $${total.toFixed(2)}`;
 
     // CORRECCIÓN CRÍTICA: Cambiada la estructura del enlace por el formato oficial wa.me
-    const urlApi = `wa.me{miTelefonoSpaceWings}?text=${encodeURIComponent(msg)}`;
+    const urlApi = "https://wa.me/523411398581?text=" + encodeURIComponent(msg);
     window.open(urlApi, '_blank');
 }
 
