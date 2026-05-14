@@ -447,39 +447,43 @@
     </div>
 
     <script>
-        // Enlace CSV principal que lee el menú (Sustituye por tu URL real de Google Sheets)
+        // URL principal de Google Sheets en formato CSV
         const CONFIG_URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv";
 
-        // URL alternativa de tu pestaña de configuración (Cambia el número de 'gid=' por el de tu pestaña 'Configuracion')
-        const CONFIG_URL_HORARIO_CSV = "google.com";
+        // URL secundaria para la configuración del Horario comercial
+        // REEMPLAZA EL CONTENIDO DE LAS COMILLAS CON TU ENLACE CSV DE LA PESTAÑA CONFIGURACIÓN
+        const CONFIG_URL_HORARIO_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv";
 
         let carrito = [];
+        
         let listaPlatillosGlobal = [];
         let listaSalsasGlobal = [];
         let listaSnacksGlobal = [];
 
         // Horarios por defecto si falla la descarga desde Sheets
-        let horaAperturaDinamica = 14; 
-        let horaCierreDinamico = 23;   
+        let horaAperturaDinamica = 14; // 2:00 PM
+        let horaCierreDinamico = 23;   // 11:00 PM
 
         async function ejecutarCargaMenu() {
             try {
-                // Intentar leer los límites de horario desde la hoja de control
+                // 1. Intentar leer los límites de horario desde la hoja de configuración
                 try {
                     const resHorario = await fetch(CONFIG_URL_HORARIO_CSV);
                     const txtHorario = await resHorario.text();
                     const lineasHorario = txtHorario.split("\n").map(l => l.trim()).filter(l => l);
-                    if(lineasHorario.length >= 2) {
+                    if (lineasHorario.length >= 2) {
                         const columnasConfig = lineasHorario[1].split(",");
                         const ap = parseInt(columnasConfig[0].replace(/"/g, "").trim());
                         const ci = parseInt(columnasConfig[1].replace(/"/g, "").trim());
-                        if(!isNaN(ap)) horaAperturaDinamica = ap;
-                        if(!isNaN(ci)) horaCierreDinamico = ci;
+                        
+                        if (!isNaN(ap)) horaAperturaDinamica = ap;
+                        if (!isNaN(ci)) horaCierreDinamico = ci;
                     }
                 } catch (e) {
-                    console.warn("No se pudo cargar el horario desde Sheets, usando horario base (2PM - 11PM)", e);
+                    console.warn("No se pudo cargar el horario desde Sheets, usando horario base (14 a 23 hrs)", e);
                 }
 
+                // 2. Cargar y procesar los artículos del menú
                 const res = await fetch(CONFIG_URL_CSV);
                 const txt = await res.text();
                 const lineas = txt.split("\n").map(l => l.trim()).filter(l => l);
@@ -495,7 +499,7 @@
 
                 // Primer recorrido: Almacenar listas globales de ingredientes desde tu inventario activo
                 filas.forEach(fila => {
-                    const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*\$)/);
+                    const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (col.length >= 5) {
                         const cat = col[1].replace(/"/g, "").trim();
                         const prod = col[2].replace(/"/g, "").trim();
@@ -595,7 +599,7 @@
                             <div class="salsa-contenedor" style="margin-top:12px;">
                                 <label class="salsa-label">Platillo Principal 2:</label>
                                 <select id="combo-p2-${itemIndex}" class="salsa-select">
-                                    ${listaPlatillosGlobal.map(p => `<option value="${p}">${p}</option> Poles `).join("")}
+                                    ${listaPlatillosGlobal.map(p => `<option value="${p}">${p}</option>`).join("")}
                                 </select>
                             </div>
                             <div class="salsa-contenedor">
@@ -683,6 +687,8 @@
                 botonWhatsapp.innerText = `🔒 CERRADO (ABRIMOS DE ${horaAperturaDinamica}:00 A ${horaCierreDinamico}:00)`;
                 return false;
             }
+            botonWhatsapp.disabled = false;
+            botonWhatsapp.innerText = "⚪ ENVIAR POR WHATSAPP";
             return true;
         }
 
@@ -816,3 +822,6 @@
             msg += `*Cliente:* ${inputCliente}\n`;
             msg += `---------------------------\n`;
             
+            let total = 0;
+            carrito.forEach(item => {
+                const subtotal = item.precio * item.cantidad;
