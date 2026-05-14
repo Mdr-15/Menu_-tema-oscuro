@@ -17,7 +17,7 @@
         
         .product-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .product-main { display: flex; justify-content: space-between; align-items: center; }
-        .product-name { font-size: 16px; font-weight: 700; }
+        .product-name { font-size: 16px; font-weight: 700; color: #ffffff; }
         .product-price { font-size: 15px; font-weight: 800; color: #f59e0b; }
         
         .sauce-selector { background: #0f172a; border: 1px solid #475569; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
@@ -48,8 +48,7 @@
         .del-btn { background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 12px; font-weight: bold; }
         
         .summary-box { border-top: 1px dashed #334155; padding-top: 10px; display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 12px; }
-        
-        .loading-text { text-align: center; font-size: 14px; color: #94a3b8; padding: 4px; }
+        .loading-text { text-align: center; font-size: 14px; color: #94a3b8; padding: 10px; }
 
         @media (max-width: 768px) {
             .main-container { flex-direction: column; padding: 0 10px; }
@@ -80,8 +79,8 @@
     </div>
 
     <script>
-        // ⚠️ PEGA AQUÍ TU URL .CSV GENERADA EN EL PASO ANTERIOR
-        const URL_SHEET = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv";
+        // Enlace oficial de tu Google Sheets (Formato CSV)
+        const URL_SHEET = "google.com";
 
         const salsasDisponibles = ["Bbq Hot", "Buffalo", "Maracuya Hot", "Mango Habanero", "Piña Habanero", "Fresa Habanero"];
         const snacksDisponibles = ["Papas a la francesa", "Papas Gajo", "Dedos de queso", "Jalapeños rellenos", "Aros de cebolla"];
@@ -95,13 +94,14 @@
                 const res = await fetch(URL_SHEET);
                 const csvData = await res.text();
                 
-                // Cortar por saltos de línea universales
+                // Procesar saltos de línea sin importar el sistema operativo
                 const lineas = csvData.split(/\r?\n/).slice(1);
                 const mapaCategorias = {};
 
                 lineas.forEach(linea => {
                     if (!linea.trim()) return;
                     
+                    // Mapeo seguro limpiando comillas extras y espacios blancos
                     const col = linea.split(",").map(c => c.replace(/^"|"$/g, '').trim());
                     if (col.length < 6) return;
 
@@ -110,10 +110,11 @@
                         categoria: col[1],
                         nombre: col[2],
                         precio: parseFloat(col[3]) || 0.00,
-                        config: col[4].toLowerCase(),
-                        disponible: col[5].toLowerCase()
+                        config: col[4] ? col[4].toLowerCase() : "individual",
+                        disponible: col[5] ? col[5].toLowerCase() : "no"
                     };
 
+                    // Validación estricta del filtro de disponibilidad
                     if (producto.disponible !== "sí" && producto.disponible !== "si") return;
 
                     if (!mapaCategorias[producto.categoria]) {
@@ -133,6 +134,12 @@
         function dibujarMenuDesdeSheets(categorias) {
             const contenedor = document.getElementById('menu-categorias');
             contenedor.innerHTML = "";
+
+            // Validar si la hoja vino vacía
+            if (Object.keys(categorias).length === 0) {
+                contenedor.innerHTML = `<div class="loading-text" style="color:#94a3b8;">⚠️ No hay productos marcados como "Si" en la columna Disponible de tu Sheets.</div>`;
+                return;
+            }
 
             for (const [nombreCat, items] of Object.entries(categorias)) {
                 let bloqueHTML = `<div class="category-block"><h2 class="category-title">${nombreCat}</h2>`;
@@ -224,7 +231,7 @@
                 const s1 = document.getElementById(`snack1_${prodId}`).value;
                 const s2 = document.getElementById(`snack2_${prodId}`).value;
                 if (!s1 || !s2) { alert("Selecciona ambos snacks."); return; }
-                configuracionAdicional = `[${pBase} c/ ${sCombo} + ${s1} + ${s2}]`;
+                configuracionAdicional = `[${pBase} b. en ${sCombo} + ${s1} + ${s2}]`;
             } else if (prod.config === "cometa") {
                 const p1 = document.getElementById(`c1_p1_${prodId}`).value;
                 const s1 = document.getElementById(`c1_s1_${prodId}`).value;
@@ -294,7 +301,7 @@
             document.getElementById('tot').textContent = cuentaTotal.toFixed(2);
         }
 
-        function enviarWhatsApp() {
+       function enviarWhatsApp() {
     if(carrito.length === 0) {
         alert("Por favor, agrega al menos un producto al carrito antes de enviar.");
         return;
