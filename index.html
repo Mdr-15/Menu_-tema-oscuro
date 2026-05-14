@@ -148,7 +148,7 @@
             font-size: 0.8rem;
         }
 
-        /* --- INTERFAZ LATERAL ULTRA COMPACTA (PEDIDO) --- */
+        /* --- INTERFAZ LATERAL ULTRA COMPACTA DEL PEDIDO --- */
         aside.panel-pedido { 
             width: 320px; 
             background-color: #161a1f; 
@@ -209,7 +209,7 @@
             margin-top: 10px; 
         }
         
-        /* --- FILA DEL ARTÍCULO REDUCIDA --- */
+        /* --- FILA DEL ARTÍCULO COMPACTA --- */
         .item-carrito-fila { 
             background-color: #0d0f12; 
             padding: 8px 10px; 
@@ -401,24 +401,25 @@
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                if (columnas && columnas.toLowerCase() === 'categoria' && i > 3) {
+                if (columnas[1] && columnas[1].toLowerCase() === 'categoria' && i > 3) {
                     leyendoCombos = true;
                     continue;
                 }
 
-                if (!columnas || columnas === 'Id_platillo' || columnas === 'CONF') {
+                if (!columnas[0] || columnas[0] === 'Id_platillo' || columnas[0] === 'CONF') {
                     continue;
                 }
 
-                const disponible = columnas ? columnas.toLowerCase() === 'si' : false;
+                const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
-                if (columnas.startsWith('P') && !leyendoCombos) {
+                // REPARACIÓN EN LAS SIGUIENTES DOS LÍNEAS CRÍTICAS: apuntamos al índice [0] del arreglo
+                if (columnas[0].startsWith('P') && !leyendoCombos) {
                     const producto = {
-                        id: columnas,
-                        categoria: columnas,
-                        nombre: columnas,
-                        precio: parseFloat(columnas) || 0,
+                        id: columnas[0],
+                        categoria: columnas[1],
+                        nombre: columnas[2],
+                        precio: parseFloat(columnas[3]) || 0,
                         salsas: []
                     };
                     for (let s = 5; s < columnas.length; s++) {
@@ -427,12 +428,12 @@
                     individuales.push(producto);
                 } 
                 
-                if (columnas.startsWith('C')) {
-                    const comboId = columnas;
-                    const nombreCombo = columnas;
-                    const precioCombo = parseFloat(columnas) || 0;
-                    const componenteCategoria = columnas; 
-                    const componenteProducto = columnas;  
+                if (columnas[0].startsWith('C')) {
+                    const comboId = columnas[0];
+                    const nombreCombo = columnas[1];
+                    const precioCombo = parseFloat(columnas[2]) || 0;
+                    const componenteCategoria = columnas[5]; 
+                    const componenteProducto = columnas[6];  
                     
                     const salsasComponente = [];
                     for (let s = 7; s < columnas.length; s++) {
@@ -460,7 +461,7 @@
                 let selectSalsas = '';
                 if (prod.salsas.length > 0) {
                     selectSalsas = `
-                        <select id="salsa-${prod.id}" style="margin-top:6px; padding: 6px;">
+                        <select id="salsa-${prod.id}" style="margin-top:6px; padding: 4px; font-size:0.8rem;">
                             <option value="">-- Selecciona Salsa --</option>
                             ${prod.salsas.map(s => `<option value="${s}">${s}</option>`).join('')}
                         </select>`;
@@ -508,7 +509,7 @@
                         bloqueSalsa = `
                             <div class="campo-grupo" style="margin-top:6px;">
                                 <label>SALSA ${numeroSalsa || 1}:</label>
-                                <select id="${idSelectSalsa}" style="padding: 6px;">
+                                <select id="${idSelectSalsa}" style="padding: 4px; font-size:0.8rem;">
                                     <option value="">-- Selecciona tu Salsa --</option>
                                 </select>
                             </div>`;
@@ -519,7 +520,7 @@
                     htmlCampos += `
                         <div class="campo-grupo">
                             <label>${etiquetaLabel}</label>
-                            <select id="${idSelectProducto}" onchange="actualizarSalsasEstructuraNueva('${combo.id}', '${nombreSeccion}', ${indexPaso})" style="padding: 6px;">
+                            <select id="${idSelectProducto}" onchange="actualizarSalsasEstructuraNueva('${combo.id}', '${nombreSeccion}', ${indexPaso})" style="padding: 4px; font-size:0.8rem;">
                                 ${htmlOpciones}
                             </select>
                             ${bloqueSalsa}
@@ -643,7 +644,7 @@
 
             if (itemExistente) { itemExistente.cantidad++; } 
             else {
-                carrito.push({ uid: Date.now() + Math.random(), id: combo.id, nombre: combo.nombre, descripcion: descripcionCombo, precio: combo.precio, quantity: 1, cantidad: 1, nota: "" });
+                carrito.push({ uid: Date.now() + Math.random(), id: combo.id, nombre: combo.nombre, descripcion: descripcionCombo, precio: combo.precio, cantidad: 1, nota: "" });
             }
             actualizarInterfazCarrito();
         }
@@ -664,6 +665,7 @@
             actualizarInterfazCarrito();
         }
 
+        // Corrección de la persistencia de las notas escritas en el carrito
         function actualizarNotaItem(uid, textoNota) {
             const item = carrito.find(i => i.uid === uid);
             if (item) item.nota = textoNota;
