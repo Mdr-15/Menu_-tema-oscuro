@@ -221,49 +221,33 @@
             return celda.trim().replace(/^"|"$/g, '').trim();
         }
 
-        // === ESCÁNER DINÁMICO DE CABECERAS PARA EVITAR CRUCES DE COLUMNAS ===
+        // === PROCESADOR INDEPENDIENTE DE CABECERAS ===
         function parsearEstructuraMenu(texto) {
             const lineas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             const individuales = [];
             const combosAgrupados = {};
-            let leyendoCombos = false;
 
-            // Índices por defecto de la tabla superior
-            let idxId = 0, idxCat = 1, idxNom = 2, idxPre = 3, idxDisp = 4;
+            // Mapeo de columnas fijas seguras para la tabla superior
+            const idxId = 0, idxCat = 1, idxNom = 2, idxPre = 3, idxDisp = 4;
             
-            // Índices de la tabla de combos (Se detectarán dinámicamente abajo)
-            let idxComboId = 0, idxComboNom = 1, idxComboPre = 2, idxComboPaso = 5, idxComboProd = 6;
+            // Mapeo seguro para la tabla de combos (Estructura de tu captura)
+            const idxComboId = 0, idxComboNom = 1, idxComboPre = 2, idxComboPaso = 5, idxComboProd = 6;
 
             for (let i = 0; i < lineas.length; i++) {
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                // Detectamos el inicio de la segunda tabla (Combos)
-                if (columnas[1] && columnas[1].toLowerCase() === 'categoria' && i > 3) {
-                    leyendoCombos = true;
-                    
-                    // Escaneamos las cabeceras exactas de los combos para saber en qué columna está cada dato
-                    idxComboId = columnas.findIndex(c => c.toLowerCase().includes('id'));
-                    idxComboNom = columnas.findIndex(c => c.toLowerCase().includes('nombre'));
-                    idxComboPre = columnas.findIndex(c => c.toLowerCase().includes('precio'));
-                    
-                    // Buscamos la columna que dice "Paso" o "Seleccion" (donde dice Platillo Principal 1)
-                    idxComboPaso = columnas.findIndex(c => c.toLowerCase().includes('paso') || c.toLowerCase().includes('seleccion') || c.toLowerCase().includes('categoria') && c !== columnas[1]);
-                    if (idxComboPaso === -1) idxComboPaso = 5; // Respaldo seguro si no se encuentra
-                    
-                    // La columna del producto real de comida siempre es la que está justo a la derecha del Paso
-                    idxComboProd = idxComboPaso + 1;
+                // Omitir líneas de control o vacías
+                if (!columnas || columnas[idxId] === 'Id_platillo' || columnas[idxId] === 'CONF') {
                     continue;
                 }
 
-                if (!columnas[0] || columnas[0] === 'Id_platillo' || columnas[0] === 'CONF') {
-                    continue;
-                }
-
+                // Switch de disponibilidad en la columna E (índice 4)
                 const disponible = columnas[idxDisp] ? columnas[idxDisp].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
-                if (columnas[0].startsWith('P') && !leyendoCombos) {
+                // DETECCIÓN INDEPENDIENTE: Si el ID empieza con P, va a productos individuales
+                if (columnas[idxId].startsWith('P')) {
                     const producto = {
                         id: columnas[idxId],
                         categoria: columnas[idxCat],
@@ -277,16 +261,16 @@
                     individuales.push(producto);
                 } 
                 
-                if (columnas[0].startsWith('C')) {
+                // DETECCIÓN INDEPENDIENTE: Si el ID empieza con C, va a la matriz de combos configurables
+                if (columnas[idxId].startsWith('C')) {
                     const comboId = columnas[idxComboId];
                     const nombreCombo = columnas[idxComboNom]; 
                     const precioCombo = parseFloat(columnas[idxComboPre]) || 0; 
                     
-                    // AJUSTE: El Paso va a la etiqueta y el Producto va directo al menú desplegable
-                    const componenteCategoria = columnas[idxComboPaso]; // "Platillo Principal 1"
-                    const componenteProducto = columnas[idxComboProd];  // "Alitas", "Boneless"
+                    const componenteCategoria = columnas[idxComboPaso]; // "Platillo Principal 1", "Snacks 1"
+                    const componenteProducto = columnas[idxComboProd];  // "Alitas", "Boneless", "Papas"
                     
-                    // Salsas (Inician después de la columna del Producto)
+                    // Extraer salsas específicas si existen a la derecha de la comida
                     const salsasComponente = [];
                     for (let s = idxComboProd + 1; s < columnas.length; s++) {
                         if (columnas[s]) salsasComponente.push(columnas[s]);
@@ -349,7 +333,6 @@
                     const esPlatilloPrincipal = nombreSeccion.toLowerCase().includes("platillo principal");
                     const esFijo = opciones.length === 1;
 
-                    // Mapeo corregido: Extrae el nombre real del alimento para las opciones
                     let htmlOpciones = opciones.map(opc => `<option value="${opc.nombre}">${opc.nombre}</option>`).join('');
                     let etiquetaLabel = `${nombreSeccion.toUpperCase()}:`;
                     if (esFijo && nombreSeccion.toLowerCase().includes("snack")) {
@@ -505,7 +488,6 @@
             }
         }
 
-        // Elimina el producto completo al tocar la cruz roja
         function eliminarDelCarrito(uid) {
             carrito = carrito.filter(item => item.uid !== uid);
             actualizarInterfazCarrito();
@@ -582,7 +564,7 @@
                 msg += `📦 *${item.cantidad}x* ${item.nombre}\n`;
                 if (item.salsa) msg += `   └ Salsa: ${item.salsa}\n`;
                 if (item.descripcion) msg += `   └ ${item.descripcion}\n`;
-                if (item.nota) msg += `   └ Nota especial: _${item.nota}_\n`;
+                if (item.nota) msg += `   └ Note especial: _${item.nota}_\n`;
                 msg += `   └ Subtotal: $${sub.toFixed(2)}\n\n`;
             });
 
