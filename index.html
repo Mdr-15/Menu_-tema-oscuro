@@ -275,7 +275,7 @@
             color: #fca311;
         }
 
-        /* Contoles de Cantidad y Borrado */
+        /* Controles de Cantidad y Borrado */
         .item-controles-col {
             display: flex;
             align-items: center;
@@ -436,7 +436,7 @@
     </div>
 
     <script>
-        // REEMPLAZA CON TU ENLACE .CSV DE GOOGLE SHEETS
+        // URL DE TU HOJA DE GOOGLE SHEETS EN FORMATO CSV
         const CONFIG_URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv";
 
         let carrito = [];
@@ -460,13 +460,13 @@
                 let rawCombos = [];
                 let itemIndex = 0;
 
-                // Primer recorrido: Almacenar listas de ingredientes basados en tus filas activas
+                // Primer recorrido: Almacenar listas globales de ingredientes desde tu inventario activo
                 filas.forEach(fila => {
                     const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (col.length >= 5) {
-                        const cat = col.replace(/"/g, "").trim();
-                        const prod = col.replace(/"/g, "").trim();
-                        const disp = col.replace(/"/g, "").trim().toUpperCase();
+                        const cat = col[1].replace(/"/g, "").trim();
+                        const prod = col[2].replace(/"/g, "").trim();
+                        const disp = col[4].replace(/"/g, "").trim().toUpperCase();
 
                         if (disp !== "SI") return;
 
@@ -475,7 +475,7 @@
                             const salsas = col.slice(5).map(s => s.replace(/"/g, "").trim()).filter(s => s);
                             salsas.forEach(s => { if(!listaSalsasGlobal.includes(s)) listaSalsasGlobal.push(s); });
                         } else if (cat === "Snacks") {
-                            if (!listaSnacksGlobal.includes(prod)) listaSnacksGlobal.push(prod);
+                            if (!listaSnacksGlobal.includes(prod)) pointer = listaSnacksGlobal.push(prod);
                         }
                     }
                 });
@@ -484,11 +484,11 @@
                 filas.forEach(fila => {
                     const col = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (col.length >= 5) {
-                        const idPlatillo = col.replace(/"/g, "").trim();
-                        const cat = col.replace(/"/g, "").trim();
-                        const prod = col.replace(/"/g, "").trim();
-                        const prec = parseFloat(col.replace(/"/g, "").trim()) || 0;
-                        const disp = col.replace(/"/g, "").trim().toUpperCase();
+                        const idPlatillo = col[0].replace(/"/g, "").trim();
+                        const cat = col[1].replace(/"/g, "").trim();
+                        const prod = col[2].replace(/"/g, "").trim();
+                        const prec = parseFloat(col[3].replace(/"/g, "").trim()) || 0;
+                        const disp = col[4].replace(/"/g, "").trim().toUpperCase();
 
                         if (disp !== "SI") return;
 
@@ -543,12 +543,9 @@
                 // Renderizar los Combos según sus reglas específicas estructurales
                 rawCombos.forEach(combo => {
                     let configInputsHtml = "";
-                    
-                    // Identificamos el tipo de combo según su nombre o ID de tu excel
                     const esComboCometa = combo.nombre.toLowerCase().includes("cometa") || combo.id.toUpperCase() === "C2";
 
                     if (esComboCometa) {
-                        // Combo Cometa: 2 Platillos Principales (con sus respectivas salsas) + 1 Snack
                         configInputsHtml = `
                             <div class="salsa-contenedor">
                                 <label class="salsa-label">Platillo Principal 1:</label>
@@ -580,7 +577,6 @@
                             </div>
                         `;
                     } else {
-                        // Combo Estrella (Por defecto): 1 Platillo Principal (con su salsa) + 2 Snacks
                         configInputsHtml = `
                             <div class="salsa-contenedor">
                                 <label class="salsa-label">Platillo Principal:</label>
@@ -759,7 +755,7 @@
             msg += `---------------------------\n`;
             msg += `*Total a Pagar:* $${total.toFixed(2)}`;
 
-            const telefonoLocal = "5210000000000"; // Reemplaza por tu celular comercial real
+            const telefonoLocal = "5210000000000"; // Configura el número real de tu negocio
             window.open(`wa.me{telefonoLocal}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
