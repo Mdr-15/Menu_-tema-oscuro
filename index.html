@@ -152,7 +152,7 @@
             font-size: 0.8rem;
         }
 
-        /* --- INTERFAZ LATERAL COMPACTA DEL PEDIDO --- */
+        /* --- INTERFAZ LATERAL FIJA (ESCRITORIO) --- */
         aside.panel-pedido { 
             width: 320px; 
             background-color: #161a1f; 
@@ -164,6 +164,7 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            z-index: 100;
         }
         .cabecera-pedido { 
             display: flex; 
@@ -329,10 +330,37 @@
             letter-spacing: 0.5px; 
         }
 
+        /* ======================================================== */
+        /* --- ESTILOS DE REDISEÑO: CARRITO FLOTANTE EN CELULARES --- */
+        /* ======================================================== */
         @media (max-width: 990px) { 
-            body { flex-direction: column; } 
-            #pantalla-tienda { flex-direction: column; }
-            aside.panel-pedido { width: 100%; height: auto; position: relative; border-left: none; border-top: 1px solid #232931; } 
+            body { 
+                flex-direction: column; 
+            } 
+            #pantalla-tienda { 
+                flex-direction: column; 
+            }
+            main {
+                padding: 15px;
+                padding-bottom: 340px; /* Deja espacio abajo para que los combos no queden tapados por el carrito flotante */
+            }
+            aside.panel-pedido { 
+                width: 100%; 
+                height: 300px; /* Tamaño fijo reducido para el celular */
+                position: fixed; /* Se vuelve flotante fijo */
+                bottom: 0; 
+                left: 0;
+                right: 0;
+                border-left: none; 
+                border-top: 3px solid #ff9f00; /* Borde dorado característico en la parte superior */
+                background-color: #161a1f;
+                padding: 12px;
+                box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5); /* Sombra elegante para dar efecto de flotado */
+                border-radius: 12px 12px 0 0; /* Bordes redondeados superiores */
+            } 
+            .Carrito-elementos {
+                max-height: 110px; /* Limita las filas internas para que quepa todo sin desbordar el tamaño flotante */
+            }
         }
     </style>
 </head>
@@ -350,25 +378,26 @@
 
         <aside class="panel-pedido">
             <div class="cabecera-pedido"><h2>🛒 Pedido</h2><div class="contador-badge" id="badge-contador">0</div></div>
-            <div style="margin-top: 10px;"><label class="label-cliente">Cliente *</label><input type="text" id="nombre-cliente" class="input-nombre" placeholder="Ingresa tu nombre"></div>
-            <div class="Carrito-elementos" id="carrito-lista"><p id="carrito-vacio-texto" style="color: #718096; text-align: center; margin-top: 20px; font-size: 0.75rem;">Carrito vacío.</p></div>
+            <div style="margin-top: 5px;"><label class="label-cliente">Cliente *</label><input type="text" id="nombre-cliente" class="input-nombre" placeholder="Ingresa tu nombre"></div>
+            <div class="Carrito-elementos" id="carrito-lista"><p id="carrito-vacio-texto" style="color: #718096; text-align: center; margin-top: 15px; font-size: 0.75rem;">Carrito vacío.</p></div>
             <div class="Total"><span>Total:</span><span id="carrito-total">$0.00</span></div>
             <button class="Boton-enviar" id="btn-whatsapp">Enviar Pedido</button>
         </aside>
     </div>
 
-    <!-- SECCIÓN INTERACTIVA DE AGRADECIMIENTO (OCULTA POR DEFECTO) -->
+    <!-- SECCIÓN INTERACTIVA DE AGRADECIMIENTO -->
     <div id="pantalla-agradecimiento" style="display: none; text-align: center; padding: 40px 20px; background-color: #161a1f; border-radius: 12px; max-width: 450px; margin: 40px auto; border: 1px solid #232931; box-sizing: border-box;">
         <span style="font-size: 3.5rem;">🚀</span>
         <h2 style="color: #ff9f00; text-transform: uppercase; margin-top: 10px; font-size: 1.4rem;">¡Pedido Confirmado!</h2>
         <p style="font-size: 1rem; color: #ffffff; margin-bottom: 5px;">Muchas gracias por tu compra, <strong id="agradecimiento-cliente" style="color: #ff9f00;"></strong>.</p>
         <p style="color: #a0aec0; font-size: 0.85rem; margin-top: 0;">Tu orden está siendo procesada en la estación de control.</p>
         <div style="background-color: #0d0f12; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #232931;">
-            <span style="color: #a0aec0; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Total a pagar en sucursal:</span>
+            <span style="color: #a0aec0; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Total a pagar:</span>
             <div id="agradecimiento-total" style="font-size: 1.6rem; color: #ff9f00; font-weight: bold; margin-top: 3px;">$0.00</div>
         </div>
         <button onclick="volverAlMenu()" style="background-color: #ff9f00; color: #0d0f12; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; width: 100%;">Volver al Menú</button>
     </div>
+
     <script>
         const urlGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv"; 
 
