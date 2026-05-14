@@ -571,8 +571,8 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            const miTelefonoSpaceWings = "521234567890"; 
-
+            const urlWhatsApp = "https://wa.me/523411398581?text=" + encodeURIComponent(mensaje);
+            
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
             msg += `👤 *Cliente:* ${cliente}\n`;
             msg += `-------------------------------------------\n`;
