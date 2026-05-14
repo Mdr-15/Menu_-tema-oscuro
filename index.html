@@ -154,7 +154,7 @@
             background-color: #161a1f; 
             border-left: 1px solid #232931; 
             padding: 15px; 
-            position: sticky;  top: 0; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column;
+            position: sticky; top: 0; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column;
         }
         .cabecera-pedido { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #232931; padding-bottom: 10px; }
         .cabecera-pedido h2 { margin: 0; font-size: 1.2rem; font-weight: bold; }
@@ -221,19 +221,38 @@
             return celda.trim().replace(/^"|"$/g, '').trim();
         }
 
-        // === ENRUTADOR DE COLUMNAS RECTIFICADO ===
+        // === ESCÁNER DINÁMICO DE CABECERAS PARA EVITAR CRUCES DE COLUMNAS ===
         function parsearEstructuraMenu(texto) {
             const lineas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
             const individuales = [];
             const combosAgrupados = {};
             let leyendoCombos = false;
 
+            // Índices por defecto de la tabla superior
+            let idxId = 0, idxCat = 1, idxNom = 2, idxPre = 3, idxDisp = 4;
+            
+            // Índices de la tabla de combos (Se detectarán dinámicamente abajo)
+            let idxComboId = 0, idxComboNom = 1, idxComboPre = 2, idxComboPaso = 5, idxComboProd = 6;
+
             for (let i = 0; i < lineas.length; i++) {
                 const linea = lineas[i];
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
+                // Detectamos el inicio de la segunda tabla (Combos)
                 if (columnas[1] && columnas[1].toLowerCase() === 'categoria' && i > 3) {
                     leyendoCombos = true;
+                    
+                    // Escaneamos las cabeceras exactas de los combos para saber en qué columna está cada dato
+                    idxComboId = columnas.findIndex(c => c.toLowerCase().includes('id'));
+                    idxComboNom = columnas.findIndex(c => c.toLowerCase().includes('nombre'));
+                    idxComboPre = columnas.findIndex(c => c.toLowerCase().includes('precio'));
+                    
+                    // Buscamos la columna que dice "Paso" o "Seleccion" (donde dice Platillo Principal 1)
+                    idxComboPaso = columnas.findIndex(c => c.toLowerCase().includes('paso') || c.toLowerCase().includes('seleccion') || c.toLowerCase().includes('categoria') && c !== columnas[1]);
+                    if (idxComboPaso === -1) idxComboPaso = 5; // Respaldo seguro si no se encuentra
+                    
+                    // La columna del producto real de comida siempre es la que está justo a la derecha del Paso
+                    idxComboProd = idxComboPaso + 1;
                     continue;
                 }
 
@@ -241,15 +260,15 @@
                     continue;
                 }
 
-                const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
+                const disponible = columnas[idxDisp] ? columnas[idxDisp].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
                 if (columnas[0].startsWith('P') && !leyendoCombos) {
                     const producto = {
-                        id: columnas[0],
-                        categoria: columnas[1],
-                        nombre: columnas[2],
-                        precio: parseFloat(columnas[3]) || 0,
+                        id: columnas[idxId],
+                        categoria: columnas[idxCat],
+                        nombre: columnas[idxNom],
+                        precio: parseFloat(columnas[idxPre]) || 0,
                         salsas: []
                     };
                     for (let s = 5; s < columnas.length; s++) {
@@ -258,16 +277,18 @@
                     individuales.push(producto);
                 } 
                 
-                // REPARADO: Se mapean por separado la etiqueta visual (columna 5) y el contenido del menú (columna 6)
                 if (columnas[0].startsWith('C')) {
-                    const comboId = columnas[0];
-                    const nombreCombo = columnas[1]; 
-                    const precioCombo = parseFloat(columnas[2]) || 0; 
-                    const componenteCategoria = columnas[5]; // Mapea "Platillo Principal 1" para la etiqueta
-                    const componenteProducto = columnas[6];  // Mapea los alimentos reales ("Alitas", "Boneless") para el select
+                    const comboId = columnas[idxComboId];
+                    const nombreCombo = columnas[idxComboNom]; 
+                    const precioCombo = parseFloat(columnas[idxComboPre]) || 0; 
                     
+                    // AJUSTE: El Paso va a la etiqueta y el Producto va directo al menú desplegable
+                    const componenteCategoria = columnas[idxComboPaso]; // "Platillo Principal 1"
+                    const componenteProducto = columnas[idxComboProd];  // "Alitas", "Boneless"
+                    
+                    // Salsas (Inician después de la columna del Producto)
                     const salsasComponente = [];
-                    for (let s = 7; s < columnas.length; s++) {
+                    for (let s = idxComboProd + 1; s < columnas.length; s++) {
                         if (columnas[s]) salsasComponente.push(columnas[s]);
                     }
 
@@ -328,7 +349,7 @@
                     const esPlatilloPrincipal = nombreSeccion.toLowerCase().includes("platillo principal");
                     const esFijo = opciones.length === 1;
 
-                    // El script ahora itera sobre las opciones de comida reales (columna 6)
+                    // Mapeo corregido: Extrae el nombre real del alimento para las opciones
                     let htmlOpciones = opciones.map(opc => `<option value="${opc.nombre}">${opc.nombre}</option>`).join('');
                     let etiquetaLabel = `${nombreSeccion.toUpperCase()}:`;
                     if (esFijo && nombreSeccion.toLowerCase().includes("snack")) {
@@ -484,6 +505,7 @@
             }
         }
 
+        // Elimina el producto completo al tocar la cruz roja
         function eliminarDelCarrito(uid) {
             carrito = carrito.filter(item => item.uid !== uid);
             actualizarInterfazCarrito();
