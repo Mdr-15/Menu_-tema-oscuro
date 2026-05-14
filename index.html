@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Wings - Menú Digital</title>
     <style>
-        /* --- CONFIGURACIÓN DE COLORES Y CUERPO GENERAL --- */
+        /* --- ESTILOS BASE SPACE WINGS (Dark Mode) --- */
         body { 
             background-color: #0d0f12; 
             color: #ffffff; 
@@ -67,7 +67,7 @@
             margin: 10px 0; 
         }
 
-        /* --- CONFIGURADOR DE COMBOS INTERACTIVOS (ESTILO DE LA IMAGEN) --- */
+        /* --- CONFIGURADOR DE COMBOS (ESTILO DE TU INTERFAZ GRÁFICA) --- */
         .tarjeta-combo-full {
             background-color: #161a1f;
             border: 1px solid #232931;
@@ -85,12 +85,13 @@
         }
         .header-combo h3 {
             margin: 0;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             color: #ffffff;
+            font-weight: bold;
         }
         .header-combo .precio-combo {
             color: #ff9f00;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: bold;
         }
         .config-box {
@@ -109,9 +110,10 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            letter-spacing: 0.5px;
         }
         .campo-grupo {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
         .campo-grupo label {
             display: block;
@@ -140,6 +142,7 @@
             color: #4a5568;
             background-color: #13171c;
             cursor: not-allowed;
+            border-color: #1a202c;
         }
         .btn-agregar-combo {
             background-color: #ff9f00;
@@ -152,6 +155,7 @@
             float: right;
             font-size: 1rem;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .btn-agregar-combo:hover { background-color: #e68f00; }
         .btn-agregar-individual {
@@ -167,7 +171,7 @@
             text-transform: uppercase;
         }
 
-        /* --- CONTENEDOR LATERAL (CARRITO DE PEDIDO) --- */
+        /* --- DISEÑO DEL PANEL LATERAL DEL PEDIDO --- */
         aside.panel-pedido { 
             width: 380px; 
             background-color: #161a1f; 
@@ -232,18 +236,16 @@
 
     <script>
         // =========================================================================
-        // REEMPLAZA EL CONTENIDO DE ABAJO CON TU ENLACE DE PUBLICACIÓN CSV DE GOOGLE SHEETS:
+        // CONFIGURACIÓN: INSERTA TU ENLACE CSV PUBLICADO DE GOOGLE SHEETS EN ESTA VARIABLE
         // =========================================================================
-        const urlGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv";
+        const urlGoogleSheets = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR5rO4smgDCoyQggGHUfR40G1zudA8tf_Tcwnvl4KPRoyhRVq0jlaUfY3DCQBA_M2Bcxyja7SaPzAz7/pub?gid=0&single=true&output=csv"; 
 
         let baseDatosProductos = { individuales: [], combos: [] };
         let carrito = [];
 
         async function cargarMenuCompleto() {
             try {
-                // Caída automática a respaldo local si no has configurado tu link de Google Sheets
-                const origen = urlGoogleSheets.includes("AQUÍ_PEGA") ? 'productos.csv' : urlGoogleSheets;
-                const respuesta = await fetch(origen);
+                const respuesta = await fetch(urlGoogleSheets);
                 const textoCSV = await respuesta.text();
                 
                 baseDatosProductos = parsearEstructuraMenu(textoCSV);
@@ -252,11 +254,11 @@
                 renderizarCombosDinamicos(baseDatosProductos.combos);
                 actualizarInterfazCarrito();
             } catch (error) {
-                console.error("Error cargando base de datos:", error);
+                console.error("Fallo al inicializar base de datos:", error);
             }
         }
 
-        // LIMPIADOR DE COMILLAS Y ESPACIOS NATIVOS DE GOOGLE SHEETS
+        // CONTROLADOR SANITIZADOR: Remueve de forma segura comillas dobles y saltos internos de línea
         function limpiarTextoSheets(celda) {
             if (!celda) return '';
             return celda.trim().replace(/^"|"$/g, '').trim();
@@ -270,24 +272,27 @@
 
             for (let i = 0; i < lineas.length; i++) {
                 const linea = lineas[i];
+                
+                // Mapeo inicial de separación limpiando comillas automáticas del CSV de Google
                 const columnas = linea.split(',').map(limpiarTextoSheets);
 
-                // Detecta el brinco de tabla hacia los combos
+                // Control de salto de sección lógica hacia la matriz de combos inferiores
                 if (columnas[0] && columnas[0].toLowerCase().includes('id_platillo') && i > 3) {
                     leyendoCombos = true;
                     continue;
                 }
 
+                // Evita procesar marcas de configuración de la hoja de cálculo
                 if (!columnas[0] || columnas[0] === 'CONF' || columnas[0].toLowerCase().includes('id_platillo')) {
                     continue;
                 }
 
-                // Switch de disponibilidad en la columna 4 (índice 4)
+                // Validar bandera booleana de disponibilidad en la columna E (Índice 4)
                 const disponible = columnas[4] ? columnas[4].toLowerCase() === 'si' : false;
                 if (!disponible) continue;
 
                 if (!leyendoCombos) {
-                    // === PARSEO PLATILLOS INDIVIDUALES (P1 - P8) ===
+                    // === PARSEO DE PRODUCTOS INDIVIDUALES (P1 - P8) ===
                     if (columnas[0].startsWith('P')) {
                         const producto = {
                             id: columnas[0],
@@ -296,13 +301,14 @@
                             precio: parseFloat(columnas[3]) || 0,
                             salsas: []
                         };
+                        // Colecciona dinámicamente el listado de salsas mapeadas horizontalmente
                         for (let s = 5; s < columnas.length; s++) {
                             if (columnas[s]) producto.salsas.push(columnas[s]);
                         }
                         individuales.push(producto);
                     }
                 } else {
-                    // === PARSEO COMBOS AGRUPADOS (C1 - C3) ===
+                    // === PARSEO Y AGRUPACIÓN DE COMBOS DINÁMICOS (C1 - C3) ===
                     if (columnas[0].startsWith('C')) {
                         const comboId = columnas[0];
                         const nombreCombo = columnas[2] || 'Combo Especial';
@@ -313,6 +319,7 @@
                             nombreItem: columnas[6] || '',
                             salsas: []
                         };
+                        // Colecciona las variantes de salsa elegibles del artículo interno
                         for (let s = 7; s < columnas.length; s++) {
                             if (columnas[s]) filaItem.salsas.push(columnas[s]);
                         }
@@ -355,7 +362,6 @@
             });
         }
 
-        // === CREACIÓN DEL CONFIGURADOR INTERACTIVO COPIADO FIELMENTE DE TU INTERFAZ ===
         function renderizarCombosDinamicos(combos) {
             const contenedor = document.getElementById('contenedor-combos');
             if (!contenedor) return;
@@ -444,7 +450,7 @@
             const salsaSeleccionada = selectSalsa ? selectSalsa.value : '';
 
             if (producto.salsas.length > 0 && !salsaSeleccionada) {
-                alert("Por favor selecciona una salsa para completar el pedido.");
+                alert("Por favor selecciona una salsa para tus alitas o snacks.");
                 return;
             }
 
@@ -482,11 +488,11 @@
                     return;
                 }
 
-                configuracionFinal.push(`${nombreLegible}${salsaArticulo ? ` (Salsa: ${salsaArticulo})` : ''}`);
+                configuracionFinal.push(`${nombreLegible}${salsaArticulo ? ` (🌶️ ${salsaArticulo})` : ''}`);
             });
 
             if (!validacionCorrecta) {
-                alert("Por favor, selecciona todos los componentes de tu combo.");
+                alert("Por favor, selecciona todos los alimentos obligatorios para armar tu combo.");
                 return;
             }
 
@@ -556,7 +562,7 @@
             if (!cliente) { alert("Por favor escribe tu nombre."); return; }
             if (carrito.length === 0) { alert("Tu carrito está vacío."); return; }
 
-            // PON TU NÚMERO DE TELÉFONO AQUÍ (CON CLAVE DE PAÍS INCLUIDA)
+            // MODIFICA ESTA VARIABLE CON TU NÚMERO DE TELÉFONO DE ATENCIÓN REAL
             const miTelefonoSpaceWings = "521234567890"; 
 
             let msg = `🚀 *NUEVO PEDIDO - SPACE WINGS* 🚀\n\n`;
