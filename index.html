@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Wings - Menú Digital</title>
     <style>
-        /* --- ESTILOS BASE SPACE WINGS (Dark Mode) --- */
+              /* --- ESTILOS BASE SPACE WINGS (Dark Mode Premium) --- */
         body { 
-            background-color: #0d0f12; 
-            color: #ffffff; 
-            font-family: 'Arial', sans-serif; 
+            background-color: #0b0f13; /* Fondo negro profundo orgánico */
+            color: #f8fafc; /* Texto blanco suave que reduce la fatiga visual */
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             margin: 0; 
             display: flex; 
             min-height: 100vh; 
@@ -20,144 +20,203 @@
         }
         main { 
             flex: 1; 
-            padding: 30px; 
+            padding: 40px; 
             box-sizing: border-box; 
+            max-width: 1200px;
+            margin: 0 auto;
         }
         h1.logo { 
-            color: #ff9f00; 
-            font-size: 2.2rem; 
+            color: #ff9f00; /* Naranja neón de tu marca */
+            font-size: 2.6rem; 
             text-transform: uppercase; 
             text-align: center; 
-            margin-bottom: 25px; 
+            margin-bottom: 35px; 
             font-weight: 900; 
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 159, 0, 0.2); /* Sutil brillo Cyberpunk */
         }
         h2.seccion-titulo { 
             color: #ff9f00; 
-            border-bottom: 2px solid #ff9f00; 
-            padding-bottom: 6px; 
-            margin-top: 25px; 
+            border-bottom: 2px solid #1e293b; 
+            padding-bottom: 10px; 
+            margin-top: 40px; 
             text-transform: uppercase; 
-            font-size: 1.2rem; 
+            font-size: 1.3rem; 
+            letter-spacing: 1px;
+            position: relative;
+        }
+        h2.seccion-titulo::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background-color: #ff9f00;
         }
         .grid-productos { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
-            gap: 15px; 
-            margin-top: 15px; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 24px; 
+            margin-top: 20px; 
         }
+        
+        /* --- TARJETAS DE PRODUCTOS (Glow Interactivo) --- */
         .tarjeta-producto { 
-            background-color: #161a1f; 
-            border: 1px solid #232931; 
-            border-radius: 10px; 
-            padding: 15px; 
+            background-color: #13171e; /* Capa gris carbón intermedia */
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 16px; 
+            padding: 24px; 
             display: flex; 
             flex-direction: column; 
             justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .tarjeta-producto:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 159, 0, 0.4); /* El borde se ilumina de naranja */
+            box-shadow: 0 12px 25px rgba(255, 159, 0, 0.08);
         }
         .tag-categoria { 
-            background-color: #232931; 
+            background-color: rgba(255, 159, 0, 0.1); /* Fondo naranja translúcido */
             color: #ff9f00; 
-            padding: 3px 6px; 
-            border-radius: 4px; 
-            font-size: 0.7rem; 
-            font-weight: bold; 
-            margin-bottom: 6px; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            margin-bottom: 12px; 
             display: inline-block;
+            align-self: flex-start;
+        }
+        .tarjeta-producto strong {
+            font-size: 1.2rem;
+            color: #ffffff;
+            font-weight: 700;
         }
         .precio { 
-            font-size: 1.1rem; 
+            font-size: 1.3rem; 
             color: #ff9f00; 
-            font-weight: bold; 
-            margin: 6px 0; 
+            font-weight: 800; 
+            margin: 12px 0; 
         }
 
         /* --- CONFIGURADOR DE COMBOS --- */
         .tarjeta-combo-full {
-            background-color: #161a1f;
-            border: 1px solid #232931;
-            border-radius: 10px;
-            padding: 18px;
-            margin-top: 15px;
+            background-color: #13171e;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
             width: 100%;
             box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.25s ease;
+            overflow: hidden !important; /* Asegura el botón dentro */
+        }
+        .tarjeta-combo-full:hover {
+            border-color: rgba(255, 159, 0, 0.3);
         }
         .header-combo {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
         .header-combo h3 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: #ffffff;
-            font-weight: bold;
+            font-weight: 700;
         }
         .header-combo .precio-combo {
             color: #ff9f00;
-            font-size: 1.3rem;
-            font-weight: bold;
+            font-size: 1.4rem;
+            font-weight: 800;
         }
         .config-box {
-            background-color: #111418;
-            border: 1px solid #1f242b;
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 12px;
-        }
-        .campo-grupo {
-            margin-bottom: 12px;
+            background-color: #0b0f13; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px;
         }
         .campo-grupo label {
             display: block;
-            color: #a0aec0;
-            font-size: 0.7rem;
-            font-weight: bold;
+            color: #94a3b8; 
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
         select { 
             width: 100%; 
-            background-color: #161a1f; 
+            background-color: #13171e; 
             color: #ffffff; 
-            border: 1px solid #2d3748; 
-            padding: 8px; 
-            border-radius: 6px; 
-            font-size: 0.8rem;
+            border: 1px solid #334155; 
+            padding: 10px; 
+            border-radius: 8px; 
+            font-size: 0.85rem;
             box-sizing: border-box;
-        }
-        .btn-agregar-combo {
-            background-color: #ff9f00;
-            color: #0d0f12;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: bold;
             cursor: pointer;
-            float: right;
+            transition: border-color 0.2s;
+        }
+        select:focus {
+            outline: none;
+            border-color: #ff9f00;
+        }
+        
+        /* --- BOTONES MODERNOS --- */
+        .btn-agregar-combo {
+            background-color: #ff9f00; 
+            color: #0b0f13; 
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
             font-size: 0.85rem;
             text-transform: uppercase;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 10px rgba(255, 159, 0, 0.2);
+            float: right !important;
+            margin-top: 5px !important;
+            margin-bottom: 15px !important;
+        }
+        .btn-agregar-combo:hover {
+            background-color: #e08b00;
+        }
+        .btn-agregar-combo:active, .btn-agregar-individual:active {
+            transform: scale(0.98);
         }
         .btn-agregar-individual {
             background-color: #ff9f00;
-            color: #0d0f12;
+            color: #0b0f13;
             border: none;
-            padding: 8px;
-            border-radius: 6px;
-            font-weight: bold;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 800;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 15px;
             text-transform: uppercase;
             font-size: 0.8rem;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-agregar-individual:hover {
+            background-color: #e08b00;
         }
 
-        /* --- INTERFAZ LATERAL FIJA (ESCRITORIO) --- */
+        /* --- INTERFAZ LATERAL FIJA DEL PEDIDO --- */
         aside.panel-pedido { 
-            width: 320px; 
-            background-color: #161a1f; 
-            border-left: 1px solid #232931; 
-            padding: 15px; 
+            width: 360px; 
+            background-color: #13171e; 
+            border-left: 1px solid rgba(255, 255, 255, 0.05); 
+            padding: 24px; 
             position: sticky; 
             top: 0; 
             height: 100vh; 
@@ -170,56 +229,69 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            border-bottom: 1px solid #232931; 
-            padding-bottom: 10px; 
+            border-bottom: 2px solid rgba(255, 255, 255, 0.05); 
+            padding-bottom: 16px; 
+            margin-bottom: 20px;
         }
         .cabecera-pedido h2 {
             margin: 0;
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #ffffff;
         }
         .contador-badge { 
             background-color: #ff9f00; 
-            color: #0d0f12; 
+            color: #0b0f13; 
             border-radius: 50%; 
-            width: 22px; 
-            height: 22px; 
+            width: 26px; 
+            height: 26px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             font-weight: bold; 
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
         .label-cliente {
             display: block; 
-            color: #a0aec0; 
-            margin-bottom: 4px; 
-            font-size: 0.7rem; 
-            font-weight: bold; 
+            color: #94a3b8; 
+            margin-bottom: 6px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .input-nombre { 
             width: 100%; 
-            padding: 8px; 
-            border-radius: 6px; 
-            border: 1px solid #3a4454; 
-            background-color: #0d0f12; 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: 1px solid #334155; 
+            background-color: #0b0f13; 
             color: white; 
             box-sizing: border-box; 
-            font-size: 0.85rem; 
+            font-size: 0.9rem; 
+            transition: border-color 0.2s;
+        }
+        .input-nombre:focus {
+            outline: none;
+            border-color: #ff9f00;
         }
         .Carrito-elementos { 
             flex: 1; 
             overflow-y: auto; 
-            margin-top: 10px; 
+            margin-top: 16px; 
         }
-        /* --- FILA DEL ARTÍCULO COMPACTO --- */
+        
+        /* --- ELEMENTOS DENTRO DEL CARRITO --- */
         .item-carrito-fila { 
-            background-color: #0d0f12; 
-            padding: 8px 10px; 
-            border-radius: 6px; 
-            margin-bottom: 8px; 
-            border: 1px solid #232931; 
+            background-color: #0b0f13; 
+            padding: 14px; 
+            border-radius: 10px; 
+            margin-bottom: 12px; 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            transition: background-color 0.2s ease;
+        }
+        .item-carrito-fila:hover {
+            background-color: #13171e;
         }
         .item-encabezado-flex {
             display: flex;
@@ -228,188 +300,201 @@
         }
         .item-titulo-carrito {
             margin: 0;
-            font-weight: bold;
-            font-size: 0.85rem;
+            font-weight: 700;
+            font-size: 0.95rem;
             color: #ffffff;
         }
         .item-salsa-carrito {
-            margin: 1px 0 0 0;
+            margin: 4px 0 0 0;
             color: #ff9f00;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-style: italic;
+            font-weight: 600;
         }
         .item-desc-carrito {
-            margin: 2px 0 0 0;
-            color: #a0aec0;
-            font-size: 0.7rem;
-            font-style: italic;
-            line-height: 1.1;
+            margin: 6px 0 0 0;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            background: #13171e;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px dashed rgba(255,255,255,0.1);
         }
         .item-precio-carrito {
-            font-weight: bold;
+            font-weight: 700;
             color: #ff9f00;
-            font-size: 0.85rem;
-            margin: 2px 0 0 0;
+            font-size: 0.95rem;
+            margin: 4px 0 0 0;
         }
+
+        /* --- CONTROLES DE CANTIDAD EN MODO OSCURO --- */
         .controles-contenedor {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            margin-top: 10px;
         }
         .item-botones-qty { 
             display: flex; 
             align-items: center; 
-            background-color: #232931;
-            border-radius: 4px;
-            padding: 1px;
+            background-color: #13171e;
+            border-radius: 8px;
+            padding: 3px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
         .item-botones-qty button { 
-            background: none;
+            background: #0b0f13;
             color: #ffffff; 
-            border: none; 
-            width: 18px; 
-            height: 18px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 6px;
             cursor: pointer; 
             font-weight: bold; 
-            font-size: 0.8rem;
-        }
-        .item-botones-qty span {
-            font-size: 0.8rem;
-            font-weight: bold;
-            padding: 0 4px;
-        }
-        .btn-cancelar {
-            background: none;
-            border: none;
-            color: #e53e3e;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 0;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+        .item-botones-qty button:hover {
+            background-color: #1e293b;
+            color: #ff9f00;
+            border-color: #ff9f00;
+        }
+        .item-botones-qty button:active {
+            transform: scale(0.92);
+        }
+        .item-botones-qty span {
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 0 10px;
+            min-width: 14px;
+            text-align: center;
+        }
+        .btn-cancelar {
+            background: rgba(229, 62, 62, 0.1); /* Fondo rojo translúcido */
+            border: 1px solid rgba(229, 62, 62, 0.2);
+            color: #f56565; 
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
         }
         .btn-cancelar:hover {
-            color: #fc8181;
-        }
-        .input-nota-carrito {
-            width: 100%;
-            background-color: #161a1f;
-            border: 1px solid #232931;
-            border-radius: 4px;
+            background: #e53e3e;
             color: #ffffff;
-            padding: 5px;
-            font-size: 0.7rem;
-            margin-top: 6px;
-            box-sizing: border-box;
+            transform: translateY(-1px);
         }
 
-        /* --- TOTALES Y BOTÓN WHATSAPP --- */
-        .Total { 
-            border-top: 1px solid #232931; 
-            padding-top: 10px; 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 1rem; 
-            font-weight: bold; 
-            margin-top: 6px;
+        /* --- BOTÓN IMPRIMIR PRESTIGIO (ESTILO APP OSCURA) --- */
+        aside.panel-pedido button:not(.item-botones-qty button):not(.btn-cancelar) {
+            background-color: #ff9f00 !important; /* Naranja llamativo */
+            color: #0b0f13 !important; /* Texto oscuro para máxima lectura */
+            border: none !important;
+            padding: 14px 20px !important;
+            border-radius: 10px !important;
+            font-size: 0.95rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer !important;
+            width: 100% !important;
+            margin-top: 20px !important;
+            box-shadow: 0 4px 12px rgba(255, 159, 0, 0.2) !important;
+            transition: all 0.2s ease !important;
+            display: block !important;
         }
-        .Total span:last-child { color: #ffffff; }
-        .Boton-enviar { 
-            background-color: #25d366; 
-            color: white; 
-            border: none; 
-            width: 100%; 
-            padding: 10px; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-top: 10px; 
-            text-transform: uppercase; 
-            font-size: 0.85rem; 
-            letter-spacing: 0.5px; 
+        aside.panel-pedido button:not(.item-botones-qty button):not(.btn-cancelar):hover {
+            background-color: #e08b00 !important;
+            box-shadow: 0 6px 20px rgba(255, 159, 0, 0.3) !important;
+            transform: translateY(-1px);
         }
-        /* --- DISEÑO RESPONSIVO: CARRITO FLOTANTE MINIMIZABLE EN CELULAR --- */
+        aside.panel-pedido button:not(.item-botones-qty button):not(.btn-cancelar):active {
+            transform: scale(0.98) !important;
+        }
+
+        /* Estructura limpia para el renglón del Total */
+        aside.panel-pedido .Total, 
+        aside.panel-pedido [id*="total"] {
+            font-size: 1.15rem !important;
+            font-weight: 800 !important;
+            color: #ffffff !important;
+            margin-top: 15px !important;
+        }
+
+                /* ====================================================
+           MÓVIL: CARRITO COLAPSABLE OSCURO PARA CELULARES (OPCIONAL)
+           ==================================================== */
         @media (max-width: 990px) { 
-            body { 
-                flex-direction: column; 
+            body, #pantalla-tienda { 
+                flex-direction: column !important; 
             } 
-            #pantalla-tienda { 
-                flex-direction: column; 
-            }
             main {
-                padding: 15px;
-                padding-top: 70px; /* 🚀 SOLUCIÓN: Empuja el nombre de Space Wings hacia abajo en celulares */
-                padding-bottom: 90px; /* Espacio inferior seguro para la barra flotante */
+                padding: 15px !important;
+                padding-bottom: 90px !important; 
             }
-            
-            /* El panel lateral se convierte en una barra colapsable */
             aside.panel-pedido { 
-                width: 100%; 
-                height: auto;
-                max-height: 60px; /* Altura compacta por defecto: NO tapa tus artículos */
-                position: fixed; 
-                bottom: 0; 
-                left: 0;
-                right: 0;
-                border-left: none; 
-                border-top: 2px solid #ff9f00; 
-                background-color: #161a1f;
-                padding: 10px 15px;
-                box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.7); 
-                border-radius: 16px 16px 0 0; 
-                overflow: hidden;
-                transition: max-height 0.4s ease-in-out; /* Animación suave al abrir/cerrar */
-                z-index: 9999;
+                width: 100% !important; 
+                height: auto !important;
+                max-height: 65px; 
+                position: fixed !important; 
+                bottom: 0 !important; left: 0 !important; right: 0 !important;
+                border-left: none !important; 
+                border-top: 3px solid #ff9f00; 
+                background-color: #13171e !important; 
+                padding: 12px 20px !important;
+                box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5) !important; 
+                border-radius: 20px 20px 0 0 !important; 
+                overflow: hidden !important;
+                transition: max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+                z-index: 9999 !important;
             } 
-            
-            /* Clase dinámica que se activará desde JS para expandir el carrito completo */
             aside.panel-pedido.expandido {
-                max-height: 80vh; /* Se abre hacia arriba cubriendo el 80% de la pantalla de forma controlada */
-                overflow-y: auto;
+                max-height: 80vh !important; 
+                overflow-y: auto !important;
             }
-
-            /* Forzamos que la cabecera del pedido actúe como un botón táctil */
             .cabecera-pedido {
-                cursor: pointer;
-                padding-bottom: 5px;
+                cursor: pointer !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                width: 100% !important;
             }
-
             .Carrito-elementos {
-                max-height: 250px; 
-                margin-top: 10px;
+                max-height: 300px !important; 
             }
-            
-            /* Ocultamos el campo del cliente si el carrito está cerrado para ahorrar espacio */
-            aside.panel-pedido:not(.expandido) .Cliente,
+            aside.panel-pedido:not(.expandido) .label-cliente,
+            aside.panel-pedido:not(.expandido) .input-nombre,
             aside.panel-pedido:not(.expandido) .Carrito-elementos,
-            aside.panel-pedido:not(.expandido) .Boton-enviar {
+            aside.panel-pedido:not(.expandido) button,
+            aside.panel-pedido:not(.expandido) .item-carrito-fila {
                 display: none !important;
             }
-            
-            /* Rediseño de la barra delgada inferior cuando está colapsado */
-            aside.panel-pedido:not(.expandido) .Total {
-                border-top: none;
-                margin-top: 0;
-                padding-top: 0;
-                display: inline-flex;
-                float: left;
-                font-size: 1rem;
-                line-height: 24px;
-            }
-            
-            /* Añadimos una flecha indicadora o texto de apoyo visual en móviles */
             .cabecera-pedido::after {
-                content: ' 🔼 Ver Carrito';
+                content: '🔼 Ver pedido';
                 color: #ff9f00;
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 font-weight: bold;
+                background-color: rgba(255, 159, 0, 0.1);
+                padding: 6px 12px;
+                border-radius: 20px;
             }
             aside.panel-pedido.expandido .cabecera-pedido::after {
-                content: ' 🔽 Ocultar';
+                content: '🔽 Ocultar';
+                background-color: #0b0f13;
+                color: #94a3b8;
             }
         }
-    </style>
+
+            </style>
 </head>
 <body>
 
